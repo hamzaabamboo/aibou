@@ -9,9 +9,21 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@chakra-ui/react": "^2.2.9",
+    "@emotion/react": "^11.10.0",
+    "@emotion/styled": "^11.10.0",
+    "@tanstack/react-query": "^4.2.3",
+    "@types/lodash": "^4.14.184",
+    "axios": "^0.27.2",
+    "dexie": "^3.2.2",
+    "dexie-react-hooks": "^1.1.1",
+    "framer-motion": "^7.2.1",
+    "kuroshiro": "^1.2.0",
+    "lodash": "^4.17.21",
     "next": "12.2.5",
     "react": "18.2.0",
-    "react-dom": "18.2.0"
+    "react-dom": "18.2.0",
+    "react-i18next": "^11.18.5"
   },
   "devDependencies": {
     "@types/node": "18.7.13",
