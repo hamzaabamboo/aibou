@@ -1,4 +1,12 @@
-import { Box, Heading, Input, Spinner, Stack, Text } from "@chakra-ui/react";
+import {
+  Box,
+  BoxProps,
+  Heading,
+  Input,
+  Spinner,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
 import debounce from "lodash/debounce";
 import { useCallback, useEffect, useState } from "react";
 import { useJishoSearch } from "../hooks/useJishoSearch";
@@ -6,10 +14,13 @@ import { JishoWord } from "../types/jisho";
 import { KanjiDisplay } from "./KanjiDisplay";
 import { SearchResultItem } from "./SearchResultItem";
 
-export const JishoSearch = (props: {
-  onSelectItem: (word: JishoWord) => void;
-}) => {
-  const { onSelectItem } = props;
+export const JishoSearch = (
+  props: {
+    inputSize?: "small" | "large";
+    onSelectItem: (word: JishoWord) => void;
+  } & BoxProps
+) => {
+  const { inputSize = "large", onSelectItem, ...boxProps } = props;
   const [input, setInput] = useState("");
   const [keyword, _setKeyword] = useState("");
   const setKeyword = useCallback(
@@ -43,13 +54,13 @@ export const JishoSearch = (props: {
   );
 
   return (
-    <Box>
+    <Box {...boxProps}>
       <Input
-        height="16"
+        p={2}
         width="full"
         value={input}
-        fontSize="4xl"
-        fontWeight="bold"
+        fontSize={inputSize === "large" ? "4xl" : "lg"}
+        fontWeight={inputSize === "large" ? "bold" : "semibold"}
         onChange={(e) => setInput(e.currentTarget.value)}
         mb={2}
       />

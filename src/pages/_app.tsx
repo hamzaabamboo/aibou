@@ -2,10 +2,16 @@ import type { AppProps } from "next/app";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { Box, ChakraProvider, Stack } from "@chakra-ui/react";
 import { Navigation } from "../components/Navigation";
+import { useEffect } from "react";
+import { initDexie } from "../utils/db";
 
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
+  useEffect(() => {
+    initDexie();
+  }, []);
+
   return (
     <ChakraProvider>
       <QueryClientProvider client={queryClient}>
