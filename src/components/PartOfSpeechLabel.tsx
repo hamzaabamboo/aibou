@@ -8,6 +8,8 @@ export const PartOfSpeechLabel = (props: { partOfSpeech: PartOfSpeech }) => {
     switch (partOfSpeech) {
       case PartOfSpeech.Noun:
         return "n";
+      case PartOfSpeech.NounWithNo:
+        return null;
       case PartOfSpeech.SuruVerb:
       case PartOfSpeech.SuruVerbIncluded:
         return "v-する";

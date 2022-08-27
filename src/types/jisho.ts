@@ -29,6 +29,7 @@ export type KanjiReading = {
 
 export enum PartOfSpeech {
   Noun = "Noun",
+  NounWithNo = "Noun which may take the genitive case particle 'no'",
   SuruVerb = "Suru verb",
   SuruVerbIncluded = "Suru verb - included",
   IchidanVerb = "Ichidan verb",

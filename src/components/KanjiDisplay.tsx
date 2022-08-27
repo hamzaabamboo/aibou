@@ -1,7 +1,7 @@
 import { KanjiReading } from "../types/jisho";
 import { chakra, Text } from "@chakra-ui/react";
 
-export const KanjiDisplay = (props: { data: KanjiReading }) => {
+export const KanjiDisplay = (props: { data: Partial<KanjiReading> }) => {
   const { data } = props;
   const { word, reading } = data;
 

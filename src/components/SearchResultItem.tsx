@@ -10,8 +10,10 @@ import { JishoWord } from "../types/jisho";
 import { KanjiDisplay } from "./KanjiDisplay";
 import { PartOfSpeechLabel } from "./PartOfSpeechLabel";
 
-export const SearchResultItem = (props: { item: JishoWord } & StackProps) => {
-  const { item, ...stackProps } = props;
+export const SearchResultItem = (
+  props: { item: JishoWord; showMeaning?: boolean } & StackProps
+) => {
+  const { item, showMeaning = true, ...stackProps } = props;
 
   return (
     <Stack
@@ -22,24 +24,26 @@ export const SearchResultItem = (props: { item: JishoWord } & StackProps) => {
       {...stackProps}
     >
       <KanjiDisplay data={item.japanese[0]} />
-      <Box>
-        <UnorderedList>
-          {item.senses.map((i, idx) => {
-            return (
-              <ListItem key={idx}>
-                <Text>
-                  <Stack direction="row" spacing="1" display="inline" mr={2}>
-                    {i.parts_of_speech.map((i, idx) => (
-                      <PartOfSpeechLabel key={idx} partOfSpeech={i} />
-                    ))}
-                  </Stack>
-                  {i.english_definitions.join(", ")}
-                </Text>
-              </ListItem>
-            );
-          })}
-        </UnorderedList>
-      </Box>
+      {showMeaning && (
+        <Box>
+          <UnorderedList>
+            {item.senses.map((i, idx) => {
+              return (
+                <ListItem key={idx}>
+                  <Text>
+                    <Stack direction="row" spacing="1" display="inline" mr={2}>
+                      {i.parts_of_speech.map((i, idx) => (
+                        <PartOfSpeechLabel key={idx} partOfSpeech={i} />
+                      ))}
+                    </Stack>
+                    {i.english_definitions.join(", ")}
+                  </Text>
+                </ListItem>
+              );
+            })}
+          </UnorderedList>
+        </Box>
+      )}
     </Stack>
   );
 };

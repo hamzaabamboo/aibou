@@ -7,5 +7,5 @@ export const fetchKanjiApiResults = async (kanji: string) => {
   const { data } = await axios.get<KanjiApiKanji>(
     `${JISHO_ENDPOINT}${encodeURIComponent(kanji)}`
   );
-  return data.data;
+  return data;
 };
