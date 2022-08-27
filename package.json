@@ -4,6 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
+    "prebuild": "test \"$CI\" = true && npx pnpm install -r --store=node_modules/.pnpm-store || echo skipping pnpm install",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
