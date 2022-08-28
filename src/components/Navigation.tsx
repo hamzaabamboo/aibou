@@ -1,11 +1,10 @@
-import { Stack, Text } from "@chakra-ui/react";
+import { HStack, Text } from "@chakra-ui/react";
 import { useRouter } from "next/router";
 
 export const Navigation = () => {
   const router = useRouter();
   return (
-    <Stack
-      direction="row"
+    <HStack
       border="md"
       width="100xw"
       py={2}
@@ -17,9 +16,9 @@ export const Navigation = () => {
       <Text fontSize="3xl" fontWeight="bold" onClick={() => router.push("/")}>
         相棒
       </Text>
-      <Stack>
+      <HStack>
         <Text onClick={() => router.push("/topics")}>Topics</Text>
-      </Stack>
-    </Stack>
+      </HStack>
+    </HStack>
   );
 };

@@ -9,7 +9,6 @@ export class AibouDB extends Dexie {
 
   constructor() {
     super("aibou-app");
-    console.log("Initialized!!!");
     this.version(1).stores({
       topics: "++id, name, createdAt",
       topicEntries: "++id, topicId, word, *tags",

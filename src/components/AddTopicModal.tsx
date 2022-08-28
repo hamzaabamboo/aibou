@@ -13,6 +13,7 @@ import {
   ModalHeader,
   ModalOverlay,
   Stack,
+  HStack,
   Text,
   Textarea,
   useToast,
@@ -88,7 +89,7 @@ export const AddTopicModal = (props: {
             </Grid>
           </ModalBody>
           <ModalFooter>
-            <Stack direction="row">
+            <HStack>
               <Button
                 leftIcon={<AddIcon />}
                 colorScheme="green"
@@ -97,7 +98,7 @@ export const AddTopicModal = (props: {
                 Add
               </Button>
               <Button onClick={() => onClose()}>Close</Button>
-            </Stack>
+            </HStack>
           </ModalFooter>
         </form>
       </ModalContent>

@@ -8,6 +8,7 @@ export const PartOfSpeechLabel = (props: { partOfSpeech: PartOfSpeech }) => {
     switch (partOfSpeech) {
       case PartOfSpeech.Noun:
         return "n";
+      case PartOfSpeech.PrenominallyNoun:
       case PartOfSpeech.NounWithNo:
         return null;
       case PartOfSpeech.SuruVerb:
@@ -26,6 +27,7 @@ export const PartOfSpeechLabel = (props: { partOfSpeech: PartOfSpeech }) => {
         return "他";
       case PartOfSpeech.IAdj:
         return "い-adj";
+      case PartOfSpeech.OldNaAdj:
       case PartOfSpeech.NaAdj:
         return "な-adj";
       case PartOfSpeech.Adverb:
@@ -44,6 +46,8 @@ export const PartOfSpeechLabel = (props: { partOfSpeech: PartOfSpeech }) => {
   const color = (() => {
     switch (partOfSpeech) {
       case PartOfSpeech.Noun:
+      case PartOfSpeech.NounWithNo:
+      case PartOfSpeech.PrenominallyNoun:
         return "green";
       case PartOfSpeech.SuruVerb:
       case PartOfSpeech.SuruVerbIncluded:
@@ -57,6 +61,7 @@ export const PartOfSpeechLabel = (props: { partOfSpeech: PartOfSpeech }) => {
         return "purple";
       case PartOfSpeech.IAdj:
       case PartOfSpeech.NaAdj:
+      case PartOfSpeech.OldNaAdj:
         return "yellow";
       case PartOfSpeech.Adverb:
       case PartOfSpeech.AdverbTo:

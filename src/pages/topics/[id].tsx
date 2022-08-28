@@ -1,25 +1,17 @@
-import {
-  AddIcon,
-  ArrowBackIcon,
-  ArrowLeftIcon,
-  DeleteIcon,
-  EditIcon,
-} from "@chakra-ui/icons";
+import { ArrowBackIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
 import {
   Box,
   Button,
   Container,
+  Divider,
   Heading,
-  Spinner,
+  HStack,
   Stack,
   Switch,
-  TagLeftIcon,
   Text,
-  useDisclosure,
   useToast,
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
-import Link from "next/link";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
 import { JishoSearch } from "../../components/JishoSearch";
@@ -34,7 +26,8 @@ import { db } from "../../utils/db";
 const TopicDetailPage: NextPage = () => {
   const { query } = useRouter();
   const [showMeaning, setShowMeaning] = useState(true);
-  const topicId = parseInt(query.id as string);
+  const [showPopup, setShowPopup] = useState(true);
+  const topicId = query.id as string;
   const { data: topic, refetch, isLoading } = useGetTopic(topicId);
 
   const { data: saveWords } = useGetTopicItems(topicId);
@@ -60,6 +53,7 @@ const TopicDetailPage: NextPage = () => {
       return;
     }
     await mutate({ word, jishoData: data });
+    setShowPopup(false);
     toast({
       status: "success",
       title: "Word successfully added",
@@ -79,23 +73,26 @@ const TopicDetailPage: NextPage = () => {
               Back to Topics
             </Button>
           </Box>
-          <Stack direction="row" justifyContent="space-between">
+          <HStack justifyContent="space-between">
             <Heading>{topic?.name}</Heading>
-            <Stack direction="row">
+            <HStack>
               <Button colorScheme="yellow">
                 <EditIcon />
               </Button>
               <Button colorScheme="red">
                 <DeleteIcon />
               </Button>
-            </Stack>
-          </Stack>
+            </HStack>
+          </HStack>
           {topic?.description && <Text>{topic?.description}</Text>}
-          <Stack direction={["column", "row"]}>
+          <Stack direction={["column"]}>
             <JishoSearch
               onSelectItem={(word) => handleAddTopicItem(word)}
               inputSize="small"
               w="full"
+              isShowPopup={showPopup}
+              setShowPopup={setShowPopup}
+              isPopup
             />
             <Box w="full" px={2}>
               {!saveWords || saveWords.length === 0 ? (
@@ -105,10 +102,13 @@ const TopicDetailPage: NextPage = () => {
               ) : (
                 <Stack>
                   <Heading fontSize="2xl">Saved words</Heading>
-                  <Switch
-                    isChecked={showMeaning}
-                    onChange={(e) => setShowMeaning(e.target.checked)}
-                  />
+                  <HStack>
+                    <Text>Show meanings</Text>
+                    <Switch
+                      isChecked={showMeaning}
+                      onChange={(e) => setShowMeaning(e.target.checked)}
+                    />
+                  </HStack>
                   <Stack>
                     {saveWords.map(({ id, jishoData, word }) => (
                       <Box key={id}>
@@ -116,10 +116,12 @@ const TopicDetailPage: NextPage = () => {
                           <SearchResultItem
                             item={jishoData}
                             showMeaning={showMeaning}
+                            isCard={false}
                           />
                         ) : (
                           <KanjiDisplay data={{ word: word }} />
                         )}
+                        <Divider />
                       </Box>
                     ))}
                   </Stack>

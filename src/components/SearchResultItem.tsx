@@ -2,6 +2,7 @@ import {
   UnorderedList,
   ListItem,
   Stack,
+  HStack,
   StackProps,
   Text,
   Box,
@@ -11,19 +12,29 @@ import { KanjiDisplay } from "./KanjiDisplay";
 import { PartOfSpeechLabel } from "./PartOfSpeechLabel";
 
 export const SearchResultItem = (
-  props: { item: JishoWord; showMeaning?: boolean } & StackProps
+  props: {
+    item: JishoWord;
+    showMeaning?: boolean;
+    isCard?: boolean;
+  } & StackProps
 ) => {
-  const { item, showMeaning = true, ...stackProps } = props;
+  const { item, showMeaning = true, isCard = true, ...stackProps } = props;
 
   return (
     <Stack
       alignItems="flex-start"
-      shadow="md"
-      borderRadius="md"
+      shadow={isCard ? "md" : "none"}
+      borderRadius={isCard ? "md" : "none"}
       p={2}
       {...stackProps}
     >
-      <KanjiDisplay data={item.japanese[0]} />
+      <HStack flexWrap="wrap" alignItems="flex-end" spacing="1">
+        <KanjiDisplay data={item.japanese[0]} />
+        {item.japanese.length > 0 &&
+          item.japanese
+            .slice(1)
+            .map((item, idx) => <KanjiDisplay key={idx} data={item} isSmall />)}
+      </HStack>
       {showMeaning && (
         <Box>
           <UnorderedList>
@@ -31,11 +42,11 @@ export const SearchResultItem = (
               return (
                 <ListItem key={idx}>
                   <Text>
-                    <Stack direction="row" spacing="1" display="inline" mr={2}>
+                    <HStack as="span" spacing="1" display="inline" mr={2}>
                       {i.parts_of_speech.map((i, idx) => (
                         <PartOfSpeechLabel key={idx} partOfSpeech={i} />
                       ))}
-                    </Stack>
+                    </HStack>
                     {i.english_definitions.join(", ")}
                   </Text>
                 </ListItem>

@@ -7,6 +7,7 @@ import {
   Link,
   Spinner,
   Stack,
+  HStack,
   Text,
   useDisclosure,
 } from "@chakra-ui/react";
@@ -27,12 +28,12 @@ const TopicsPage: NextPage = () => {
     <>
       <Container pt={8}>
         <Stack>
-          <Stack direction="row" justifyContent="space-between">
+          <HStack justifyContent="space-between">
             <Heading>Topics</Heading>
             <Button leftIcon={<AddIcon />} onClick={onOpen}>
               Add Topic
             </Button>
-          </Stack>
+          </HStack>
           {isLoading ? (
             <Spinner />
           ) : (
@@ -40,8 +41,16 @@ const TopicsPage: NextPage = () => {
               {data?.map((topic) => {
                 return (
                   <Link key={topic.id} href={`/topics/${topic.id}`}>
-                    <Box shadow="md" rounded="md" p={2}>
-                      <Text fontSize="2xl">{topic.name}</Text>
+                    <Box
+                      shadow="md"
+                      rounded="md"
+                      p={2}
+                      _hover={{ textDecoration: "none" }}
+                    >
+                      <Text fontSize="2xl" fontWeight="bold">
+                        {topic.name}
+                      </Text>
+                      <Text fontSize="lg">{topic.description}</Text>
                     </Box>
                   </Link>
                 );

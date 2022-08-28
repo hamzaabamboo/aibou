@@ -30,10 +30,11 @@ export type KanjiReading = {
 export enum PartOfSpeech {
   Noun = "Noun",
   NounWithNo = "Noun which may take the genitive case particle 'no'",
+  PrenominallyNoun = "Noun or verb acting prenominally",
   SuruVerb = "Suru verb",
   SuruVerbIncluded = "Suru verb - included",
   IchidanVerb = "Ichidan verb",
-  GodanVerU = "Godan verb with su ending",
+  GodanVerU = "Godan verb with u ending",
   GodanVerbSu = "Godan verb with su ending",
   GodanVerbMu = "Godan verb with mu ending",
   GodanVerbRu = "Godan verb with ru ending",
@@ -44,5 +45,6 @@ export enum PartOfSpeech {
   WikipediaDefinition = "Wikipedia definition",
   IAdj = "I-adjective (keiyoushi)",
   NaAdj = "Na-adjective (keiyodoshi)",
+  OldNaAdj = "Archaic/formal form of na-adjective",
   Expressions = "Expressions (phrases, clauses, etc.)",
 }

@@ -1,15 +1,15 @@
 import { JishoWord } from "./jisho";
 
 export type Topic = {
-  id?: number;
+  id?: string;
   name: string;
   description?: string;
   createdAt: Date;
 };
 
 export type TopicItem = {
-  id?: number;
-  topicId: number;
+  id?: string;
+  topicId: string;
   word: string;
   notes?: string;
   jishoData?: JishoWord;
