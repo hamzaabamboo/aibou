@@ -69,6 +69,10 @@ export const JishoSearch = (
     </Stack>
   );
 
+  const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    if (e.key === "Escape") setShowPopup?.(false);
+  };
+
   return (
     <Box {...boxProps} position="relative">
       <Input
@@ -77,7 +81,10 @@ export const JishoSearch = (
         value={input}
         fontSize={inputSize === "large" ? "4xl" : "lg"}
         fontWeight={inputSize === "large" ? "bold" : "semibold"}
+        onFocus={() => setShowPopup?.(true)}
+        onBlur={() => setShowPopup?.(false)}
         onChange={(e) => setInput(e.currentTarget.value)}
+        onKeyUp={(e) => handleKeyPress(e)}
         mb={2}
       />
       {keyword.length > 0 && !isLoading && isShowPopup && (
