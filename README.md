@@ -9,5 +9,5 @@ Companion for learning japanese with useful utilities
 - [ ] Offline Dictionary (with online fallback)
 - [ ] Background sync
 - [ ] PWA
-- [ ] Sort by date
-- [ ] Grid view
+- [x] Sort by date
+- [x] Grid view

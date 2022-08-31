@@ -18,7 +18,8 @@ export type ItemViewOptions = {
   filter?: string;
   numberOfColumns?: 1 | 2 | 3 | 4;
   showMeaning?: boolean;
-  orderBy?: keyof TopicItem;
+  orderBy?: "word" | "createdAt";
+  reverseSortOrder?: boolean;
 };
 
 type ItemViewSettingsProps = {
@@ -26,7 +27,8 @@ type ItemViewSettingsProps = {
   setData: Dispatch<SetStateAction<ItemViewOptions | null>>;
 };
 export const ItemViewSettings = ({ data, setData }: ItemViewSettingsProps) => {
-  const { filter, numberOfColumns, showMeaning } = data;
+  const { filter, numberOfColumns, showMeaning, orderBy, reverseSortOrder } =
+    data;
   return (
     <Accordion allowToggle>
       <AccordionItem>
@@ -38,7 +40,10 @@ export const ItemViewSettings = ({ data, setData }: ItemViewSettingsProps) => {
         </AccordionButton>
         <AccordionPanel>
           <Stack>
-            <Stack direction={["column", "row"]}>
+            <Stack
+              direction={["column", "row"]}
+              alignItems={["flex-start", "center"]}
+            >
               <Text>Filter Results (name, reading, meaning)</Text>
               <Input
                 type="text"
@@ -48,7 +53,10 @@ export const ItemViewSettings = ({ data, setData }: ItemViewSettingsProps) => {
                 }
               />
             </Stack>
-            <Stack direction={["column", "row"]}>
+            <Stack
+              direction={["column", "row"]}
+              alignItems={["flex-start", "center"]}
+            >
               <Text>Rows of result</Text>
               <Select
                 width="fit-content"
@@ -64,6 +72,38 @@ export const ItemViewSettings = ({ data, setData }: ItemViewSettingsProps) => {
                   </option>
                 ))}
               </Select>
+            </Stack>
+            <Stack
+              direction={["column", "row"]}
+              alignItems={["flex-start", "center"]}
+            >
+              <Text>Sort results by </Text>
+              <Select
+                width="fit-content"
+                value={orderBy}
+                onChange={(e) =>
+                  setData((d) => ({
+                    ...d,
+                    orderBy: e.target.value as "word" | "createdAt",
+                  }))
+                }
+              >
+                {["word", "createdAt"].map((row) => (
+                  <option value={row} key={row}>
+                    {row}
+                  </option>
+                ))}
+              </Select>
+              <Text>Reverse Sort Order</Text>
+              <Switch
+                isChecked={reverseSortOrder}
+                onChange={(e) =>
+                  setData((d) => ({
+                    ...d,
+                    reverseSortOrder: e.target.checked,
+                  }))
+                }
+              />
             </Stack>
             <HStack>
               <Text>Show meanings</Text>

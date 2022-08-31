@@ -32,6 +32,7 @@ import { JishoWord } from "../../types/jisho";
 import { Topic } from "../../types/topic";
 import { db } from "../../utils/db";
 import { filterTopicItemsByKeywords } from "../../utils/filterTopicItemsByKeywords";
+import { sortTopicItems } from "../../utils/sortTopicItems";
 
 const TopicDetailPage: NextPage = () => {
   const { query } = useRouter();
@@ -41,10 +42,9 @@ const TopicDetailPage: NextPage = () => {
   const [editingTopic, setEditingTopic] = useState<Topic>();
   const [settingsData, setSettingsData] = useLocalStorage<ItemViewOptions>(
     "search-view-settings",
-    { showMeaning: true }
+    { showMeaning: true, reverseSortOrder: true, orderBy: "createdAt" }
   );
 
-  const { showMeaning, filter, numberOfColumns } = settingsData ?? {};
   const { data: topic, refetch, isLoading } = useGetTopic(topicId);
   const { data: saveWords } = useGetTopicItems(topicId);
   const { mutate, isLoading: isAdding } = useAddTopicItem(topicId);
@@ -52,9 +52,16 @@ const TopicDetailPage: NextPage = () => {
   const router = useRouter();
   const toast = useToast();
 
+  const { showMeaning, filter, numberOfColumns, orderBy, reverseSortOrder } =
+    settingsData ?? {};
+
   const filteredList = useMemo(
-    () => filterTopicItemsByKeywords(filter)(saveWords),
-    [filter, saveWords]
+    () =>
+      sortTopicItems(
+        orderBy,
+        reverseSortOrder
+      )(filterTopicItemsByKeywords(filter)(saveWords ?? [])),
+    [filter, saveWords, orderBy, reverseSortOrder]
   );
 
   useEffect(() => {
@@ -118,14 +125,13 @@ const TopicDetailPage: NextPage = () => {
               setShowPopup={setShowPopup}
               isPopup
             />
-            <Box w="full" px={2}>
+            <Box w="full">
               {!saveWords || saveWords.length === 0 ? (
                 <Heading fontSize="xl" textAlign="center">
                   No saved words
                 </Heading>
               ) : (
                 <Stack>
-                  <Heading fontSize="2xl">Saved words</Heading>
                   {settingsData && (
                     <ItemViewSettings
                       data={settingsData}
