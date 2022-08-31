@@ -11,8 +11,7 @@ export const useLocalStorage = function <T>(
   const setNewData: Dispatch<SetStateAction<T | null>> = (
     s: SetStateAction<T | null>
   ) => {
-    // eslint-disable-next-line
-    const newData = typeof s === "function" ? s.call(this, data) : s;
+    const newData = typeof s === "function" ? (s as Function).call(s, data) : s;
     storage.current.value = newData;
     setData(newData);
   };
