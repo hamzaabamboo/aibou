@@ -14,6 +14,7 @@ import {
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useState } from "react";
+import { EditTopicModal } from "../../components/EditTopicModal";
 import { JishoSearch } from "../../components/JishoSearch";
 import { KanjiDisplay } from "../../components/KanjiDisplay";
 import { SearchResultItem } from "../../components/SearchResultItem";
@@ -21,12 +22,14 @@ import { useAddTopicItem } from "../../hooks/useAddTopicItem";
 import { useGetTopic } from "../../hooks/useGetTopic";
 import { useGetTopicItems } from "../../hooks/useGetTopicItems";
 import { JishoWord } from "../../types/jisho";
+import { Topic } from "../../types/topic";
 import { db } from "../../utils/db";
 
 const TopicDetailPage: NextPage = () => {
   const { query } = useRouter();
   const [showMeaning, setShowMeaning] = useState(true);
   const [showPopup, setShowPopup] = useState(true);
+  const [editingTopic, setEditingTopic] = useState<Topic>();
   const topicId = query.id as string;
   const { data: topic, refetch, isLoading } = useGetTopic(topicId);
 
@@ -76,7 +79,10 @@ const TopicDetailPage: NextPage = () => {
           <HStack justifyContent="space-between">
             <Heading>{topic?.name}</Heading>
             <HStack>
-              <Button colorScheme="yellow">
+              <Button
+                colorScheme="yellow"
+                onClick={() => setEditingTopic(topic)}
+              >
                 <EditIcon />
               </Button>
               <Button colorScheme="red">
@@ -131,6 +137,12 @@ const TopicDetailPage: NextPage = () => {
           </Stack>
         </Stack>
       </Container>
+      {editingTopic && (
+        <EditTopicModal
+          topic={editingTopic}
+          onClose={() => setEditingTopic(undefined)}
+        />
+      )}
     </>
   );
 };
