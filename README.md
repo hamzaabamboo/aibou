@@ -1,5 +1,7 @@
 # Aibou app
 
+Companion for learning japanese with useful utilities
+
 ## Todo
 
 - [ ] finish this doc

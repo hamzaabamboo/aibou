@@ -35,10 +35,7 @@ export const JishoSearch = (
   } = props;
   const [input, setInput] = useState("");
   const [keyword, _setKeyword] = useState("");
-  const setKeyword = useCallback(
-    (word: string) => debounce(_setKeyword, 500)(word),
-    [_setKeyword]
-  );
+  const setKeyword = useCallback(debounce(_setKeyword, 1000), [_setKeyword]);
   const { data, isLoading } = useJishoSearch(keyword);
 
   useEffect(() => {

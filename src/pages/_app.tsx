@@ -4,12 +4,14 @@ import { Box, ChakraProvider, Stack } from "@chakra-ui/react";
 import { Navigation } from "../components/Navigation";
 import { useEffect } from "react";
 import { initDexie } from "../utils/db";
+import { requestPersistentStoragePermission } from "../utils/requestPersistentStoragePermission";
 
 const queryClient = new QueryClient();
 
 function MyApp({ Component, pageProps }: AppProps) {
   useEffect(() => {
     initDexie();
+    requestPersistentStoragePermission();
   }, []);
 
   return (
