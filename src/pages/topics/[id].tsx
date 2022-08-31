@@ -4,6 +4,8 @@ import {
   Button,
   Container,
   Divider,
+  Grid,
+  GridItem,
   Heading,
   HStack,
   Stack,
@@ -13,31 +15,47 @@ import {
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { EditTopicModal } from "../../components/EditTopicModal";
+import {
+  ItemViewOptions,
+  ItemViewSettings,
+} from "../../components/ItemViewSettings";
 import { JishoSearch } from "../../components/JishoSearch";
 import { KanjiDisplay } from "../../components/KanjiDisplay";
 import { SearchResultItem } from "../../components/SearchResultItem";
 import { useAddTopicItem } from "../../hooks/useAddTopicItem";
 import { useGetTopic } from "../../hooks/useGetTopic";
 import { useGetTopicItems } from "../../hooks/useGetTopicItems";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { JishoWord } from "../../types/jisho";
 import { Topic } from "../../types/topic";
 import { db } from "../../utils/db";
+import { filterTopicItemsByKeywords } from "../../utils/filterTopicItemsByKeywords";
 
 const TopicDetailPage: NextPage = () => {
   const { query } = useRouter();
-  const [showMeaning, setShowMeaning] = useState(true);
+  const topicId = query.id as string;
+
   const [showPopup, setShowPopup] = useState(true);
   const [editingTopic, setEditingTopic] = useState<Topic>();
-  const topicId = query.id as string;
-  const { data: topic, refetch, isLoading } = useGetTopic(topicId);
+  const [settingsData, setSettingsData] = useLocalStorage<ItemViewOptions>(
+    "search-view-settings",
+    { showMeaning: true }
+  );
 
+  const { showMeaning, filter, numberOfColumns } = settingsData ?? {};
+  const { data: topic, refetch, isLoading } = useGetTopic(topicId);
   const { data: saveWords } = useGetTopicItems(topicId);
   const { mutate, isLoading: isAdding } = useAddTopicItem(topicId);
-  // const { isOpen, onOpen, onClose } = useDisclosure();
+
   const router = useRouter();
   const toast = useToast();
+
+  const filteredList = useMemo(
+    () => filterTopicItemsByKeywords(filter)(saveWords),
+    [filter, saveWords]
+  );
 
   useEffect(() => {
     refetch();
@@ -65,7 +83,7 @@ const TopicDetailPage: NextPage = () => {
 
   return (
     <>
-      <Container maxW="2xl" pt={8}>
+      <Container maxW="4xl" pt={8}>
         <Stack>
           <Box>
             <Button
@@ -108,16 +126,23 @@ const TopicDetailPage: NextPage = () => {
               ) : (
                 <Stack>
                   <Heading fontSize="2xl">Saved words</Heading>
-                  <HStack>
-                    <Text>Show meanings</Text>
-                    <Switch
-                      isChecked={showMeaning}
-                      onChange={(e) => setShowMeaning(e.target.checked)}
+                  {settingsData && (
+                    <ItemViewSettings
+                      data={settingsData}
+                      setData={setSettingsData}
                     />
-                  </HStack>
-                  <Stack>
-                    {saveWords.map(({ id, jishoData, word }) => (
-                      <Box key={id}>
+                  )}
+                  <Grid
+                    gridTemplateColumns={[
+                      "1fr",
+                      `repeat(min(${numberOfColumns}, 2), 1fr)`,
+                      `repeat(min(${numberOfColumns}, 3), 1fr)`,
+                      `repeat(min(${numberOfColumns}, 4), 1fr)`,
+                    ]}
+                    alignItems="stretch"
+                  >
+                    {filteredList.map(({ id, jishoData, word }) => (
+                      <GridItem key={id}>
                         {jishoData ? (
                           <SearchResultItem
                             item={jishoData}
@@ -128,9 +153,9 @@ const TopicDetailPage: NextPage = () => {
                           <KanjiDisplay data={{ word: word }} />
                         )}
                         <Divider />
-                      </Box>
+                      </GridItem>
                     ))}
-                  </Stack>
+                  </Grid>
                 </Stack>
               )}
             </Box>

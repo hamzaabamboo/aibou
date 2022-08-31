@@ -25,6 +25,7 @@ export const SearchResultItem = (
       alignItems="flex-start"
       shadow={isCard ? "md" : "none"}
       borderRadius={isCard ? "md" : "none"}
+      h="full"
       p={2}
       {...stackProps}
     >
