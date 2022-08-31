@@ -79,7 +79,6 @@ export const JishoSearch = (
         fontSize={inputSize === "large" ? "4xl" : "lg"}
         fontWeight={inputSize === "large" ? "bold" : "semibold"}
         onFocus={() => setShowPopup?.(true)}
-        onBlur={() => setShowPopup?.(false)}
         onChange={(e) => setInput(e.currentTarget.value)}
         onKeyUp={(e) => handleKeyPress(e)}
         mb={2}
