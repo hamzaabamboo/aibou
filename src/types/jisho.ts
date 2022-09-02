@@ -48,3 +48,4 @@ export enum PartOfSpeech {
   OldNaAdj = "Archaic/formal form of na-adjective",
   Expressions = "Expressions (phrases, clauses, etc.)",
 }
+
