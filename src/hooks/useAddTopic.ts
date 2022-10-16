@@ -7,7 +7,12 @@ export const useAddTopic = () => {
   return useMutation(
     async (data: { name: string; description?: string }) => {
       try {
-        await db?.topics.add({ ...data, id: nanoid(5), createdAt: new Date() });
+        await db?.topics.add({
+          ...data,
+          id: nanoid(5),
+          createdAt: new Date(),
+          lastUpdatedAt: new Date(),
+        });
       } catch (e) {}
     },
     {

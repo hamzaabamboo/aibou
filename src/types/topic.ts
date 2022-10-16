@@ -5,6 +5,7 @@ export type Topic = {
   name: string;
   description?: string;
   createdAt: Date;
+  lastUpdatedAt: Date;
 };
 
 export type TopicItem = {
@@ -15,4 +16,5 @@ export type TopicItem = {
   jishoData?: JishoWord;
   tags: string[];
   createdAt: Date;
+  lastUpdatedAt: Date;
 };

@@ -4,6 +4,6 @@ import { db } from "../utils/db";
 export const useGetTopicsList = () => {
   return useQuery(["fetchTopicsList"], async () => {
     const data = await db?.topics.toArray();
-    return data;
+    return data ?? [];
   });
 };

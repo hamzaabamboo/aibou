@@ -8,10 +8,10 @@ export const useGetTopic = (topicId: string) => {
       const data =
         (await db?.topics.get(topicId)) ||
         (!isNaN(idNumber) && (await db?.topics.get(idNumber))) ||
-        undefined;
+        [];
       return data;
     } catch (error) {
-      return;
+      return [];
     }
   });
 };

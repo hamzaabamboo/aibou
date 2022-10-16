@@ -16,8 +16,9 @@ export const Navigation = () => {
       <Text fontSize="3xl" fontWeight="bold" onClick={() => router.push("/")}>
         相棒
       </Text>
-      <HStack>
+      <HStack cursor="pointer" p>
         <Text onClick={() => router.push("/topics")}>Topics</Text>
+        <Text onClick={() => router.push("/settings")}>Settings</Text>
       </HStack>
     </HStack>
   );

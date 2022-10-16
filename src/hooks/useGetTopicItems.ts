@@ -8,6 +8,6 @@ export const useGetTopicItems = (topicId: string) => {
     if (!isNaN(idNumber)) {
       q = q?.or("topicId").equals(idNumber);
     }
-    return await q?.reverse().sortBy("createdAt");
+    return (await q?.reverse().sortBy("createdAt")) ?? [];
   });
 };

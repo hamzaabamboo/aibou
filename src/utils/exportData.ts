@@ -7,17 +7,44 @@ export type ExportDataType = {
   topicItem: Omit<TopicItem, "jishoData">[];
   timestamp: number;
 };
-export const exportData = async () => {
-  const topics = await db?.topics.toArray();
-  const topicEntries = await db?.topicEntries.toArray();
+const fixMissingData = async () => {
+  console.log("Fixing missing data...");
+  const topics =
+    (await db?.topics.toArray())?.filter((t) => !t.lastUpdatedAt) ?? [];
+  const topicEntries =
+    (await db?.topicEntries.toArray())?.filter((t) => !t.lastUpdatedAt) ?? [];
+  console.log(topics);
+  await db?.topics.bulkPut(
+    topics.map((d) => ({ ...d, lastUpdatedAt: new Date() }))
+  );
+  await db?.topicEntries.bulkPut(
+    topicEntries.map((d) => ({ ...d, lastUpdatedAt: new Date() }))
+  );
+};
+export const getNewData = async (lastUpdated: Date = new Date(0)) => {
+  // Add last updated date for existing data
 
-  const seralizedData = {
+  const d = await db?.topics.limit(1).toArray();
+  if (d && d.length > 0 && !d[0].lastUpdatedAt) {
+    await fixMissingData();
+  }
+
+  const topics = await db?.topics
+    .where("lastUpdatedAt")
+    .aboveOrEqual(lastUpdated)
+    .toArray();
+  const topicEntries = await db?.topicEntries
+    .where("lastUpdatedAt")
+    .aboveOrEqual(lastUpdated)
+    .toArray();
+
+  const serializedData = {
     topics: topics?.map((t) => seralizeTopic(t)),
     topicItem: topicEntries?.map((t) => seralizeTopicItem(t)),
     timestamp: new Date().valueOf(),
   };
 
-  console.log(seralizedData);
+  return serializedData;
 };
 
 export const importData = async (
