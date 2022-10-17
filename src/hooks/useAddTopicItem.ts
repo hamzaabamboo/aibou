@@ -14,6 +14,7 @@ export const useAddTopicItem = (topicId: string) => {
           topicId,
           tags: [],
           createdAt: new Date(),
+          lastUpdatedAt: new Date(),
         });
       } catch (e) {}
     },

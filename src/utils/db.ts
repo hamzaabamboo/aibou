@@ -6,12 +6,15 @@ export class AibouDB extends Dexie {
   // We just tell the typing system this is the case
   topics!: Table<Topic>;
   topicEntries!: Table<TopicItem>;
+  keyValues!: Table<{ key: string; value: object | string | number }>;
 
   constructor() {
     super("aibou-app");
-    this.version(1).stores({
-      topics: "++id, name, createdAt",
-      topicEntries: "++id, topicId, word, *tags",
+    this.version(4).stores({
+      topics: "++id, name, createdAt, lastUpdatedAt, isDeleted",
+      topicEntries:
+        "++id, topicId, word, createdAt,lastUpdatedAt, isDeleted, *tags",
+      keyValues: "&key",
     });
   }
 }

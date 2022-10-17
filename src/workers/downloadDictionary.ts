@@ -22,7 +22,7 @@ function chunkInsert<
     )
   );
   return groups
-    .map((group) => () => inputFn(group))
+    .map((group) => () => inputFn(group as any))
     .reduce((p, c) => p.then(() => c()), Promise.resolve({}));
 }
 
