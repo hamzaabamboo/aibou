@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { db } from "../utils/db";
 
-export const useKeyValueData = <T extends object | string>(
+export const useKeyValueData = <T extends object | string | number>(
   key: string,
   defaultValue: T
 ) => {

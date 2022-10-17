@@ -5,9 +5,12 @@ import { Topic } from "../types/topic";
 export const useUpdateTopic = (topicId: string) => {
   const queryClient = useQueryClient();
   return useMutation(
-    async (data: Pick<Topic, "name" | "description">) => {
+    async (data: Partial<Topic>) => {
       const idNumber = Number(topicId);
-      await db?.topics.update(isNaN(idNumber) ? topicId : idNumber, data);
+      await db?.topics.update(isNaN(idNumber) ? topicId : idNumber, {
+        ...data,
+        lastUpdatedAt: new Date(),
+      });
     },
     {
       onSuccess: () => {

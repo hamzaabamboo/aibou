@@ -16,6 +16,7 @@ import {
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
+import { DeleteTopicModal } from "../../components/DeleteTopicModal";
 import { EditTopicModal } from "../../components/EditTopicModal";
 import {
   ItemViewOptions,
@@ -28,6 +29,7 @@ import { useAddTopicItem } from "../../hooks/useAddTopicItem";
 import { useGetTopic } from "../../hooks/useGetTopic";
 import { useGetTopicItems } from "../../hooks/useGetTopicItems";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { useUpdateTopic } from "../../hooks/useUpdateTopic";
 import { JishoWord } from "../../types/jisho";
 import { Topic } from "../../types/topic";
 import { db } from "../../utils/db";
@@ -40,6 +42,8 @@ const TopicDetailPage: NextPage = () => {
 
   const [showPopup, setShowPopup] = useState(true);
   const [editingTopic, setEditingTopic] = useState<Topic>();
+  const [deleteTopic, setDeleteTopic] = useState<Topic>();
+
   const [settingsData, setSettingsData] = useLocalStorage<ItemViewOptions>(
     "search-view-settings",
     { showMeaning: true, reverseSortOrder: true, orderBy: "createdAt" }
@@ -48,7 +52,6 @@ const TopicDetailPage: NextPage = () => {
   const { data: topic, refetch, isLoading } = useGetTopic(topicId);
   const { data: saveWords } = useGetTopicItems(topicId);
   const { mutate, isLoading: isAdding } = useAddTopicItem(topicId);
-
   const router = useRouter();
   const toast = useToast();
 
@@ -110,7 +113,7 @@ const TopicDetailPage: NextPage = () => {
               >
                 <EditIcon />
               </Button>
-              <Button colorScheme="red">
+              <Button colorScheme="red" onClick={() => setDeleteTopic(topic)}>
                 <DeleteIcon />
               </Button>
             </HStack>
@@ -172,6 +175,16 @@ const TopicDetailPage: NextPage = () => {
         <EditTopicModal
           topic={editingTopic}
           onClose={() => setEditingTopic(undefined)}
+        />
+      )}
+      {deleteTopic && (
+        <DeleteTopicModal
+          topic={deleteTopic}
+          onClose={() => setDeleteTopic(undefined)}
+          onDeleteSuccess={() => {
+            setDeleteTopic(undefined);
+            router.push("/topics/");
+          }}
         />
       )}
     </>

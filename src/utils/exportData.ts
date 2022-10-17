@@ -15,10 +15,10 @@ const fixMissingData = async () => {
     (await db?.topicEntries.toArray())?.filter((t) => !t.lastUpdatedAt) ?? [];
   console.log(topics);
   await db?.topics.bulkPut(
-    topics.map((d) => ({ ...d, lastUpdatedAt: new Date() }))
+    topics.map((d) => ({ ...d, lastUpdatedAt: d.createdAt }))
   );
   await db?.topicEntries.bulkPut(
-    topicEntries.map((d) => ({ ...d, lastUpdatedAt: new Date() }))
+    topicEntries.map((d) => ({ ...d, lastUpdatedAt: d.createdAt }))
   );
 };
 export const getNewData = async (lastUpdated: Date = new Date(0)) => {
@@ -53,7 +53,22 @@ export const importData = async (
 ) => {
   const { topics, topicItem, timestamp } = data;
   const { replace } = options ?? {};
-  return {};
+
+  await db?.topics.bulkPut(
+    topics.map((d) => ({
+      ...d,
+      createdAt: new Date(d.createdAt),
+      lastUpdatedAt: new Date(d.lastUpdatedAt),
+    }))
+  );
+  await db?.topicEntries.bulkPut(
+    topicItem.map((d) => ({
+      ...d,
+      createdAt: new Date(d.createdAt),
+      lastUpdatedAt: new Date(d.lastUpdatedAt),
+    }))
+  );
+  return timestamp;
 };
 
 export const seralizeTopic = (topic: Topic) => {

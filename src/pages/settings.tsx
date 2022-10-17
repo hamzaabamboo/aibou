@@ -15,10 +15,11 @@ import { exportData } from "../utils/exportData";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { SyncSettings } from "../components/SyncSettings";
 import { useSyncData } from "../hooks/useSyncData";
+import { useKeyValueData } from "../hooks/useKeyValueData";
 
 const Home: NextPage = () => {
   const { download } = useDownloadOfflineDictionary();
-  const [lastSyncedTime] = useLocalStorage("lastSyncedTime", 0);
+  const [{ data: lastSyncedTime }] = useKeyValueData("lastSyncedTime", 0);
   const syncData = useSyncData();
 
   return (
