@@ -29,7 +29,7 @@ const Home: NextPage = () => {
         <Stack>
           <HStack justifyContent="space-between">
             <Stack>
-              <Text>Export Data (Experimental)</Text>
+              <Text>Sync Data (Experimental)</Text>
               {lastSyncedTime && (
                 <Text>
                   Last updated at :{" "}
@@ -38,10 +38,16 @@ const Home: NextPage = () => {
               )}
             </Stack>
             <Button onClick={() => syncData(new Date(lastSyncedTime ?? 0))}>
-              Export Data
+              Sync Data
             </Button>
           </HStack>
           <SyncSettings />
+          <HStack justifyContent="space-between">
+            <Text>Sync Everything (This is destructive btw)</Text>
+            <Button colorScheme="red" onClick={() => syncData(new Date(0))}>
+              Sync Everything
+            </Button>
+          </HStack>
           <HStack justifyContent="space-between">
             <Text>Download offline dictionary (Work in progress)</Text>
             <Button isDisabled onClick={() => download()}>
