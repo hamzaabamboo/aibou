@@ -12,6 +12,7 @@ export const useSyncData = () => {
   const toast = useToast();
 
   return async (lastUpdated: Date = new Date(0)) => {
+    if (!syncUrl || !syncSecret) return;
     const newData = await getNewData(lastUpdated);
 
     try {

@@ -1,3 +1,5 @@
+import { UseQueryResult } from "@tanstack/react-query";
+import { UseMutationResult } from "@tanstack/react-query";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { db } from "../utils/db";
 
@@ -31,5 +33,5 @@ export const useKeyValueData = <T extends object | string | number>(
     }
   );
 
-  return [data ?? {}, setData ?? {}];
+  return [data ?? {}, setData ?? {}] as [UseQueryResult<T>, UseMutationResult];
 };

@@ -11,7 +11,6 @@ import { JishoSearch } from "../components/JishoSearch";
 import { useDownloadOfflineDictionary } from "../hooks/useDownloadOfflineDictionary";
 import { useLastUpdatedTime } from "../hooks/useLastUpdatedTime";
 import { format } from "date-fns";
-import { exportData } from "../utils/exportData";
 import { useLocalStorage } from "../hooks/useLocalStorage";
 import { SyncSettings } from "../components/SyncSettings";
 import { useSyncData } from "../hooks/useSyncData";
