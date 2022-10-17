@@ -16,7 +16,11 @@ export const useFetchJishoResults = (topicId: string) => {
         const { data } = await axios.get<SearchAPIResults>(
           `/api/search?keyword=${encodeURIComponent(word.word)}`
         );
-        const jishoData = data.results.find((m) => m.slug === word.word);
+        const jishoData = data.results.find((m) =>
+          m.japanese.some(
+            (w) => w.word === word.word || w.reading === word.word
+          )
+        );
         toUpdate.push({
           ...word,
           jishoData,

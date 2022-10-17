@@ -13,7 +13,6 @@ const fixMissingData = async () => {
     (await db?.topics.toArray())?.filter((t) => !t.lastUpdatedAt) ?? [];
   const topicEntries =
     (await db?.topicEntries.toArray())?.filter((t) => !t.lastUpdatedAt) ?? [];
-  console.log(topics);
   await db?.topics.bulkPut(
     topics.map((d) => ({ ...d, lastUpdatedAt: d.createdAt }))
   );

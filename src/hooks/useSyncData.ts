@@ -14,28 +14,33 @@ export const useSyncData = () => {
   return async (lastUpdated: Date = new Date(0)) => {
     const newData = await getNewData(lastUpdated);
 
-    const { data } = await axios.post<{
-      topics: Topic[];
-      topicItem: TopicItem[];
-      timestamp: number;
-    }>(
-      syncUrl,
-      { newData, lastUpdated: lastUpdated.valueOf() },
-      {
-        headers: {
-          "x-aibou-secret": syncSecret,
-        },
-      }
-    );
-
-    console.log(syncUrl, syncSecret, lastUpdated, newData, data);
-
-    await importData(data);
-    await updateLastUpdatedTime(new Date().valueOf());
-    toast({
-      title: "Update Succesfully",
-      status: "success",
-      description: "Data has been updated",
-    });
+    try {
+      const { data } = await axios.post<{
+        topics: Topic[];
+        topicItem: TopicItem[];
+        timestamp: number;
+      }>(
+        syncUrl,
+        { newData, lastUpdated: lastUpdated.valueOf() },
+        {
+          headers: {
+            "x-aibou-secret": syncSecret,
+          },
+        }
+      );
+      await importData(data);
+      await updateLastUpdatedTime(new Date().valueOf());
+      toast({
+        title: "Update Succesfully",
+        status: "success",
+        description: "Data has been updated",
+      });
+    } catch (error) {
+      toast({
+        title: "Sync Failed",
+        status: "error",
+        description: `Something went wrong ${(error as any).message}`,
+      });
+    }
   };
 };
