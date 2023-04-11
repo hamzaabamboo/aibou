@@ -1,2 +1,2 @@
-[[plugins]]
-  package = "/.netlify/netlify-plugin-pnpm"
+[build]
+  command = "pnpm run build"
