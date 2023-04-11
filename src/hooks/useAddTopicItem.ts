@@ -16,6 +16,10 @@ export const useAddTopicItem = (topicId: string) => {
           createdAt: new Date(),
           lastUpdatedAt: new Date(),
         });
+        const idNumber = Number(topicId);
+        await db?.topics.update(isNaN(idNumber) ? topicId : idNumber, {
+          lastUpdatedAt: new Date(),
+        });
       } catch (e) {}
     },
     {

@@ -15,6 +15,7 @@ import { useLocalStorage } from "../hooks/useLocalStorage";
 import { SyncSettings } from "../components/SyncSettings";
 import { useSyncData } from "../hooks/useSyncData";
 import { useKeyValueData } from "../hooks/useKeyValueData";
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 const Home: NextPage = () => {
   const { download } = useDownloadOfflineDictionary();
@@ -32,7 +33,8 @@ const Home: NextPage = () => {
               {lastSyncedTime && (
                 <Text>
                   Last updated at :{" "}
-                  {format(new Date(lastSyncedTime), "dd/MM/yyyy HH:mm")}
+                  {format(new Date(lastSyncedTime), "dd/MM/yyyy HH:mm")} (
+                  {formatDistanceToNow(new Date(lastSyncedTime))} ago)
                 </Text>
               )}
             </Stack>

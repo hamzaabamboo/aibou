@@ -44,7 +44,8 @@ const TopicsPage: NextPage = () => {
                     <Box
                       shadow="md"
                       rounded="md"
-                      p={2}
+                      px="2"
+                      py="4"
                       _hover={{ textDecoration: "none" }}
                     >
                       <Text fontSize="2xl" fontWeight="bold">
