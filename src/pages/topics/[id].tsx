@@ -174,7 +174,7 @@ const TopicDetailPage: NextPage = () => {
                   </MenuItem>
                   <MenuItem
                     icon={<DownloadIcon />}
-                    onClick={() => handleDownloadCSV(topic)}
+                    onClick={() => handleDownloadCSV()}
                   >
                     Download Data (Kotobot CSV)
                   </MenuItem>
