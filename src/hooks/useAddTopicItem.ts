@@ -25,6 +25,7 @@ export const useAddTopicItem = (topicId: string) => {
     {
       onSuccess: () => {
         queryClient.invalidateQueries(["fetchTopicItems", topicId]);
+        queryClient.invalidateQueries(["fetchLastUpdatedTopics"]);
       },
     }
   );
