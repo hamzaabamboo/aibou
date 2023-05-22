@@ -4,6 +4,7 @@ import { Topic, TopicItem } from "../types/topic";
 import { getNewData, importData } from "../utils/exportData";
 import { useKeyValueData } from "./useKeyValueData";
 import { useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useSyncData = () => {
   const [isSyncing, setSyncing] = useState(false);
@@ -12,6 +13,7 @@ export const useSyncData = () => {
   const [{ data: lastSyncedTime }, { mutate: updateLastUpdatedTime }] =
     useKeyValueData("lastSyncedTime", "");
   const toast = useToast();
+  const queryClient = useQueryClient();
 
   const syncEnabled = syncUrl && syncSecret;
 
@@ -37,12 +39,25 @@ export const useSyncData = () => {
           }
         );
         await importData(data);
-        await updateLastUpdatedTime(new Date().valueOf());
-        toast({
-          title: "Update Succesfully",
-          status: "success",
-          description: "Data has been updated",
-        });
+        const clientUpdated =
+          (newData.topicItem && newData.topicItem.length > 0) ||
+          (newData.topics && newData.topics.length > 0);
+        const serverUpdated =
+          data.topicItem.length > 0 || data.topics.length > 0;
+        if (serverUpdated) {
+          queryClient.invalidateQueries(["fetchTopicsList"]);
+          queryClient.invalidateQueries({
+            predicate: (query) => query.queryKey[0] === "fetchTopicItems",
+          });
+        }
+        if (clientUpdated || serverUpdated) {
+          await updateLastUpdatedTime(new Date().valueOf());
+          toast({
+            title: "Update Succesfully",
+            status: "success",
+            description: "Data has been updated",
+          });
+        }
       } catch (error) {
         toast({
           title: "Sync Failed",
@@ -50,7 +65,7 @@ export const useSyncData = () => {
           description: `Something went wrong ${(error as any).message}`,
         });
       }
-      setSyncing(true);
+      setSyncing(false);
     },
   };
 };
