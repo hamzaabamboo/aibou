@@ -93,6 +93,7 @@ const TopicDetailPage: NextPage = () => {
     const header = `Question,Answers,Comment,Instructions,Render as\n`;
     const data = words
       ?.filter((w) => !!w.jishoData)
+      ?.reverse()
       ?.map(
         (w) =>
           `${w.word},"${uniq(w.jishoData?.japanese.map((w) => w.reading)).join(
