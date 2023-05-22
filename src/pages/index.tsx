@@ -9,7 +9,6 @@ import {
 } from "@chakra-ui/react";
 import type { NextPage } from "next";
 import { JishoSearch } from "../components/JishoSearch";
-import { useKeyValueData } from "../hooks/useKeyValueData";
 import format from "date-fns/format";
 import { useSyncData } from "../hooks/useSyncData";
 import { useLastUpdatedTopics } from "../hooks/useLastUpdatedTopics";
@@ -17,15 +16,9 @@ import { useEffect } from "react";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 
 const Home: NextPage = () => {
-  const [{ data: syncUrl }] = useKeyValueData("syncUrl", "");
-  const [{ data: syncSecret }] = useKeyValueData("syncSecret", "");
-  const [{ data: lastSyncedTime }] = useKeyValueData("lastSyncedTime", 0);
-
   const { data: lastUpdatedTopics, refetch } = useLastUpdatedTopics();
 
-  const syncData = useSyncData();
-
-  const hasSyncData = syncUrl && syncSecret && lastSyncedTime;
+  const { syncEnabled, sync, lastSyncedTime } = useSyncData();
 
   useEffect(() => {
     refetch();
@@ -37,14 +30,14 @@ const Home: NextPage = () => {
         <Heading>相棒/ Aibou</Heading>
         <Text>Japanese-language learning companion</Text>
         <JishoSearch onSelectItem={console.log} />
-        {hasSyncData && (
+        {syncEnabled && (
           <HStack>
             <Text>
               Last Synced At:{" "}
               {format(new Date(lastSyncedTime), "dd/MM/yyyy HH:mm")} (
               {formatDistanceToNow(new Date(lastSyncedTime))} ago)
             </Text>
-            <Link onClick={() => syncData()}>
+            <Link onClick={() => sync()}>
               <Text color="blue.400">Sync Now</Text>
             </Link>
           </HStack>

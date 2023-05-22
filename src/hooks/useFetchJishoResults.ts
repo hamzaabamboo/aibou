@@ -10,7 +10,6 @@ export const useFetchJishoResults = (topicId: string) => {
     ["updateJishoResults"],
     async (words?: TopicItem[]) => {
       if (!words) return;
-      const toUpdate: TopicItem[] = [];
       for (let word of words) {
         if (!word.id) return;
         const { data } = await axios.get<SearchAPIResults>(
@@ -21,12 +20,8 @@ export const useFetchJishoResults = (topicId: string) => {
             (w) => w.word === word.word || w.reading === word.word
           )
         );
-        toUpdate.push({
-          ...word,
-          jishoData,
-        });
+        if (jishoData) await db?.topicEntries.put({ ...word, jishoData });
       }
-      await db?.topicEntries.bulkPut(toUpdate);
     },
     {
       onSuccess: () =>

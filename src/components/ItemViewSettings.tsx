@@ -57,7 +57,7 @@ export const ItemViewSettings = ({ data, setData }: ItemViewSettingsProps) => {
               direction={["column", "row"]}
               alignItems={["flex-start", "center"]}
             >
-              <Text>Rows of result</Text>
+              <Text>Results Per Row</Text>
               <Select
                 width="fit-content"
                 value={numberOfColumns}

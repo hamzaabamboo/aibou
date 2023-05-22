@@ -11,13 +11,13 @@ import { JishoWord } from "../types/jisho";
 import { KanjiDisplay } from "./KanjiDisplay";
 import { PartOfSpeechLabel } from "./PartOfSpeechLabel";
 
-export const SearchResultItem = (
-  props: {
-    item: JishoWord;
-    showMeaning?: boolean;
-    isCard?: boolean;
-  } & StackProps
-) => {
+export type SearchResultItemProps = {
+  item: JishoWord;
+  showMeaning?: boolean;
+  isCard?: boolean;
+} & StackProps;
+
+export const SearchResultItem = (props: SearchResultItemProps) => {
   const { item, showMeaning = true, isCard = true, ...stackProps } = props;
 
   return (

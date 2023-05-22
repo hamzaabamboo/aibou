@@ -20,7 +20,7 @@ import formatDistanceToNow from "date-fns/formatDistanceToNow";
 const Home: NextPage = () => {
   const { download } = useDownloadOfflineDictionary();
   const [{ data: lastSyncedTime }] = useKeyValueData("lastSyncedTime", 0);
-  const syncData = useSyncData();
+  const { sync, syncEnabled } = useSyncData();
 
   return (
     <Container>
@@ -38,14 +38,21 @@ const Home: NextPage = () => {
                 </Text>
               )}
             </Stack>
-            <Button onClick={() => syncData(new Date(lastSyncedTime ?? 0))}>
+            <Button
+              isDisabled={!syncEnabled}
+              onClick={() => sync(new Date(lastSyncedTime ?? 0))}
+            >
               Sync Data
             </Button>
           </HStack>
           <SyncSettings />
           <HStack justifyContent="space-between">
             <Text>Sync Everything (This is destructive btw)</Text>
-            <Button colorScheme="red" onClick={() => syncData(new Date(0))}>
+            <Button
+              isDisabled={!syncEnabled}
+              colorScheme="red"
+              onClick={() => sync(new Date(0))}
+            >
               Sync Everything
             </Button>
           </HStack>

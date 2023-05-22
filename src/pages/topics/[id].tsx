@@ -1,4 +1,10 @@
-import { ArrowBackIcon, DeleteIcon, EditIcon } from "@chakra-ui/icons";
+import {
+  ArrowBackIcon,
+  DeleteIcon,
+  DownloadIcon,
+  EditIcon,
+  HamburgerIcon,
+} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -8,6 +14,10 @@ import {
   GridItem,
   Heading,
   HStack,
+  Menu,
+  MenuButton,
+  MenuItem,
+  MenuList,
   Stack,
   Switch,
   Text,
@@ -36,6 +46,9 @@ import { Topic } from "../../types/topic";
 import { db } from "../../utils/db";
 import { filterTopicItemsByKeywords } from "../../utils/filterTopicItemsByKeywords";
 import { sortTopicItems } from "../../utils/sortTopicItems";
+import { WordItem } from "../../components/WordItem";
+import { download } from "../../utils/downloadFile";
+import { uniq } from "lodash";
 
 const TopicDetailPage: NextPage = () => {
   const { query } = useRouter();
@@ -51,7 +64,7 @@ const TopicDetailPage: NextPage = () => {
   );
 
   const { data: topic, refetch, isLoading } = useGetTopic(topicId);
-  const { data: saveWords } = useGetTopicItems(topicId);
+  const { data: words } = useGetTopicItems(topicId);
   const { mutate, isLoading: isAdding } = useAddTopicItem(topicId);
   const { mutate: fetchJishoResults, isLoading: isFetchingJishoResults } =
     useFetchJishoResults(topicId);
@@ -66,13 +79,28 @@ const TopicDetailPage: NextPage = () => {
       sortTopicItems(
         orderBy,
         reverseSortOrder
-      )(filterTopicItemsByKeywords(filter)(saveWords ?? [])),
-    [filter, saveWords, orderBy, reverseSortOrder]
+      )(filterTopicItemsByKeywords(filter)(words ?? [])),
+    [filter, words, orderBy, reverseSortOrder]
   );
 
+  const handleDownloadCSV = () => {
+    const header = `Question,Answers,Comment,Instructions,Render as\n`;
+    const data = words
+      ?.map(
+        (w) =>
+          `${w.word},"${uniq(w.jishoData?.japanese.map((w) => w.reading)).join(
+            ","
+          )}","${w.jishoData?.senses
+            .map((s) => s.english_definitions.join(",").replace('"', '""'))
+            .join("\n")}",Type the reading!,Image`
+      )
+      .join("\n");
+    const csv = header + data;
+    download(`${topic?.name}.csv`, csv);
+  };
   const needsSync = useMemo(
-    () => saveWords?.filter((w) => !w.jishoData) ?? [],
-    [saveWords]
+    () => words?.filter((w) => !w.jishoData) ?? [],
+    [words]
   );
 
   useEffect(() => {
@@ -121,19 +149,34 @@ const TopicDetailPage: NextPage = () => {
                   isLoading={isFetchingJishoResults}
                   onClick={() => fetchJishoResults(needsSync)}
                 >
-                  Sync Words
+                  Load Definition
                 </Button>
               )}
-              <Button
-                colorScheme="yellow"
-                onClick={() => setEditingTopic(topic)}
-              >
-                <EditIcon />
-              </Button>
-
-              <Button colorScheme="red" onClick={() => setDeleteTopic(topic)}>
-                <DeleteIcon />
-              </Button>
+              <Menu>
+                <MenuButton as={Button} rightIcon={<HamburgerIcon />}>
+                  Menu
+                </MenuButton>
+                <MenuList>
+                  <MenuItem
+                    icon={<EditIcon />}
+                    onClick={() => setEditingTopic(topic)}
+                  >
+                    Edit Topic
+                  </MenuItem>
+                  <MenuItem
+                    icon={<DownloadIcon />}
+                    onClick={() => handleDownloadCSV(topic)}
+                  >
+                    Download Data (Kotobot CSV)
+                  </MenuItem>
+                  <MenuItem
+                    icon={<DeleteIcon />}
+                    onClick={() => setDeleteTopic(topic)}
+                  >
+                    Delete Topic
+                  </MenuItem>
+                </MenuList>
+              </Menu>
             </HStack>
           </HStack>
           {topic?.description && <Text>{topic?.description}</Text>}
@@ -147,7 +190,7 @@ const TopicDetailPage: NextPage = () => {
               isPopup
             />
             <Box w="full">
-              {!saveWords || saveWords.length === 0 ? (
+              {!words || words.length === 0 ? (
                 <Heading fontSize="xl" textAlign="center">
                   No saved words
                 </Heading>
@@ -168,17 +211,22 @@ const TopicDetailPage: NextPage = () => {
                     ]}
                     alignItems="stretch"
                   >
-                    {filteredList.map(({ id, jishoData, word }) => (
-                      <GridItem key={id}>
-                        {jishoData ? (
-                          <SearchResultItem
-                            item={jishoData}
-                            showMeaning={showMeaning}
-                            isCard={false}
-                          />
-                        ) : (
-                          <KanjiDisplay data={{ word: word }} />
-                        )}
+                    {filteredList.map(({ id, jishoData, word, ...rest }) => (
+                      <GridItem
+                        key={id}
+                        onClick={() => {
+                          if (!jishoData) {
+                            fetchJishoResults([
+                              { id, jishoData, word, ...rest },
+                            ]);
+                          }
+                        }}
+                      >
+                        <WordItem
+                          word={word}
+                          showMeaning={showMeaning}
+                          item={jishoData}
+                        />
                         <Divider />
                       </GridItem>
                     ))}

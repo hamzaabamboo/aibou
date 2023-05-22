@@ -1,8 +1,11 @@
-import { HStack, Text } from "@chakra-ui/react";
+import { HStack, Icon, IconButton, Text } from "@chakra-ui/react";
+import { RepeatIcon } from "@chakra-ui/icons";
 import { useRouter } from "next/router";
+import { useSyncData } from "../hooks/useSyncData";
 
 export const Navigation = () => {
   const router = useRouter();
+  const { syncEnabled, sync } = useSyncData();
   return (
     <HStack
       border="md"
@@ -19,6 +22,13 @@ export const Navigation = () => {
       <HStack cursor="pointer">
         <Text onClick={() => router.push("/topics")}>Topics</Text>
         <Text onClick={() => router.push("/settings")}>Settings</Text>
+        {syncEnabled && (
+          <IconButton
+            aria-label="sync"
+            onClick={() => sync()}
+            icon={<RepeatIcon />}
+          />
+        )}
       </HStack>
     </HStack>
   );

@@ -13,12 +13,12 @@ export const useKeyValueData = <T extends object | string | number>(
       const data = await db?.keyValues.get(key);
       if (!data) {
         await db?.keyValues.add({ key, value: defaultValue });
-        return (await db?.keyValues.get(key))?.value;
+        return defaultValue;
       }
-      return data?.value;
+      return data.value;
     } catch (error) {
       await db?.keyValues.add({ key, value: defaultValue });
-      return (await db?.keyValues.get(key))?.value;
+      return defaultValue;
     }
   });
 
