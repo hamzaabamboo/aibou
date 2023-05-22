@@ -5,6 +5,7 @@ import { Navigation } from "../components/Navigation";
 import { useEffect } from "react";
 import { initDexie } from "../utils/db";
 import { requestPersistentStoragePermission } from "../utils/requestPersistentStoragePermission";
+import Head from "next/head";
 
 const queryClient = new QueryClient();
 
@@ -15,23 +16,28 @@ function MyApp({ Component, pageProps }: AppProps) {
   }, []);
 
   return (
-    <ChakraProvider>
-      <QueryClientProvider client={queryClient}>
-        <Stack minH="100vh">
-          <Navigation />
-          <Box
-            display="flex"
-            flex={1}
-            justifyContent="stretch"
-            alignItems="stretch"
-            width="100%"
-            minH="100%"
-          >
-            <Component {...pageProps} />
-          </Box>
-        </Stack>
-      </QueryClientProvider>
-    </ChakraProvider>
+    <>
+      <Head>
+        <title>Aibou | 相棒</title>
+      </Head>
+      <ChakraProvider>
+        <QueryClientProvider client={queryClient}>
+          <Stack minH="100vh">
+            <Navigation />
+            <Box
+              display="flex"
+              flex={1}
+              justifyContent="stretch"
+              alignItems="stretch"
+              width="100%"
+              minH="100%"
+            >
+              <Component {...pageProps} />
+            </Box>
+          </Stack>
+        </QueryClientProvider>
+      </ChakraProvider>
+    </>
   );
 }
 
