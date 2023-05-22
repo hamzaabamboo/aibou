@@ -49,6 +49,7 @@ import { sortTopicItems } from "../../utils/sortTopicItems";
 import { WordItem } from "../../components/WordItem";
 import { download } from "../../utils/downloadFile";
 import { uniq } from "lodash";
+import { parsePartOfSpeech } from "../../components/PartOfSpeechLabel";
 
 const TopicDetailPage: NextPage = () => {
   const { query } = useRouter();
@@ -92,8 +93,15 @@ const TopicDetailPage: NextPage = () => {
           `${w.word},"${uniq(w.jishoData?.japanese.map((w) => w.reading)).join(
             ","
           )}","${w.jishoData?.senses
-            .map((s) => s.english_definitions.join(",").replace('"', '""'))
-            .join("\n")}",Type the reading!,Image`
+            .map((s) =>
+              `(${s.parts_of_speech
+                .map(parsePartOfSpeech)
+                .join(",")}) ${s.english_definitions.join(",")}`.replace(
+                '"',
+                '""'
+              )
+            )
+            .join("/")}",Type the reading!,Image`
       )
       .join("\n");
     const csv = header + data;

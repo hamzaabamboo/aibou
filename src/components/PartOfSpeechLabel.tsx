@@ -1,47 +1,48 @@
 import { Tag } from "@chakra-ui/react";
 import { PartOfSpeech } from "../types/jisho";
 
+export const parsePartOfSpeech = (partOfSpeech: PartOfSpeech) => {
+  switch (partOfSpeech) {
+    case PartOfSpeech.Noun:
+      return "n";
+    case PartOfSpeech.PrenominallyNoun:
+    case PartOfSpeech.NounWithNo:
+      return null;
+    case PartOfSpeech.SuruVerb:
+    case PartOfSpeech.SuruVerbIncluded:
+      return "v-する";
+    case PartOfSpeech.IchidanVerb:
+      return "v-る";
+    case PartOfSpeech.GodanVerU:
+    case PartOfSpeech.GodanVerbMu:
+    case PartOfSpeech.GodanVerbSu:
+    case PartOfSpeech.GodanVerbRu:
+      return "v-いる";
+    case PartOfSpeech.TransitiveVerb:
+      return "自";
+    case PartOfSpeech.IntransitiveVerb:
+      return "他";
+    case PartOfSpeech.IAdj:
+      return "い-adj";
+    case PartOfSpeech.OldNaAdj:
+    case PartOfSpeech.NaAdj:
+      return "な-adj";
+    case PartOfSpeech.Adverb:
+      return "adv";
+    case PartOfSpeech.AdverbTo:
+      return "と-adv";
+    case PartOfSpeech.Expressions:
+      return "Expressions";
+    case PartOfSpeech.WikipediaDefinition:
+      return "wiki";
+    default:
+      return partOfSpeech;
+  }
+};
 export const PartOfSpeechLabel = (props: { partOfSpeech: PartOfSpeech }) => {
   const { partOfSpeech } = props;
 
-  const text = (() => {
-    switch (partOfSpeech) {
-      case PartOfSpeech.Noun:
-        return "n";
-      case PartOfSpeech.PrenominallyNoun:
-      case PartOfSpeech.NounWithNo:
-        return null;
-      case PartOfSpeech.SuruVerb:
-      case PartOfSpeech.SuruVerbIncluded:
-        return "v-する";
-      case PartOfSpeech.IchidanVerb:
-        return "v-る";
-      case PartOfSpeech.GodanVerU:
-      case PartOfSpeech.GodanVerbMu:
-      case PartOfSpeech.GodanVerbSu:
-      case PartOfSpeech.GodanVerbRu:
-        return "v-いる";
-      case PartOfSpeech.TransitiveVerb:
-        return "自";
-      case PartOfSpeech.IntransitiveVerb:
-        return "他";
-      case PartOfSpeech.IAdj:
-        return "い-adj";
-      case PartOfSpeech.OldNaAdj:
-      case PartOfSpeech.NaAdj:
-        return "な-adj";
-      case PartOfSpeech.Adverb:
-        return "adv";
-      case PartOfSpeech.AdverbTo:
-        return "と-adv";
-      case PartOfSpeech.Expressions:
-        return "Expressions";
-      case PartOfSpeech.WikipediaDefinition:
-        return "wiki";
-      default:
-        return partOfSpeech;
-    }
-  })();
+  const text = parsePartOfSpeech(partOfSpeech);
 
   const color = (() => {
     switch (partOfSpeech) {
