@@ -86,6 +86,7 @@ const TopicDetailPage: NextPage = () => {
   const handleDownloadCSV = () => {
     const header = `Question,Answers,Comment,Instructions,Render as\n`;
     const data = words
+      ?.filter((w) => !!w.jishoData)
       ?.map(
         (w) =>
           `${w.word},"${uniq(w.jishoData?.japanese.map((w) => w.reading)).join(
