@@ -10,20 +10,36 @@ const JMDICT_FILE = `/${encodeURIComponent(
   "jmdict-eng-3.1.0+20201001122454.json.tgz"
 )}`;
 
+const BATCH_SIZE = 100000;
+
 function chunkInsert<
   O extends { id: string },
   T extends Table<O>["bulkPut"],
   P extends Parameters<T>[0]
->(inputFn: (params: P) => ReturnType<T>, data: P) {
+>(
+  inputFn: (
+    params: P,
+    progress?: { total: number; current: number; percentage: number }
+  ) => ReturnType<T>,
+  data: P
+) {
   const groups = Object.values(
     groupBy(
       data.map((d, idx) => ({ ...d, idx })),
-      ({ id }) => Math.floor(Number(id) / 10000)
+      ({ id }) => Math.floor(Number(id) / 50000)
     )
   );
   return groups
-    .map((group) => () => inputFn(group as any))
-    .reduce((p, c) => p.then(() => c()), Promise.resolve({}));
+    .map(
+      (group, idx) => () =>
+        inputFn(group as any, {
+          total: groups.length * 50000,
+          current: (idx + 1) * 50000,
+          percentage: idx / groups.length,
+        })
+    )
+    .forEach((c) => c());
+  // .reduce((p, c) => p.then(() => c()), Promise.resolve({}));
 }
 
 type WorkerEvent = {
@@ -66,33 +82,61 @@ addEventListener("message", async ({ data }: MessageEvent<WorkerEvent>) => {
     });
 
     try {
-      await chunkInsert((d) => db.words.bulkPut(d), words);
+      await db.transaction("rw", db.words, () =>
+        chunkInsert((d, p) => {
+          postMessage({
+            type: "addingWords",
+            value: `added ${p?.current} (${p?.percentage ?? 0 * 100})`,
+          });
+          return db.words.bulkPut(d);
+        }, words)
+      );
       postMessage({
         type: "importProgress",
-        value: "added words",
+        value: "Finished added words",
       });
-      await chunkInsert((d) => db.glosses.bulkPut(d), glosses);
+      await db.transaction(
+        "rw",
+        db.glosses,
+        async () => await chunkInsert((d) => db.glosses.bulkPut(d), glosses)
+      );
       postMessage({
         type: "importProgress",
         value: "added glosses",
       });
-      await chunkInsert((d) => db.kanjis.bulkPut(d), kanjis);
+      await db.transaction(
+        "rw",
+        db.kanjis,
+        async () => await chunkInsert((d) => db.kanjis.bulkPut(d), kanjis)
+      );
       postMessage({
         type: "importProgress",
         value: "added kanjis",
       });
-      await chunkInsert((d) => db.kanas.bulkPut(d), kanas);
+      await db.transaction(
+        "rw",
+        db.kanas,
+        async () => await chunkInsert((d) => db.kanas.bulkPut(d), kanas)
+      );
       postMessage({
         type: "importProgress",
         value: "added kanas",
       });
-      await chunkInsert((d) => db.senses.bulkPut(d), senses);
+      await db.transaction(
+        "rw",
+        db.senses,
+        async () => await chunkInsert((d) => db.senses.bulkPut(d), senses)
+      );
       postMessage({
         type: "importProgress",
         value: "added senses",
       });
     } catch (error) {
-      console.log("fuck", error);
+      console.log("Something went wrong", error);
+      postMessage({
+        type: "error",
+        value: "Something went wrong",
+      });
     }
 
     postMessage({

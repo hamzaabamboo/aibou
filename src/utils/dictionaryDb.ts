@@ -20,8 +20,8 @@ export class DictionaryDB extends Dexie {
       words: "&id, *kanjiIds, *senseIds, *kanaIds",
       kanjis: "&id, wordId, text, common, *tags",
       kanas: "&id, wordId, text, common, *tags, *kanjiIds",
-      senses: "&id, wordId, *info, *partOfSpeech, *glossesId",
-      glosses: "&id, wordId , senseId, type, lang, text",
+      senses: "&id, wordId, *glossesId",
+      glosses: "&id, wordId, senseId, type, text",
     });
   }
 }
