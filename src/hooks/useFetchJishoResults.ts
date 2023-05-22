@@ -3,6 +3,8 @@ import axios from "axios";
 import { SearchAPIResults } from "../types/api";
 import { TopicItem } from "../types/topic";
 import { db } from "../utils/db";
+import { orderBy } from "lodash";
+import { similarity } from "../utils/stringSimilarity";
 
 export const useFetchJishoResults = (topicId: string) => {
   const queryClient = useQueryClient();
@@ -20,7 +22,24 @@ export const useFetchJishoResults = (topicId: string) => {
             (w) => w.word === word.word || w.reading === word.word
           )
         );
-        if (jishoData) await db?.topicEntries.put({ ...word, jishoData });
+
+        const sortedReadings = word
+          ? orderBy(
+              jishoData?.japanese,
+              (w) =>
+                Math.max(
+                  w.word ? similarity(w.word, word.word) : -Infinity,
+                  w.reading ? similarity(w.reading, word.word) : -Infinity
+                ),
+              "desc"
+            )
+          : jishoData?.japanese;
+
+        if (jishoData)
+          await db?.topicEntries.put({
+            ...word,
+            jishoData: { ...jishoData, japanese: sortedReadings ?? [] },
+          });
       }
     },
     {
