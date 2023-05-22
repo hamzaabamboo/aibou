@@ -37,6 +37,7 @@ export const TopicItemModal = (props: {
   const handleChangeReading = (index: number) => {
     updateTopicItem({
       ...item,
+      word: item.jishoData?.japanese[index].word ?? item.word,
       jishoData: {
         ...(item.jishoData as JishoWord),
         japanese:
@@ -50,7 +51,6 @@ export const TopicItemModal = (props: {
             : item.jishoData?.japanese ?? [],
       },
     });
-    console.log("updated", index);
   };
 
   return (
