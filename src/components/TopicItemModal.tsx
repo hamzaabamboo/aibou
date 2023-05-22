@@ -15,7 +15,7 @@ import {
   IconButton,
 } from "@chakra-ui/react";
 import { TopicItem } from "../types/topic";
-import { JishoWorld } from "../types/jisho";
+import { JishoWord } from "../types/jisho";
 import { SearchResultItem } from "./SearchResultItem";
 import { KanjiDisplay } from "./KanjiDisplay";
 import { useUpdateTopic } from "../hooks/useUpdateTopic";
@@ -38,7 +38,7 @@ export const TopicItemModal = (props: {
     updateTopicItem({
       ...item,
       jishoData: {
-        ...(item.jishoData as JishoWorld),
+        ...(item.jishoData as JishoWord),
         japanese:
           item.jishoData && index !== 0
             ? [

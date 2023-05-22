@@ -281,7 +281,7 @@ const TopicDetailPage: NextPage = () => {
       )}
       {viewingItem && (
         <TopicItemModal
-          item={words?.find((v) => v.id === viewingItem)}
+          item={words?.find((v) => v.id === viewingItem)!}
           isOpen={!!viewingItem}
           onClose={() => setViewingItem(undefined)}
         />
