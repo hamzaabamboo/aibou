@@ -15,6 +15,8 @@ import { useJishoSearch } from "../hooks/useJishoSearch";
 import { JishoWord } from "../types/jisho";
 import { KanjiDisplay } from "./KanjiDisplay";
 import { SearchResultItem } from "./SearchResultItem";
+import { similarity } from "../utils/stringSimilarity";
+import orderBy from "lodash/orderBy";
 
 export const JishoSearch = (
   props: {
@@ -52,11 +54,26 @@ export const JishoSearch = (
   ) : (
     <Stack>
       {data?.map((item) => {
+        const sortedReadings = input
+          ? orderBy(
+              item.japanese,
+              (w) =>
+                Math.max(
+                  w.word ? similarity(w.word, input) : -Infinity,
+                  w.reading ? similarity(w.reading, input) : -Infinity
+                ),
+              "desc"
+            )
+          : item.japanese;
+
         return (
           <React.Fragment key={item.slug}>
             <SearchResultItem
+              searchInput={input}
               item={item}
-              onClick={() => onSelectItem(item)}
+              onClick={() =>
+                onSelectItem({ ...item, japanese: sortedReadings })
+              }
               isCard={!isPopup}
             />
             {isPopup && <Divider />}

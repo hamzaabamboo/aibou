@@ -10,15 +10,37 @@ import {
 import { JishoWord } from "../types/jisho";
 import { KanjiDisplay } from "./KanjiDisplay";
 import { PartOfSpeechLabel } from "./PartOfSpeechLabel";
+import { sortBy } from "lodash";
+import { similarity } from "../utils/stringSimilarity";
+import { orderBy } from "lodash";
 
 export type SearchResultItemProps = {
+  searchInput: string;
   item: JishoWord;
   showMeaning?: boolean;
   isCard?: boolean;
 } & StackProps;
 
 export const SearchResultItem = (props: SearchResultItemProps) => {
-  const { item, showMeaning = true, isCard = true, ...stackProps } = props;
+  const {
+    item,
+    showMeaning = true,
+    isCard = true,
+    searchInput,
+    ...stackProps
+  } = props;
+
+  const word = searchInput
+    ? orderBy(
+        item.japanese,
+        (w) =>
+          Math.max(
+            w.word ? similarity(w.word, searchInput) : -Infinity,
+            w.reading ? similarity(w.reading, searchInput) : -Infinity
+          ),
+        "desc"
+      )
+    : item.japanese;
 
   return (
     <Stack
@@ -30,9 +52,9 @@ export const SearchResultItem = (props: SearchResultItemProps) => {
       {...stackProps}
     >
       <HStack flexWrap="wrap" alignItems="flex-end" spacing="1">
-        <KanjiDisplay data={item.japanese[0]} />
-        {item.japanese.length > 0 &&
-          item.japanese
+        <KanjiDisplay data={word[0]} />
+        {word.length > 0 &&
+          word
             .slice(1)
             .map((item, idx) => <KanjiDisplay key={idx} data={item} isSmall />)}
       </HStack>
