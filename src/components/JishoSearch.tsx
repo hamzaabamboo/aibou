@@ -69,8 +69,7 @@ export const JishoSearch = (
         return (
           <React.Fragment key={item.slug}>
             <SearchResultItem
-              searchInput={input}
-              item={item}
+              item={{ ...item, japanese: sortedReadings }}
               onClick={() =>
                 onSelectItem({ ...item, japanese: sortedReadings })
               }

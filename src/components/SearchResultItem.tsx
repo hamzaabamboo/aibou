@@ -15,32 +15,15 @@ import { similarity } from "../utils/stringSimilarity";
 import { orderBy } from "lodash";
 
 export type SearchResultItemProps = {
-  searchInput: string;
   item: JishoWord;
   showMeaning?: boolean;
   isCard?: boolean;
 } & StackProps;
 
 export const SearchResultItem = (props: SearchResultItemProps) => {
-  const {
-    item,
-    showMeaning = true,
-    isCard = true,
-    searchInput,
-    ...stackProps
-  } = props;
+  const { item, showMeaning = true, isCard = true, ...stackProps } = props;
 
-  const word = searchInput
-    ? orderBy(
-        item.japanese,
-        (w) =>
-          Math.max(
-            w.word ? similarity(w.word, searchInput) : -Infinity,
-            w.reading ? similarity(w.reading, searchInput) : -Infinity
-          ),
-        "desc"
-      )
-    : item.japanese;
+  const word = item.japanese;
 
   return (
     <Stack

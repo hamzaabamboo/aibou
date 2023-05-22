@@ -3,9 +3,10 @@ import { chakra, Text } from "@chakra-ui/react";
 
 export const KanjiDisplay = (props: {
   data: Partial<KanjiReading>;
+  hideRuby?: boolean;
   isSmall?: boolean;
 }) => {
-  const { data, isSmall = false } = props;
+  const { data, isSmall = false, hideRuby = false } = props;
   const { word, reading } = data;
 
   const fontSize = isSmall ? "lg" : "3xl";
@@ -21,7 +22,7 @@ export const KanjiDisplay = (props: {
   return (
     <chakra.ruby fontSize={fontSize} textAlign="center">
       <Text fontWeight={fontWeight}>{word}</Text>
-      <chakra.rt>{reading}</chakra.rt>
+      {!hideRuby && <chakra.rt>{reading}</chakra.rt>}
       <chakra.rp>({reading})</chakra.rp>
     </chakra.ruby>
   );

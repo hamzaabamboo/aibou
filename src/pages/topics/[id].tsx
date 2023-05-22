@@ -42,7 +42,7 @@ import { useGetTopicItems } from "../../hooks/useGetTopicItems";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { useUpdateTopic } from "../../hooks/useUpdateTopic";
 import { JishoWord } from "../../types/jisho";
-import { Topic } from "../../types/topic";
+import { Topic, TopicItem } from "../../types/topic";
 import { db } from "../../utils/db";
 import { filterTopicItemsByKeywords } from "../../utils/filterTopicItemsByKeywords";
 import { sortTopicItems } from "../../utils/sortTopicItems";
@@ -50,6 +50,8 @@ import { WordItem } from "../../components/WordItem";
 import { download } from "../../utils/downloadFile";
 import { uniq } from "lodash";
 import { parsePartOfSpeech } from "../../components/PartOfSpeechLabel";
+import { TopicItemModal } from "../../components/TopicItemModal";
+import { useUpdateTopicItem } from "../../hooks/useUpdateTopicItem";
 
 const TopicDetailPage: NextPage = () => {
   const { query } = useRouter();
@@ -58,6 +60,7 @@ const TopicDetailPage: NextPage = () => {
   const [showPopup, setShowPopup] = useState(true);
   const [editingTopic, setEditingTopic] = useState<Topic>();
   const [deleteTopic, setDeleteTopic] = useState<Topic>();
+  const [viewingItem, setViewingItem] = useState<string>();
 
   const [settingsData, setSettingsData] = useLocalStorage<ItemViewOptions>(
     "search-view-settings",
@@ -67,6 +70,8 @@ const TopicDetailPage: NextPage = () => {
   const { data: topic, refetch, isLoading } = useGetTopic(topicId);
   const { data: words } = useGetTopicItems(topicId);
   const { mutate, isLoading: isAdding } = useAddTopicItem(topicId);
+  const { mutate: editItem, isLoading: isUpdating } =
+    useUpdateTopicItem(topicId);
   const { mutate: fetchJishoResults, isLoading: isFetchingJishoResults } =
     useFetchJishoResults(topicId);
   const router = useRouter();
@@ -122,11 +127,20 @@ const TopicDetailPage: NextPage = () => {
     const wordAlreadyExist =
       (await db?.topicEntries?.where({ word, topicId }).count()) ?? 0;
     if (wordAlreadyExist > 0) {
-      toast({
-        status: "warning",
-        title: "Word already exist in this topic",
-      });
-      return;
+      const a = (
+        await db?.topicEntries?.where({ word, topicId }).toArray()
+      )?.[0];
+      if (a?.isDeleted) {
+        await editItem({ id: a.id, isDeleted: false });
+        setShowPopup(false);
+        return;
+      } else {
+        toast({
+          status: "warning",
+          title: "Word already exist in this topic",
+        });
+        return;
+      }
     }
     await mutate({ word, jishoData: data });
     setShowPopup(false);
@@ -220,25 +234,28 @@ const TopicDetailPage: NextPage = () => {
                     ]}
                     alignItems="stretch"
                   >
-                    {filteredList.map(({ id, jishoData, word, ...rest }) => (
-                      <GridItem
-                        key={id}
-                        onClick={() => {
-                          if (!jishoData) {
-                            fetchJishoResults([
-                              { id, jishoData, word, ...rest },
-                            ]);
-                          }
-                        }}
-                      >
-                        <WordItem
-                          word={word}
-                          showMeaning={showMeaning}
-                          item={jishoData}
-                        />
-                        <Divider />
-                      </GridItem>
-                    ))}
+                    {filteredList.map((item, idx) => {
+                      const { id, jishoData, word, ...rest } = item;
+                      return (
+                        <GridItem
+                          key={id}
+                          onClick={() => {
+                            if (!jishoData) {
+                              fetchJishoResults([item]);
+                            } else {
+                              setViewingItem(item.id);
+                            }
+                          }}
+                        >
+                          <WordItem
+                            word={word}
+                            showMeaning={showMeaning}
+                            item={jishoData}
+                          />
+                          <Divider />
+                        </GridItem>
+                      );
+                    })}
                   </Grid>
                 </Stack>
               )}
@@ -260,6 +277,13 @@ const TopicDetailPage: NextPage = () => {
             setDeleteTopic(undefined);
             router.push("/topics/");
           }}
+        />
+      )}
+      {viewingItem && (
+        <TopicItemModal
+          item={words?.find((v) => v.id === viewingItem)}
+          isOpen={!!viewingItem}
+          onClose={() => setViewingItem(undefined)}
         />
       )}
     </>
