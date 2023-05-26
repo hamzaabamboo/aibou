@@ -1,60 +1,59 @@
-import axios from "axios";
-import { Table } from "dexie";
-import groupBy from "lodash/groupBy";
-import pako from "pako";
-import { JMDictFile } from "../types/jmdict";
-import { initDictionaryDB } from "../utils/dictionaryDb";
-import { normalizeDictionary } from "../utils/normalizeDictionary";
+import axios from 'axios';
+import { Table } from 'dexie';
+import groupBy from 'lodash/groupBy';
+import pako from 'pako';
+import { JMDictFile } from '../types/jmdict';
+import { initDictionaryDB } from '../utils/dictionaryDb';
+import { normalizeDictionary } from '../utils/normalizeDictionary';
 
 const JMDICT_FILE = `/${encodeURIComponent(
-  "jmdict-eng-3.1.0+20201001122454.json.tgz"
+  'jmdict-eng-3.1.0+20201001122454.json.tgz',
 )}`;
 
 const BATCH_SIZE = 100000;
 
 function chunkInsert<
   O extends { id: string },
-  T extends Table<O>["bulkPut"],
+  T extends Table<O>['bulkPut'],
   P extends Parameters<T>[0]
 >(
   inputFn: (
     params: P,
     progress?: { total: number; current: number; percentage: number }
   ) => ReturnType<T>,
-  data: P
+  data: P,
 ) {
   const groups = Object.values(
     groupBy(
       data.map((d, idx) => ({ ...d, idx })),
-      ({ id }) => Math.floor(Number(id) / 50000)
-    )
+      ({ id }) => Math.floor(Number(id) / 50000),
+    ),
   );
   return groups
     .map(
-      (group, idx) => () =>
-        inputFn(group as any, {
-          total: groups.length * 50000,
-          current: (idx + 1) * 50000,
-          percentage: idx / groups.length,
-        })
+      (group, idx) => () => inputFn(group as any, {
+        total: groups.length * 50000,
+        current: (idx + 1) * 50000,
+        percentage: idx / groups.length,
+      }),
     )
     .forEach((c) => c());
   // .reduce((p, c) => p.then(() => c()), Promise.resolve({}));
 }
 
 type WorkerEvent = {
-  type: "download" | "extract";
+  type: 'download' | 'extract';
   data?: any;
 };
-addEventListener("message", async ({ data }: MessageEvent<WorkerEvent>) => {
+addEventListener('message', async ({ data }: MessageEvent<WorkerEvent>) => {
   const { type, data: inputData } = data;
   console.log(data);
-  if (type === "download") {
+  if (type === 'download') {
     const { data: downloadData } = await axios.get(JMDICT_FILE, {
-      responseType: "arraybuffer",
+      responseType: 'arraybuffer',
       onDownloadProgress: (progress: ProgressEvent) => {
         postMessage({
-          type: "downloadProgress",
+          type: 'downloadProgress',
           value: Math.floor((progress.loaded / progress.total) * 100) / 100,
         });
       },
@@ -62,89 +61,89 @@ addEventListener("message", async ({ data }: MessageEvent<WorkerEvent>) => {
 
     const decompress = pako.inflate(downloadData as ArrayBuffer);
     postMessage({
-      type: "downloadCompleted",
+      type: 'downloadCompleted',
       value: decompress.buffer,
     });
   }
-  if (type === "extract") {
-    const enc = new TextDecoder("utf-8");
+  if (type === 'extract') {
+    const enc = new TextDecoder('utf-8');
     const dict = JSON.parse(enc.decode(inputData as ArrayBuffer)) as JMDictFile;
     postMessage({
-      type: "extractComplete",
+      type: 'extractComplete',
     });
 
-    const { kanjis, kanas, senses, glosses, words } = normalizeDictionary(dict);
+    const {
+      kanjis, kanas, senses, glosses, words,
+    } = normalizeDictionary(dict);
 
     const db = await initDictionaryDB();
 
     postMessage({
-      type: "importDB",
+      type: 'importDB',
     });
 
     try {
-      await db.transaction("rw", db.words, () =>
-        chunkInsert((d, p) => {
-          postMessage({
-            type: "addingWords",
-            value: `added ${p?.current} (${p?.percentage ?? 0 * 100})`,
-          });
-          return db.words.bulkPut(d);
-        }, words)
-      );
+      await db.transaction('rw', db.words, () => chunkInsert((d, p) => {
+        postMessage({
+          type: 'addingWords',
+          value: `added ${p?.current} (${p?.percentage ?? 0 * 100})`,
+        });
+        return db.words.bulkPut(d);
+      }, words));
       postMessage({
-        type: "importProgress",
-        value: "Finished added words",
+        type: 'importProgress',
+        value: 'Finished added words',
       });
       await db.transaction(
-        "rw",
+        'rw',
         db.glosses,
-        async () => await chunkInsert((d) => db.glosses.bulkPut(d), glosses)
+        async () =>  chunkInsert((d) => db.glosses.bulkPut(d), glosses),
       );
       postMessage({
-        type: "importProgress",
-        value: "added glosses",
+        type: 'importProgress',
+        value: 'added glosses',
       });
       await db.transaction(
-        "rw",
+        'rw',
         db.kanjis,
-        async () => await chunkInsert((d) => db.kanjis.bulkPut(d), kanjis)
+        async () =>  chunkInsert((d) => db.kanjis.bulkPut(d), kanjis),
       );
       postMessage({
-        type: "importProgress",
-        value: "added kanjis",
+        type: 'importProgress',
+        value: 'added kanjis',
       });
       await db.transaction(
-        "rw",
+        'rw',
         db.kanas,
-        async () => await chunkInsert((d) => db.kanas.bulkPut(d), kanas)
+        async () =>  chunkInsert((d) => db.kanas.bulkPut(d), kanas),
       );
       postMessage({
-        type: "importProgress",
-        value: "added kanas",
+        type: 'importProgress',
+        value: 'added kanas',
       });
       await db.transaction(
-        "rw",
+        'rw',
         db.senses,
-        async () => await chunkInsert((d) => db.senses.bulkPut(d), senses)
+        async () =>  chunkInsert((d) => db.senses.bulkPut(d), senses),
       );
       postMessage({
-        type: "importProgress",
-        value: "added senses",
+        type: 'importProgress',
+        value: 'added senses',
       });
     } catch (error) {
-      console.log("Something went wrong", error);
+      console.log('Something went wrong', error);
       postMessage({
-        type: "error",
-        value: "Something went wrong",
+        type: 'error',
+        value: 'Something went wrong',
       });
     }
 
     postMessage({
-      type: "importFinished",
+      type: 'importFinished',
     });
 
     postMessage({
-      type: "completed",
+      type: 'completed',
     });
   }
 });

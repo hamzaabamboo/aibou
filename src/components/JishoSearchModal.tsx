@@ -8,15 +8,15 @@ import {
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-} from "@chakra-ui/react";
-import { JishoWord } from "../types/jisho";
-import { JishoSearch } from "./JishoSearch";
+} from '@chakra-ui/react';
+import { JishoWord } from '../types/jisho';
+import { JishoSearch } from './JishoSearch';
 
-export const JishoSearchModal = (props: {
+export function JishoSearchModal(props: {
   isOpen: boolean;
   onClose: () => void;
   onSelectItem: (word: JishoWord) => void;
-}) => {
+}) {
   const { isOpen, onClose, onSelectItem } = props;
 
   return (
@@ -39,4 +39,4 @@ export const JishoSearchModal = (props: {
       </ModalContent>
     </Modal>
   );
-};
+}

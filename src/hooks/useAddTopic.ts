@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { db } from "../utils/db";
-import { nanoid } from "nanoid";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { nanoid } from 'nanoid';
+import { db } from '../utils/db';
 
 export const useAddTopic = () => {
   const queryClient = useQueryClient();
@@ -13,12 +13,14 @@ export const useAddTopic = () => {
           createdAt: new Date(),
           lastUpdatedAt: new Date(),
         });
-      } catch (e) {}
+      } catch (e) {
+        console.error("Error adding")
+      }
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["fetchTopicsList"]);
+        queryClient.invalidateQueries(['fetchTopicsList']);
       },
-    }
+    },
   );
 };

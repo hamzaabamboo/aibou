@@ -1,10 +1,10 @@
-import axios from "axios";
-import { JishoWord } from "../types/jisho";
+import axios from 'axios';
+import { JishoWord } from '../types/jisho';
 
 /**
  * Referenced from : https://jisho.org/forum/54fefc1f6e73340b1f160000-is-there-any-kind-of-search-api
  */
-const JISHO_ENDPOINT = "https://jisho.org/api/v1/search/words?keyword=";
+const JISHO_ENDPOINT = 'https://jisho.org/api/v1/search/words?keyword=';
 
 export const fetchJishoResults = async (keyword: string) => {
   const { data } = await axios.get<{

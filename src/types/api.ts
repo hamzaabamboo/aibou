@@ -1,4 +1,4 @@
-import { JishoWord } from "./jisho";
+import { JishoWord } from './jisho';
 
 export type SearchAPIResults = {
   results: JishoWord[];

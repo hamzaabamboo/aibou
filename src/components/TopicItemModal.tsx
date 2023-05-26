@@ -1,35 +1,35 @@
 import {
   Button,
+  HStack,
   Heading,
+  IconButton,
+  Link,
   Modal,
-  Stack,
-  Select,
   ModalBody,
   ModalCloseButton,
   ModalContent,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  HStack,
+  Select,
+  Stack,
   Text,
-  IconButton,
-  Link,
-} from "@chakra-ui/react";
-import { TopicItem } from "../types/topic";
-import { JishoWord } from "../types/jisho";
-import { SearchResultItem } from "./SearchResultItem";
-import { KanjiDisplay } from "./KanjiDisplay";
-import { useUpdateTopic } from "../hooks/useUpdateTopic";
-import { useUpdateTopicItem } from "../hooks/useUpdateTopicItem";
-import { DeleteIcon, ExternalLinkIcon } from "@chakra-ui/icons";
-import { useState } from "react";
-import { DeleteTopicItemModal } from "./DeleteTopicItemModal";
+} from '@chakra-ui/react';
+import { DeleteIcon, ExternalLinkIcon } from '@chakra-ui/icons';
+import { useState } from 'react';
+import { TopicItem } from '../types/topic';
+import { JishoWord } from '../types/jisho';
+import { useUpdateTopic } from '../hooks/useUpdateTopic';
+import { useUpdateTopicItem } from '../hooks/useUpdateTopicItem';
+import { SearchResultItem } from './SearchResultItem';
+import { KanjiDisplay } from './KanjiDisplay';
+import { DeleteTopicItemModal } from './DeleteTopicItemModal';
 
-export const TopicItemModal = (props: {
+export function TopicItemModal(props: {
   item: TopicItem;
   isOpen: boolean;
   onClose: () => void;
-}) => {
+}) {
   const { isOpen, onClose, item } = props;
   const [isDeleting, setDeleting] = useState(false);
 
@@ -44,11 +44,11 @@ export const TopicItemModal = (props: {
         japanese:
           item.jishoData && index !== 0
             ? [
-                item.jishoData.japanese[index],
-                ...(item.jishoData?.japanese.filter(
-                  (_, idx) => idx !== index
-                ) ?? []),
-              ]
+              item.jishoData.japanese[index],
+              ...(item.jishoData?.japanese.filter(
+                (_, idx) => idx !== index,
+              ) ?? []),
+            ]
             : item.jishoData?.japanese ?? [],
       },
     });
@@ -75,7 +75,7 @@ export const TopicItemModal = (props: {
                 <Heading size="lg">Search On</Heading>
                 <Link
                   href={`https://www.google.com/search?q=${encodeURIComponent(
-                    item.word
+                    item.word,
                   )}`}
                   isExternal
                 >
@@ -84,7 +84,7 @@ export const TopicItemModal = (props: {
                 </Link>
                 <Link
                   href={`https://jisho.org/search/${encodeURIComponent(
-                    item.word
+                    item.word,
                   )}`}
                   isExternal
                 >
@@ -93,7 +93,7 @@ export const TopicItemModal = (props: {
                 </Link>
                 <Link
                   href={`https://kotobank.jp/gs/?q=${encodeURIComponent(
-                    item.word
+                    item.word,
                   )}`}
                   isExternal
                 >
@@ -102,10 +102,10 @@ export const TopicItemModal = (props: {
                 </Link>
                 <Link
                   href={`https://kanji.jitenon.jp/cat/search.php?getdata=${item.word
-                    .split("")
+                    .split('')
                     .map((s) => s.charCodeAt(0).toString(16))
-                    .join("_")}&search=contain&how=${encodeURIComponent(
-                    "すべて"
+                    .join('_')}&search=contain&how=${encodeURIComponent(
+                    'すべて',
                   )}`}
                   isExternal
                 >
@@ -119,9 +119,7 @@ export const TopicItemModal = (props: {
                   <Text>Change Reading:</Text>
                   <Select
                     value={0}
-                    onChange={(e) =>
-                      handleChangeReading(Number(e.target.value))
-                    }
+                    onChange={(e) => handleChangeReading(Number(e.target.value))}
                   >
                     {item.jishoData?.japanese.map((o, idx) => (
                       <option key={idx} value={idx}>
@@ -158,4 +156,4 @@ export const TopicItemModal = (props: {
       )}
     </>
   );
-};
+}

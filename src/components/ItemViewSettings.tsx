@@ -10,15 +10,15 @@ import {
   Stack,
   Switch,
   Text,
-} from "@chakra-ui/react";
-import { Dispatch, SetStateAction } from "react";
-import { TopicItem } from "../types/topic";
+} from '@chakra-ui/react';
+import { Dispatch, SetStateAction } from 'react';
+import { TopicItem } from '../types/topic';
 
 export type ItemViewOptions = {
   filter?: string;
   numberOfColumns?: 1 | 2 | 3 | 4;
   showMeaning?: boolean;
-  orderBy?: "word" | "createdAt";
+  orderBy?: 'word' | 'createdAt';
   reverseSortOrder?: boolean;
 };
 
@@ -26,9 +26,10 @@ type ItemViewSettingsProps = {
   data: ItemViewOptions;
   setData: Dispatch<SetStateAction<ItemViewOptions | null>>;
 };
-export const ItemViewSettings = ({ data, setData }: ItemViewSettingsProps) => {
-  const { filter, numberOfColumns, showMeaning, orderBy, reverseSortOrder } =
-    data;
+export function ItemViewSettings({ data, setData }: ItemViewSettingsProps) {
+  const {
+    filter, numberOfColumns, showMeaning, orderBy, reverseSortOrder,
+  } = data;
   return (
     <Accordion allowToggle>
       <AccordionItem>
@@ -41,21 +42,19 @@ export const ItemViewSettings = ({ data, setData }: ItemViewSettingsProps) => {
         <AccordionPanel>
           <Stack>
             <Stack
-              direction={["column", "row"]}
-              alignItems={["flex-start", "center"]}
+              direction={['column', 'row']}
+              alignItems={['flex-start', 'center']}
             >
               <Text>Filter Results (name, reading, meaning)</Text>
               <Input
                 type="text"
-                value={filter ?? ""}
-                onChange={(e) =>
-                  setData((d) => ({ ...d, filter: e.target.value }))
-                }
+                value={filter ?? ''}
+                onChange={(e) => setData((d) => ({ ...d, filter: e.target.value }))}
               />
             </Stack>
             <Stack
-              direction={["column", "row"]}
-              alignItems={["flex-start", "center"]}
+              direction={['column', 'row']}
+              alignItems={['flex-start', 'center']}
             >
               <Text>Results Per Row</Text>
               <Select
@@ -74,21 +73,19 @@ export const ItemViewSettings = ({ data, setData }: ItemViewSettingsProps) => {
               </Select>
             </Stack>
             <Stack
-              direction={["column", "row"]}
-              alignItems={["flex-start", "center"]}
+              direction={['column', 'row']}
+              alignItems={['flex-start', 'center']}
             >
               <Text>Sort results by </Text>
               <Select
                 width="fit-content"
                 value={orderBy}
-                onChange={(e) =>
-                  setData((d) => ({
-                    ...d,
-                    orderBy: e.target.value as "word" | "createdAt",
-                  }))
-                }
+                onChange={(e) => setData((d) => ({
+                  ...d,
+                  orderBy: e.target.value as 'word' | 'createdAt',
+                }))}
               >
-                {["word", "createdAt"].map((row) => (
+                {['word', 'createdAt'].map((row) => (
                   <option value={row} key={row}>
                     {row}
                   </option>
@@ -97,21 +94,17 @@ export const ItemViewSettings = ({ data, setData }: ItemViewSettingsProps) => {
               <Text>Reverse Sort Order</Text>
               <Switch
                 isChecked={reverseSortOrder}
-                onChange={(e) =>
-                  setData((d) => ({
-                    ...d,
-                    reverseSortOrder: e.target.checked,
-                  }))
-                }
+                onChange={(e) => setData((d) => ({
+                  ...d,
+                  reverseSortOrder: e.target.checked,
+                }))}
               />
             </Stack>
             <HStack>
               <Text>Show meanings</Text>
               <Switch
                 isChecked={showMeaning}
-                onChange={(e) =>
-                  setData((d) => ({ ...d, showMeaning: e.target.checked }))
-                }
+                onChange={(e) => setData((d) => ({ ...d, showMeaning: e.target.checked }))}
               />
             </HStack>
           </Stack>
@@ -119,4 +112,4 @@ export const ItemViewSettings = ({ data, setData }: ItemViewSettingsProps) => {
       </AccordionItem>
     </Accordion>
   );
-};
+}

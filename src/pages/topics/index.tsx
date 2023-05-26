@@ -1,21 +1,21 @@
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon } from '@chakra-ui/icons';
 import {
   Box,
   Button,
   Container,
+  HStack,
   Heading,
   Link,
   Spinner,
   Stack,
-  HStack,
   Text,
   useDisclosure,
-} from "@chakra-ui/react";
-import type { NextPage } from "next";
-import { useEffect } from "react";
-import { AddTopicModal } from "../../components/AddTopicModal";
-import { useGetTopicsList } from "../../hooks/useGetTopicsList";
-import sortBy from "lodash/sortBy";
+} from '@chakra-ui/react';
+import type { NextPage } from 'next';
+import { useEffect } from 'react';
+import sortBy from 'lodash/sortBy';
+import { AddTopicModal } from '../../components/AddTopicModal';
+import { useGetTopicsList } from '../../hooks/useGetTopicsList';
 
 const TopicsPage: NextPage = () => {
   const { data, refetch, isLoading } = useGetTopicsList();
@@ -41,24 +41,22 @@ const TopicsPage: NextPage = () => {
             <Stack>
               {sortBy(data, (d) => d.lastUpdatedAt)
                 .reverse()
-                .map((topic) => {
-                  return (
-                    <Link key={topic.id} href={`/topics/${topic.id}`}>
-                      <Box
-                        shadow="md"
-                        rounded="md"
-                        px="2"
-                        py="4"
-                        _hover={{ textDecoration: "none" }}
-                      >
-                        <Text fontSize="2xl" fontWeight="bold">
-                          {topic.name}
-                        </Text>
-                        <Text fontSize="lg">{topic.description}</Text>
-                      </Box>
-                    </Link>
-                  );
-                })}
+                .map((topic) => (
+                  <Link key={topic.id} href={`/topics/${topic.id}`}>
+                    <Box
+                      shadow="md"
+                      rounded="md"
+                      px="2"
+                      py="4"
+                      _hover={{ textDecoration: 'none' }}
+                    >
+                      <Text fontSize="2xl" fontWeight="bold">
+                        {topic.name}
+                      </Text>
+                      <Text fontSize="lg">{topic.description}</Text>
+                    </Box>
+                  </Link>
+                ))}
             </Stack>
           )}
         </Stack>

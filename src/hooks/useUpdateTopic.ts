@@ -1,6 +1,6 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { db } from "../utils/db";
-import { Topic } from "../types/topic";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { db } from '../utils/db';
+import { Topic } from '../types/topic';
 
 export const useUpdateTopic = (topicId: string) => {
   const queryClient = useQueryClient();
@@ -14,8 +14,8 @@ export const useUpdateTopic = (topicId: string) => {
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["fetchTopic", topicId]);
+        queryClient.invalidateQueries(['fetchTopic', topicId]);
       },
-    }
+    },
   );
 };

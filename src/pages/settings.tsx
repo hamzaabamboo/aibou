@@ -1,25 +1,25 @@
 import {
   Button,
   Container,
-  Heading,
   HStack,
+  Heading,
   Stack,
   Text,
-} from "@chakra-ui/react";
-import type { NextPage } from "next";
-import { JishoSearch } from "../components/JishoSearch";
-import { useDownloadOfflineDictionary } from "../hooks/useDownloadOfflineDictionary";
-import { useLastUpdatedTime } from "../hooks/useLastUpdatedTime";
-import { format } from "date-fns";
-import { useLocalStorage } from "../hooks/useLocalStorage";
-import { SyncSettings } from "../components/SyncSettings";
-import { useSyncData } from "../hooks/useSyncData";
-import { useKeyValueData } from "../hooks/useKeyValueData";
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
+} from '@chakra-ui/react';
+import type { NextPage } from 'next';
+import { format } from 'date-fns';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { JishoSearch } from '../components/JishoSearch';
+import { useDownloadOfflineDictionary } from '../hooks/useDownloadOfflineDictionary';
+import { useLastUpdatedTime } from '../hooks/useLastUpdatedTime';
+import { useLocalStorage } from '../hooks/useLocalStorage';
+import { SyncSettings } from '../components/SyncSettings';
+import { useSyncData } from '../hooks/useSyncData';
+import { useKeyValueData } from '../hooks/useKeyValueData';
 
 const Home: NextPage = () => {
   const { download } = useDownloadOfflineDictionary();
-  const [{ data: lastSyncedTime }] = useKeyValueData("lastSyncedTime", 0);
+  const [{ data: lastSyncedTime }] = useKeyValueData('lastSyncedTime', 0);
   const { sync, syncEnabled } = useSyncData();
 
   return (
@@ -32,9 +32,14 @@ const Home: NextPage = () => {
               <Text>Sync Data (Experimental)</Text>
               {lastSyncedTime && (
                 <Text>
-                  Last updated at :{" "}
-                  {format(new Date(lastSyncedTime), "dd/MM/yyyy HH:mm")} (
-                  {formatDistanceToNow(new Date(lastSyncedTime))} ago)
+                  Last updated at :
+                  {' '}
+                  {format(new Date(lastSyncedTime), 'dd/MM/yyyy HH:mm')}
+                  {' '}
+                  (
+                  {formatDistanceToNow(new Date(lastSyncedTime))}
+                  {' '}
+                  ago)
                 </Text>
               )}
             </Stack>

@@ -6,14 +6,14 @@ import {
   Link,
   Stack,
   Text,
-} from "@chakra-ui/react";
-import type { NextPage } from "next";
-import { JishoSearch } from "../components/JishoSearch";
-import format from "date-fns/format";
-import { useSyncData } from "../hooks/useSyncData";
-import { useLastUpdatedTopics } from "../hooks/useLastUpdatedTopics";
-import { useEffect } from "react";
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
+} from '@chakra-ui/react';
+import type { NextPage } from 'next';
+import format from 'date-fns/format';
+import { useEffect } from 'react';
+import formatDistanceToNow from 'date-fns/formatDistanceToNow';
+import { JishoSearch } from '../components/JishoSearch';
+import { useSyncData } from '../hooks/useSyncData';
+import { useLastUpdatedTopics } from '../hooks/useLastUpdatedTopics';
 
 const Home: NextPage = () => {
   const { data: lastUpdatedTopics, refetch } = useLastUpdatedTopics();
@@ -33,9 +33,14 @@ const Home: NextPage = () => {
         {syncEnabled && (
           <HStack>
             <Text>
-              Last Synced At:{" "}
-              {format(new Date(lastSyncedTime), "dd/MM/yyyy HH:mm")} (
-              {formatDistanceToNow(new Date(lastSyncedTime))} ago)
+              Last Synced At:
+              {' '}
+              {format(new Date(lastSyncedTime), 'dd/MM/yyyy HH:mm')}
+              {' '}
+              (
+              {formatDistanceToNow(new Date(lastSyncedTime))}
+              {' '}
+              ago)
             </Text>
             <Link onClick={() => sync()}>
               <Text color="blue.400">Sync Now</Text>
@@ -43,23 +48,21 @@ const Home: NextPage = () => {
           </HStack>
         )}
         <Stack alignItems="stretch" width="full">
-          {lastUpdatedTopics?.map((topic) => {
-            return (
-              <Link key={topic.id} href={`/topics/${topic.id}`}>
-                <Box
-                  shadow="md"
-                  rounded="md"
-                  p={2}
-                  _hover={{ textDecoration: "none" }}
-                >
-                  <Text fontSize="2xl" fontWeight="bold">
-                    {topic.name}
-                  </Text>
-                  <Text fontSize="lg">{topic.description}</Text>
-                </Box>
-              </Link>
-            );
-          })}
+          {lastUpdatedTopics?.map((topic) => (
+            <Link key={topic.id} href={`/topics/${topic.id}`}>
+              <Box
+                shadow="md"
+                rounded="md"
+                p={2}
+                _hover={{ textDecoration: 'none' }}
+              >
+                <Text fontSize="2xl" fontWeight="bold">
+                  {topic.name}
+                </Text>
+                <Text fontSize="lg">{topic.description}</Text>
+              </Box>
+            </Link>
+          ))}
         </Stack>
       </Stack>
     </Container>

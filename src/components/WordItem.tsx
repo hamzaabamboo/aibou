@@ -1,24 +1,26 @@
-import { CopyIcon } from "@chakra-ui/icons";
-import { useToast, HStack, IconButton, Text, Stack } from "@chakra-ui/react";
-import { JishoWord, KanjiReading } from "../types/jisho";
-import { KanjiDisplay } from "./KanjiDisplay";
-import { SearchResultItem, SearchResultItemProps } from "./SearchResultItem";
+import { CopyIcon } from '@chakra-ui/icons';
+import {
+  HStack, IconButton, Stack, Text, useToast,
+} from '@chakra-ui/react';
+import { JishoWord, KanjiReading } from '../types/jisho';
+import { KanjiDisplay } from './KanjiDisplay';
+import { SearchResultItem, SearchResultItemProps } from './SearchResultItem';
 
-export const WordItem = (
-  props: { item?: JishoWord; word: string } & Omit<
+export function WordItem(props: { item?: JishoWord; word: string } & Omit<
     SearchResultItemProps,
-    "item"
-  >
-) => {
-  const { item, showMeaning, word, ...rest } = props;
+    'item'
+  >) {
+  const {
+    item, showMeaning, word, ...rest
+  } = props;
 
   const toast = useToast();
 
   const handleCopy = () => {
     navigator.clipboard.writeText(word);
     toast({
-      status: "success",
-      title: "Word Copied to Clipboard",
+      status: 'success',
+      title: 'Word Copied to Clipboard',
     });
   };
 
@@ -32,7 +34,7 @@ export const WordItem = (
   ) : (
     <Stack justifyContent="flex-start" h="full">
       <HStack justifyContent="space-between" w="full">
-        <KanjiDisplay data={{ word: word }} />
+        <KanjiDisplay data={{ word }} />
         {rest.showCopy && (
           <IconButton
             aria-label="copy-text"
@@ -48,4 +50,4 @@ export const WordItem = (
       <Text textAlign="center">Click to retreive meaning</Text>
     </Stack>
   );
-};
+}

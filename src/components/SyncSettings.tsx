@@ -1,25 +1,24 @@
 import {
   Accordion,
-  AccordionItem,
   AccordionButton,
-  HStack,
   AccordionIcon,
+  AccordionItem,
   AccordionPanel,
-  Text,
-  Stack,
+  HStack,
   Input,
   Select,
+  Stack,
   Switch,
-} from "@chakra-ui/react";
-import { filter, orderBy } from "lodash";
-import { useKeyValueData } from "../hooks/useKeyValueData";
+  Text,
+} from '@chakra-ui/react';
+import { filter, orderBy } from 'lodash';
+import { useKeyValueData } from '../hooks/useKeyValueData';
 
-export const SyncSettings = () => {
-  const [{ data: syncUrl, isLoading }, { mutate: setSyncUrl }] =
-    useKeyValueData("syncUrl", "");
+export function SyncSettings() {
+  const [{ data: syncUrl, isLoading }, { mutate: setSyncUrl }] = useKeyValueData('syncUrl', '');
   const [{ data: syncSecret }, { mutate: setSyncSecret }] = useKeyValueData(
-    "syncSecret",
-    ""
+    'syncSecret',
+    '',
   );
 
   return (
@@ -54,4 +53,4 @@ export const SyncSettings = () => {
       </AccordionItem>
     </Accordion>
   );
-};
+}

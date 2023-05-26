@@ -1,9 +1,10 @@
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon } from '@chakra-ui/icons';
 import {
   Button,
   FormControl,
   Grid,
   GridItem,
+  HStack,
   Heading,
   Input,
   Modal,
@@ -13,20 +14,19 @@ import {
   ModalHeader,
   ModalOverlay,
   Stack,
-  HStack,
   Text,
   Textarea,
   useToast,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useAddTopic } from "../hooks/useAddTopic";
+} from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { useAddTopic } from '../hooks/useAddTopic';
 
-export const AddTopicModal = (props: {
+export function AddTopicModal(props: {
   isOpen: boolean;
   onClose: () => void;
-}) => {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+}) {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
   const [formError, setFormError] = useState<{
     title?: boolean;
   }>({});
@@ -37,7 +37,7 @@ export const AddTopicModal = (props: {
   const handleAddTopic = async () => {
     if (title.length === 0 || isLoading) return;
     await mutate({ name: title, description });
-    toast({ status: "success", title: "Topic added successfully" });
+    toast({ status: 'success', title: 'Topic added successfully' });
     onClose();
   };
 
@@ -64,7 +64,7 @@ export const AddTopicModal = (props: {
             <Heading>Add new topic</Heading>
           </ModalHeader>
           <ModalBody>
-            <Grid templateColumns={["1fr", "1fr 3fr"]} gap="2">
+            <Grid templateColumns={['1fr', '1fr 3fr']} gap="2">
               <GridItem>
                 <Text>Title</Text>
               </GridItem>
@@ -104,4 +104,4 @@ export const AddTopicModal = (props: {
       </ModalContent>
     </Modal>
   );
-};
+}

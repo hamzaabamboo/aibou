@@ -1,9 +1,10 @@
-import { AddIcon, EditIcon } from "@chakra-ui/icons";
+import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import {
   Button,
   FormControl,
   Grid,
   GridItem,
+  HStack,
   Heading,
   Input,
   Modal,
@@ -13,34 +14,33 @@ import {
   ModalHeader,
   ModalOverlay,
   Stack,
-  HStack,
   Text,
   Textarea,
   useToast,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useAddTopic } from "../hooks/useAddTopic";
-import { useUpdateTopic } from "../hooks/useUpdateTopic";
-import { Topic } from "../types/topic";
+} from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { useAddTopic } from '../hooks/useAddTopic';
+import { useUpdateTopic } from '../hooks/useUpdateTopic';
+import { Topic } from '../types/topic';
 
 // TODO: Refactor modals
-export const EditTopicModal = (props: {
+export function EditTopicModal(props: {
   topic: Topic;
   onClose: () => void;
-}) => {
+}) {
   const { topic, onClose } = props;
   const [title, setTitle] = useState(topic.name);
   const [description, setDescription] = useState(topic.description);
   const [formError, setFormError] = useState<{
     title?: boolean;
   }>({});
-  const { mutate, isLoading } = useUpdateTopic(topic.id ?? "");
+  const { mutate, isLoading } = useUpdateTopic(topic.id ?? '');
   const toast = useToast();
 
   const handleEditTopic = async () => {
     if (title.length === 0 || isLoading) return;
     await mutate({ name: title, description });
-    toast({ status: "success", title: "Topic edited successfully" });
+    toast({ status: 'success', title: 'Topic edited successfully' });
     onClose();
   };
 
@@ -72,7 +72,7 @@ export const EditTopicModal = (props: {
             <Heading>Add new topic</Heading>
           </ModalHeader>
           <ModalBody>
-            <Grid templateColumns={["1fr", "1fr 3fr"]} gap="2">
+            <Grid templateColumns={['1fr', '1fr 3fr']} gap="2">
               <GridItem>
                 <Text>Title</Text>
               </GridItem>
@@ -112,4 +112,4 @@ export const EditTopicModal = (props: {
       </ModalContent>
     </Modal>
   );
-};
+}

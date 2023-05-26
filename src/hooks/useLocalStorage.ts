@@ -1,24 +1,26 @@
-import { useState, useEffect, Dispatch, SetStateAction, useRef } from "react";
-import { LocalStorage } from "./localStorage";
+import {
+  Dispatch, SetStateAction, useEffect, useRef, useState,
+} from 'react';
+import { LocalStorage } from './localStorage';
 
-export const useLocalStorage = function <T>(
+export const useLocalStorage = function <T> (
   key: string,
-  initial: T | null = null
+  initial: T | null = null,
 ): [T | null, Dispatch<SetStateAction<T | null>>] {
   const storage = useRef(new LocalStorage<T>(key));
   const [data, setData] = useState<T | null>(initial);
 
   const setNewData: Dispatch<SetStateAction<T | null>> = (
-    s: SetStateAction<T | null>
+    s: SetStateAction<T | null>,
   ) => {
-    const newData = typeof s === "function" ? (s as Function).call(s, data) : s;
+    const newData = typeof s === 'function' ? (s as Function).call(s, data) : s;
     storage.current.value = newData;
     setData(newData);
   };
 
   const updateValue = (key: string) => (storageEvent: StorageEvent) => {
     if (storageEvent.key === key) {
-      setData(JSON.parse(storageEvent.newValue || ""));
+      setData(JSON.parse(storageEvent.newValue || ''));
     }
   };
 
@@ -27,9 +29,9 @@ export const useLocalStorage = function <T>(
   }, []);
 
   useEffect(() => {
-    window.addEventListener("storage", updateValue(key));
+    window.addEventListener('storage', updateValue(key));
     return () => {
-      window.removeEventListener("storage", updateValue(key));
+      window.removeEventListener('storage', updateValue(key));
     };
   }, [key]);
 

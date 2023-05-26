@@ -1,9 +1,10 @@
-import { AddIcon, EditIcon } from "@chakra-ui/icons";
+import { AddIcon, EditIcon } from '@chakra-ui/icons';
 import {
   Button,
   FormControl,
   Grid,
   GridItem,
+  HStack,
   Heading,
   Input,
   Modal,
@@ -13,30 +14,29 @@ import {
   ModalHeader,
   ModalOverlay,
   Stack,
-  HStack,
   Text,
   Textarea,
   useToast,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useAddTopic } from "../hooks/useAddTopic";
-import { useUpdateTopic } from "../hooks/useUpdateTopic";
-import { Topic } from "../types/topic";
+} from '@chakra-ui/react';
+import { useEffect, useState } from 'react';
+import { useAddTopic } from '../hooks/useAddTopic';
+import { useUpdateTopic } from '../hooks/useUpdateTopic';
+import { Topic } from '../types/topic';
 
 // TODO: Refactor modals
-export const DeleteTopicModal = (props: {
+export function DeleteTopicModal(props: {
   topic: Topic;
   onClose: () => void;
   onDeleteSuccess: () => void;
-}) => {
+}) {
   const { topic, onClose, onDeleteSuccess } = props;
-  const { mutate, isLoading } = useUpdateTopic(topic.id ?? "");
+  const { mutate, isLoading } = useUpdateTopic(topic.id ?? '');
   const toast = useToast();
 
   const handleDeleteTopic = async () => {
     if (isLoading) return;
     await mutate({ isDeleted: true });
-    toast({ status: "success", title: "Topic Deleted successfully" });
+    toast({ status: 'success', title: 'Topic Deleted successfully' });
     onDeleteSuccess();
   };
 
@@ -82,4 +82,4 @@ export const DeleteTopicModal = (props: {
       </ModalContent>
     </Modal>
   );
-};
+}

@@ -1,23 +1,21 @@
-import omit from "lodash/omit";
-import { Topic, TopicItem } from "../types/topic";
-import { db } from "./db";
+import omit from 'lodash/omit';
+import { Topic, TopicItem } from '../types/topic';
+import { db } from './db';
 
 export type ExportDataType = {
   topics: Topic[];
-  topicItem: Omit<TopicItem, "jishoData">[];
+  topicItem: Omit<TopicItem, 'jishoData'>[];
   timestamp: number;
 };
 const fixMissingData = async () => {
-  console.log("Fixing missing data...");
-  const topics =
-    (await db?.topics.toArray())?.filter((t) => !t.lastUpdatedAt) ?? [];
-  const topicEntries =
-    (await db?.topicEntries.toArray())?.filter((t) => !t.lastUpdatedAt) ?? [];
+  console.log('Fixing missing data...');
+  const topics = (await db?.topics.toArray())?.filter((t) => !t.lastUpdatedAt) ?? [];
+  const topicEntries = (await db?.topicEntries.toArray())?.filter((t) => !t.lastUpdatedAt) ?? [];
   await db?.topics.bulkPut(
-    topics.map((d) => ({ ...d, lastUpdatedAt: d.createdAt }))
+    topics.map((d) => ({ ...d, lastUpdatedAt: d.createdAt })),
   );
   await db?.topicEntries.bulkPut(
-    topicEntries.map((d) => ({ ...d, lastUpdatedAt: d.createdAt }))
+    topicEntries.map((d) => ({ ...d, lastUpdatedAt: d.createdAt })),
   );
 };
 export const getNewData = async (lastUpdated: Date = new Date(0)) => {
@@ -29,11 +27,11 @@ export const getNewData = async (lastUpdated: Date = new Date(0)) => {
   }
 
   const topics = await db?.topics
-    .where("lastUpdatedAt")
+    .where('lastUpdatedAt')
     .aboveOrEqual(lastUpdated)
     .toArray();
   const topicEntries = await db?.topicEntries
-    .where("lastUpdatedAt")
+    .where('lastUpdatedAt')
     .aboveOrEqual(lastUpdated)
     .toArray();
 
@@ -48,7 +46,7 @@ export const getNewData = async (lastUpdated: Date = new Date(0)) => {
 
 export const importData = async (
   data: ExportDataType,
-  options?: { replace?: boolean }
+  options?: { replace?: boolean },
 ) => {
   const { topics, topicItem, timestamp } = data;
   const { replace } = options ?? {};
@@ -58,21 +56,17 @@ export const importData = async (
       ...d,
       createdAt: new Date(d.createdAt),
       lastUpdatedAt: new Date(d.lastUpdatedAt),
-    }))
+    })),
   );
   await db?.topicEntries.bulkPut(
     topicItem.map((d) => ({
       ...d,
       createdAt: new Date(d.createdAt),
       lastUpdatedAt: new Date(d.lastUpdatedAt),
-    }))
+    })),
   );
   return timestamp;
 };
 
-export const seralizeTopic = (topic: Topic) => {
-  return omit(topic, [""]);
-};
-export const seralizeTopicItem = (topicItem: TopicItem) => {
-  return omit(topicItem, ["jishoData"]);
-};
+export const seralizeTopic = (topic: Topic) => omit(topic, ['']);
+export const seralizeTopicItem = (topicItem: TopicItem) => omit(topicItem, ['jishoData']);

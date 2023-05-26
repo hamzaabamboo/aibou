@@ -4,6 +4,7 @@ import {
   FormControl,
   Grid,
   GridItem,
+  HStack,
   Heading,
   Input,
   Modal,
@@ -13,7 +14,6 @@ import {
   ModalHeader,
   ModalOverlay,
   Stack,
-  HStack,
   Text,
   Textarea,
   useToast,
@@ -25,11 +25,11 @@ import { Topic, TopicItem } from "../types/topic";
 import { useUpdateTopicItem } from "../hooks/useUpdateTopicItem";
 
 // TODO: Refactor modals
-export const DeleteTopicItemModal = (props: {
+export function DeleteTopicItemModal(props: {
   topicItem: TopicItem;
   onClose: () => void;
   onDeleteSuccess: () => void;
-}) => {
+}) {
   const { topicItem, onClose, onDeleteSuccess } = props;
   const { mutate, isLoading } = useUpdateTopicItem(topicItem.topicId ?? "");
   const toast = useToast();
@@ -87,4 +87,4 @@ export const DeleteTopicItemModal = (props: {
       </ModalContent>
     </Modal>
   );
-};
+}

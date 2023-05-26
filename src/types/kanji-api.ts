@@ -12,12 +12,12 @@ export type KanjiApiKanji = {
 };
 export type KanjiApiGrades = 1 | 2 | 3 | 4 | 5 | 6 | 8;
 export type KanjiApiKanjiLists =
-  | "joyo"
-  | "jouyou"
-  | "jinyou"
-  | "jinmeiyou"
+  | 'joyo'
+  | 'jouyou'
+  | 'jinyou'
+  | 'jinmeiyou'
   | `grade-${KanjiApiGrades}`
-  | `all`;
+  | 'all';
 
 export type KanjiApiWord = {
   meanings: {

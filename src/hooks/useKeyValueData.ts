@@ -1,14 +1,14 @@
-import { UseQueryResult } from "@tanstack/react-query";
-import { UseMutationResult } from "@tanstack/react-query";
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { db } from "../utils/db";
+import {
+  UseMutationResult, UseQueryResult, useMutation, useQuery, useQueryClient,
+} from '@tanstack/react-query';
+import { db } from '../utils/db';
 
 export const useKeyValueData = <T extends object | string | number>(
   key: string,
-  defaultValue: T
+  defaultValue: T,
 ) => {
   const queryClient = useQueryClient();
-  const data = useQuery(["fetchKeyData", key], async () => {
+  const data = useQuery(['fetchKeyData', key], async () => {
     try {
       const data = await db?.keyValues.get(key);
       if (!data) {
@@ -28,9 +28,9 @@ export const useKeyValueData = <T extends object | string | number>(
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["fetchKeyData", key]);
+        queryClient.invalidateQueries(['fetchKeyData', key]);
       },
-    }
+    },
   );
 
   return [data ?? {}, setData ?? {}] as [UseQueryResult<T>, UseMutationResult];

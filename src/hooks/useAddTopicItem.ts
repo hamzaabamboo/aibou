@@ -1,7 +1,7 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { nanoid } from "nanoid";
-import { JishoWord } from "../types/jisho";
-import { db } from "../utils/db";
+import { useMutation, useQueryClient } from '@tanstack/react-query';
+import { nanoid } from 'nanoid';
+import { JishoWord } from '../types/jisho';
+import { db } from '../utils/db';
 
 export const useAddTopicItem = (topicId: string) => {
   const queryClient = useQueryClient();
@@ -20,13 +20,15 @@ export const useAddTopicItem = (topicId: string) => {
         await db?.topics.update(isNaN(idNumber) ? topicId : idNumber, {
           lastUpdatedAt: new Date(),
         });
-      } catch (e) {}
+      } catch (e) {
+        console.error('Error adding')
+      }
     },
     {
       onSuccess: () => {
-        queryClient.invalidateQueries(["fetchTopicItems", topicId]);
-        queryClient.invalidateQueries(["fetchLastUpdatedTopics"]);
+        queryClient.invalidateQueries(['fetchTopicItems', topicId]);
+        queryClient.invalidateQueries(['fetchLastUpdatedTopics']);
       },
-    }
+    },
   );
 };

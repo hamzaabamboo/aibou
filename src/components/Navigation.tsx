@@ -1,9 +1,11 @@
-import { HStack, Icon, IconButton, Text } from "@chakra-ui/react";
-import { RepeatIcon } from "@chakra-ui/icons";
-import { useRouter } from "next/router";
-import { useSyncData } from "../hooks/useSyncData";
+import {
+  HStack, Icon, IconButton, Text,
+} from '@chakra-ui/react';
+import { RepeatIcon } from '@chakra-ui/icons';
+import { useRouter } from 'next/router';
+import { useSyncData } from '../hooks/useSyncData';
 
-export const Navigation = () => {
+export function Navigation() {
   const router = useRouter();
   const { syncEnabled, sync } = useSyncData();
   return (
@@ -16,12 +18,12 @@ export const Navigation = () => {
       alignItems="center"
       shadow="md"
     >
-      <Text fontSize="3xl" fontWeight="bold" onClick={() => router.push("/")}>
+      <Text fontSize="3xl" fontWeight="bold" onClick={() => router.push('/')}>
         相棒
       </Text>
       <HStack cursor="pointer">
-        <Text onClick={() => router.push("/topics")}>Topics</Text>
-        <Text onClick={() => router.push("/settings")}>Settings</Text>
+        <Text onClick={() => router.push('/topics')}>Topics</Text>
+        <Text onClick={() => router.push('/settings')}>Settings</Text>
         {syncEnabled && (
           <IconButton
             aria-label="sync"
@@ -32,4 +34,4 @@ export const Navigation = () => {
       </HStack>
     </HStack>
   );
-};
+}

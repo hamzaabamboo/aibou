@@ -7,36 +7,33 @@ import {
   Spinner,
   Stack,
   Text,
-} from "@chakra-ui/react";
-import debounce from "lodash/debounce";
-import React from "react";
-import { useCallback, useEffect, useState } from "react";
-import { useJishoSearch } from "../hooks/useJishoSearch";
-import { JishoWord } from "../types/jisho";
-import { KanjiDisplay } from "./KanjiDisplay";
-import { SearchResultItem } from "./SearchResultItem";
-import { similarity } from "../utils/stringSimilarity";
-import orderBy from "lodash/orderBy";
+} from '@chakra-ui/react';
+import debounce from 'lodash/debounce';
+import React, { useCallback, useEffect, useState } from 'react';
+import orderBy from 'lodash/orderBy';
+import { useJishoSearch } from '../hooks/useJishoSearch';
+import { JishoWord } from '../types/jisho';
+import { similarity } from '../utils/stringSimilarity';
+import { KanjiDisplay } from './KanjiDisplay';
+import { SearchResultItem } from './SearchResultItem';
 
-export const JishoSearch = (
-  props: {
-    inputSize?: "small" | "large";
+export function JishoSearch(props: {
+    inputSize?: 'small' | 'large';
     onSelectItem: (word: JishoWord) => void;
     isPopup?: boolean;
     isShowPopup?: boolean;
     setShowPopup?: (status: boolean) => void;
-  } & BoxProps
-) => {
+  } & BoxProps) {
   const {
-    inputSize = "large",
+    inputSize = 'large',
     onSelectItem,
     isPopup = false,
     isShowPopup = true,
     setShowPopup,
     ...boxProps
   } = props;
-  const [input, setInput] = useState("");
-  const [keyword, _setKeyword] = useState("");
+  const [input, setInput] = useState('');
+  const [keyword, _setKeyword] = useState('');
   const setKeyword = useCallback(debounce(_setKeyword, 1000), [_setKeyword]);
   const { data, isLoading } = useJishoSearch(keyword);
 
@@ -56,23 +53,20 @@ export const JishoSearch = (
       {data?.map((item) => {
         const sortedReadings = input
           ? orderBy(
-              item.japanese,
-              (w) =>
-                Math.max(
-                  w.word ? similarity(w.word, input) : -Infinity,
-                  w.reading ? similarity(w.reading, input) : -Infinity
-                ),
-              "desc"
-            )
+            item.japanese,
+            (w) => Math.max(
+              w.word ? similarity(w.word, input) : -Infinity,
+              w.reading ? similarity(w.reading, input) : -Infinity,
+            ),
+            'desc',
+          )
           : item.japanese;
 
         return (
           <React.Fragment key={item.slug}>
             <SearchResultItem
               item={{ ...item, japanese: sortedReadings }}
-              onClick={() =>
-                onSelectItem({ ...item, japanese: sortedReadings })
-              }
+              onClick={() => onSelectItem({ ...item, japanese: sortedReadings })}
               isCard={!isPopup}
             />
             {isPopup && <Divider />}
@@ -83,7 +77,7 @@ export const JishoSearch = (
   );
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Escape") setShowPopup?.(false);
+    if (e.key === 'Escape') setShowPopup?.(false);
   };
 
   return (
@@ -92,8 +86,8 @@ export const JishoSearch = (
         p={2}
         width="full"
         value={input}
-        fontSize={inputSize === "large" ? "4xl" : "lg"}
-        fontWeight={inputSize === "large" ? "bold" : "semibold"}
+        fontSize={inputSize === 'large' ? '4xl' : 'lg'}
+        fontWeight={inputSize === 'large' ? 'bold' : 'semibold'}
         onFocus={() => setShowPopup?.(true)}
         onChange={(e) => setInput(e.currentTarget.value)}
         onKeyUp={(e) => handleKeyPress(e)}
@@ -102,11 +96,11 @@ export const JishoSearch = (
       {keyword.length > 0 && !isLoading && isShowPopup && (
         <Box
           background="white"
-          position={isPopup ? "absolute" : "initial"}
-          p={isPopup ? "2" : "0"}
+          position={isPopup ? 'absolute' : 'initial'}
+          p={isPopup ? '2' : '0'}
           w="full"
           borderRadius="md"
-          shadow={isPopup ? "md" : "none"}
+          shadow={isPopup ? 'md' : 'none'}
           zIndex={2}
         >
           {!isPopup && (
@@ -119,4 +113,4 @@ export const JishoSearch = (
       )}
     </Box>
   );
-};
+}

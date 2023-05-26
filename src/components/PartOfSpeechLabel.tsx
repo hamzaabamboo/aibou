@@ -1,45 +1,45 @@
-import { Tag } from "@chakra-ui/react";
-import { PartOfSpeech } from "../types/jisho";
+import { Tag } from '@chakra-ui/react';
+import { PartOfSpeech } from '../types/jisho';
 
 export const parsePartOfSpeech = (partOfSpeech: PartOfSpeech) => {
   switch (partOfSpeech) {
     case PartOfSpeech.Noun:
-      return "n";
+      return 'n';
     case PartOfSpeech.PrenominallyNoun:
     case PartOfSpeech.NounWithNo:
       return null;
     case PartOfSpeech.SuruVerb:
     case PartOfSpeech.SuruVerbIncluded:
-      return "v-する";
+      return 'v-する';
     case PartOfSpeech.IchidanVerb:
-      return "v-る";
+      return 'v-る';
     case PartOfSpeech.GodanVerU:
     case PartOfSpeech.GodanVerbMu:
     case PartOfSpeech.GodanVerbSu:
     case PartOfSpeech.GodanVerbRu:
-      return "v-いる";
+      return 'v-いる';
     case PartOfSpeech.TransitiveVerb:
-      return "自";
+      return '自';
     case PartOfSpeech.IntransitiveVerb:
-      return "他";
+      return '他';
     case PartOfSpeech.IAdj:
-      return "い-adj";
+      return 'い-adj';
     case PartOfSpeech.OldNaAdj:
     case PartOfSpeech.NaAdj:
-      return "な-adj";
+      return 'な-adj';
     case PartOfSpeech.Adverb:
-      return "adv";
+      return 'adv';
     case PartOfSpeech.AdverbTo:
-      return "と-adv";
+      return 'と-adv';
     case PartOfSpeech.Expressions:
-      return "Expressions";
+      return 'Expressions';
     case PartOfSpeech.WikipediaDefinition:
-      return "wiki";
+      return 'wiki';
     default:
       return partOfSpeech;
   }
 };
-export const PartOfSpeechLabel = (props: { partOfSpeech: PartOfSpeech }) => {
+export function PartOfSpeechLabel(props: { partOfSpeech: PartOfSpeech }) {
   const { partOfSpeech } = props;
 
   const text = parsePartOfSpeech(partOfSpeech);
@@ -49,7 +49,7 @@ export const PartOfSpeechLabel = (props: { partOfSpeech: PartOfSpeech }) => {
       case PartOfSpeech.Noun:
       case PartOfSpeech.NounWithNo:
       case PartOfSpeech.PrenominallyNoun:
-        return "green";
+        return 'green';
       case PartOfSpeech.SuruVerb:
       case PartOfSpeech.SuruVerbIncluded:
       case PartOfSpeech.IchidanVerb:
@@ -59,24 +59,24 @@ export const PartOfSpeechLabel = (props: { partOfSpeech: PartOfSpeech }) => {
       case PartOfSpeech.GodanVerbRu:
       case PartOfSpeech.TransitiveVerb:
       case PartOfSpeech.IntransitiveVerb:
-        return "purple";
+        return 'purple';
       case PartOfSpeech.IAdj:
       case PartOfSpeech.NaAdj:
       case PartOfSpeech.OldNaAdj:
-        return "yellow";
+        return 'yellow';
       case PartOfSpeech.Adverb:
       case PartOfSpeech.AdverbTo:
-        return "cyan";
+        return 'cyan';
       case PartOfSpeech.Expressions:
-        return "red";
+        return 'red';
       case PartOfSpeech.WikipediaDefinition:
-        return "wiki.";
+        return 'wiki.';
       default:
-        return "gray";
+        return 'gray';
     }
   })();
 
   if (!text) return null;
 
   return <Tag colorScheme={color}>{text}</Tag>;
-};
+}
