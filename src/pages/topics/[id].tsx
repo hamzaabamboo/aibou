@@ -252,6 +252,7 @@ const TopicDetailPage: NextPage = () => {
                             word={word}
                             showMeaning={showMeaning}
                             item={jishoData}
+                            showCopy
                           />
                           <Divider />
                         </GridItem>
