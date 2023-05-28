@@ -6,14 +6,14 @@ import {
   Link,
   Stack,
   Text,
-} from '@chakra-ui/react';
-import type { NextPage } from 'next';
-import format from 'date-fns/format';
-import { useEffect } from 'react';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-import { JishoSearch } from '../components/JishoSearch';
-import { useSyncData } from '../hooks/useSyncData';
-import { useLastUpdatedTopics } from '../hooks/useLastUpdatedTopics';
+} from "@chakra-ui/react";
+import format from "date-fns/format";
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import type { NextPage } from "next";
+import { useEffect } from "react";
+import { OfflineSearch } from "../components/OfflineSearch";
+import { useLastUpdatedTopics } from "../hooks/useLastUpdatedTopics";
+import { useSyncData } from "../hooks/useSyncData";
 
 const Home: NextPage = () => {
   const { data: lastUpdatedTopics, refetch } = useLastUpdatedTopics();
@@ -29,18 +29,14 @@ const Home: NextPage = () => {
       <Stack justifyContent="center" alignItems="center" h="full" pt="8">
         <Heading>相棒/ Aibou</Heading>
         <Text>Japanese-language learning companion</Text>
-        <JishoSearch onSelectItem={console.log} />
+        {/* <JishoSearch onSelectItem={console.log} /> */}
+        <OfflineSearch />
         {syncEnabled && (
           <HStack>
             <Text>
-              Last Synced At:
-              {' '}
-              {format(new Date(lastSyncedTime), 'dd/MM/yyyy HH:mm')}
-              {' '}
-              (
-              {formatDistanceToNow(new Date(lastSyncedTime))}
-              {' '}
-              ago)
+              Last Synced At:{" "}
+              {format(new Date(lastSyncedTime), "dd/MM/yyyy HH:mm")} (
+              {formatDistanceToNow(new Date(lastSyncedTime))} ago)
             </Text>
             <Link onClick={() => sync()}>
               <Text color="blue.400">Sync Now</Text>
@@ -54,7 +50,7 @@ const Home: NextPage = () => {
                 shadow="md"
                 rounded="md"
                 p={2}
-                _hover={{ textDecoration: 'none' }}
+                _hover={{ textDecoration: "none" }}
               >
                 <Text fontSize="2xl" fontWeight="bold">
                   {topic.name}

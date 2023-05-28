@@ -4,38 +4,34 @@ export const useDownloadOfflineDictionary = () => {
   const [error, setError] = useState();
   const [isProcessing, setProcessing] = useState(false);
   const [progress, setProgress] = useState(0);
+  const [isDBDownloaded, setIsDBDownloaded] = useState(false);
   const [progressText, setProgressText] = useState('');
   const worker = useRef<Worker>();
-
+  
   useEffect(() => {
-    worker.current = new Worker(
-      new URL('../workers/downloadDictionary.ts', import.meta.url),
-    );
+    worker.current = new Worker(new URL('../workers/initdb.worker.ts', import.meta.url));
     worker.current.onmessage = async ({ data }) => {
-      const { default: untar } = await import('js-untar');
       switch (data.type) {
         case 'error':
           break;
+        case 'message': 
+        setProgressText(data.value)
+          break;
         case 'downloadProgress':
-          setProgressText('downloading');
+          setProgressText('Downloading...');
           setProgress(data.value);
           break;
-        case 'downloadCompleted':{
-          setProgressText('downloading');
-          worker.current?.postMessage({
-            type: 'extract',
-            data: (await untar(data.value as Uint8Array))[0].buffer,
-          });
+        case 'checkResult':
+          setIsDBDownloaded(data.value)
           break;
-        }
-        case 'extractComplete':
-          setProgressText('Download Completed');
-          break;
-        case 'completed':
-          setProgressText('Import data Completed');
+        default:
+          console.log(data);
           break;
       }
     };
+    worker.current.postMessage({
+      type: 'check'
+    })
     return () => {
       worker.current?.terminate();
     };
@@ -48,6 +44,6 @@ export const useDownloadOfflineDictionary = () => {
     });
   };
   return {
-    download, error, progress, progressText,
+    download, error, progress, progressText,isDBDownloaded
   };
 };

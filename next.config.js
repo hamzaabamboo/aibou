@@ -10,4 +10,10 @@ module.exports = withPWA({
 })({
   reactStrictMode: true,
   swcMinify: true,
+  webpack: (config) => {
+    config.resolve.fallback = { fs: false };
+    config.experiments.syncWebAssembly = true;
+    return config;
+  },
+  transpilePackages: ['absurd-sql'],
 });

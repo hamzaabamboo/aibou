@@ -5,21 +5,19 @@ import {
   Heading,
   Stack,
   Text,
-} from '@chakra-ui/react';
-import type { NextPage } from 'next';
-import { format } from 'date-fns';
-import formatDistanceToNow from 'date-fns/formatDistanceToNow';
-import { JishoSearch } from '../components/JishoSearch';
-import { useDownloadOfflineDictionary } from '../hooks/useDownloadOfflineDictionary';
-import { useLastUpdatedTime } from '../hooks/useLastUpdatedTime';
-import { useLocalStorage } from '../hooks/useLocalStorage';
-import { SyncSettings } from '../components/SyncSettings';
-import { useSyncData } from '../hooks/useSyncData';
-import { useKeyValueData } from '../hooks/useKeyValueData';
+} from "@chakra-ui/react";
+import { format } from "date-fns";
+import formatDistanceToNow from "date-fns/formatDistanceToNow";
+import type { NextPage } from "next";
+import { SyncSettings } from "../components/SyncSettings";
+import { useDownloadOfflineDictionary } from "../hooks/useDownloadOfflineDictionary";
+import { useKeyValueData } from "../hooks/useKeyValueData";
+import { useSyncData } from "../hooks/useSyncData";
 
 const Home: NextPage = () => {
-  const { download } = useDownloadOfflineDictionary();
-  const [{ data: lastSyncedTime }] = useKeyValueData('lastSyncedTime', 0);
+  const { download, isDBDownloaded, progressText } =
+    useDownloadOfflineDictionary();
+  const [{ data: lastSyncedTime }] = useKeyValueData("lastSyncedTime", 0);
   const { sync, syncEnabled } = useSyncData();
 
   return (
@@ -32,14 +30,9 @@ const Home: NextPage = () => {
               <Text>Sync Data (Experimental)</Text>
               {lastSyncedTime && (
                 <Text>
-                  Last updated at :
-                  {' '}
-                  {format(new Date(lastSyncedTime), 'dd/MM/yyyy HH:mm')}
-                  {' '}
-                  (
-                  {formatDistanceToNow(new Date(lastSyncedTime))}
-                  {' '}
-                  ago)
+                  Last updated at :{" "}
+                  {format(new Date(lastSyncedTime), "dd/MM/yyyy HH:mm")} (
+                  {formatDistanceToNow(new Date(lastSyncedTime))} ago)
                 </Text>
               )}
             </Stack>
@@ -62,10 +55,15 @@ const Home: NextPage = () => {
             </Button>
           </HStack>
           <HStack justifyContent="space-between">
+            isDBDownloaded
             <Text>Download offline dictionary (Work in progress)</Text>
-            <Button isDisabled onClick={() => download()}>
-              Download
-            </Button>
+            {isDBDownloaded ? (
+              <Text>Already downloaded</Text>
+            ) : (
+              <Button isDisabled={isDBDownloaded} onClick={() => download()}>
+                Download
+              </Button>
+            )}
           </HStack>
         </Stack>
       </Stack>
