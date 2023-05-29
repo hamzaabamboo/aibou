@@ -9,7 +9,7 @@ export const useDownloadOfflineDictionary = () => {
   const worker = useRef<Worker>();
   
   useEffect(() => {
-    worker.current = new Worker(new URL('../workers/initdb.worker.ts', import.meta.url));
+    worker.current = new Worker(new URL('../workers/initdb-worker.ts', import.meta.url));
     worker.current.onmessage = async ({ data }) => {
       switch (data.type) {
         case 'error':
