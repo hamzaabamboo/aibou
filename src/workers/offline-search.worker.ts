@@ -6,6 +6,7 @@ import { getOfflineSearchSQL } from '../utils/sql/getOfflineSearchSQL';
 let isInitialized = false;
 let indexedDB: DictionaryDB|undefined = undefined; 
 let db: Database | undefined;
+let tagsData: Record<string,string> = undefined;
 
 const loadDictionaryFile = async () => {
     const db = indexedDB ? indexedDB : await initDictionaryDB() 
@@ -60,8 +61,11 @@ addEventListener('message', async ({ type,data }: MessageEvent<WorkerMessage>) =
           console.time("Offline Search")
            if (!db) db = await init();
             const res = await db.exec(getOfflineSearchSQL(data.data), { $searchTerm:`${data.data}`})
+            if (!tagsData) {
+              tagsData = Object.fromEntries(await db.exec('SELECT * FROM tags')[0].values)
+            }
             console.timeEnd("Offline Search")
-            postMessage({ type: 'searchWordResult', data: parseOfflineDBResult(res)})
+            postMessage({ type: 'searchWordResult', data: parseOfflineDBResult(res, tagsData)})
          break;   
         }
     }
