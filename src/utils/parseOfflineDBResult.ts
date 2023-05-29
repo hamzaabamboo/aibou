@@ -1,4 +1,7 @@
-import { groupBy, sortBy, uniq, values } from "lodash";
+import groupBy from 'lodash/groupBy';
+import sortBy from 'lodash/sortBy';
+import uniq from 'lodash/uniq';
+import values from 'lodash/values';
 import { SqlValue } from "sql.js";
 import { JishoWord } from "../types/jisho";
 

@@ -7,8 +7,8 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { orderBy } from "lodash";
 import debounce from "lodash/debounce";
+import orderBy from "lodash/orderBy";
 import React, { useCallback, useEffect, useState } from "react";
 import { useOfflineDictionary } from "../hooks/useOfflineDictionary";
 import { similarity } from "../utils/stringSimilarity";

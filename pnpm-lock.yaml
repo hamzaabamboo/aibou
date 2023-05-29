@@ -43,9 +43,6 @@ dependencies:
   dexie-react-hooks:
     specifier: ^1.1.3
     version: 1.1.3(@types/react@18.0.17)(dexie@3.2.3)(react@18.2.0)
-  dexie-relationships:
-    specifier: ^1.2.11
-    version: 1.2.11(dexie@3.2.3)
   framer-motion:
     specifier: ^7.10.3
     version: 7.10.3(react-dom@18.2.0)(react@18.2.0)
@@ -3720,14 +3717,6 @@ packages:
       '@types/react': 18.0.17
       dexie: 3.2.3
       react: 18.2.0
-    dev: false
-
-  /dexie-relationships@1.2.11(dexie@3.2.3):
-    resolution: {integrity: sha512-dptIUMiCiEPnSPyZno6yOrmFo+xf0Y1PVC4LX2HO/VgPAYIoaf/wMcC7mbna+RMZ6wRIOEb4T+lgR5v21q2EnA==}
-    peerDependencies:
-      dexie: ^2.0.0-beta.10
-    dependencies:
-      dexie: 3.2.3
     dev: false
 
   /dexie@3.2.3:

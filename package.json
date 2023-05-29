@@ -23,7 +23,6 @@
     "date-fns": "^2.30.0",
     "dexie": "^3.2.3",
     "dexie-react-hooks": "^1.1.3",
-    "dexie-relationships": "^1.2.11",
     "framer-motion": "^7.10.3",
     "i18next": "^21.10.0",
     "jotai": "^1.13.1",
