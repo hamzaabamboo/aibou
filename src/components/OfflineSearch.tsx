@@ -1,6 +1,5 @@
 import {
   Box,
-  BoxProps,
   Divider,
   Heading,
   Input,
@@ -12,19 +11,11 @@ import { orderBy } from "lodash";
 import debounce from "lodash/debounce";
 import React, { useCallback, useEffect, useState } from "react";
 import { useOfflineDictionary } from "../hooks/useOfflineDictionary";
-import { JishoWord } from "../types/jisho";
 import { similarity } from "../utils/stringSimilarity";
+import { SearchProps } from "./Search";
 import { SearchResultItem } from "./SearchResultItem";
 
-export function OfflineSearch(
-  props: {
-    inputSize?: "small" | "large";
-    onSelectItem: (word: JishoWord) => void;
-    isPopup?: boolean;
-    isShowPopup?: boolean;
-    setShowPopup?: (status: boolean) => void;
-  } & BoxProps
-) {
+export function OfflineSearch(props: SearchProps) {
   const {
     inputSize = "large",
     onSelectItem,
@@ -36,9 +27,7 @@ export function OfflineSearch(
   const [input, setInput] = useState("");
   const [keyword, _setKeyword] = useState("");
   const setKeyword = useCallback(debounce(_setKeyword, 1000), [_setKeyword]);
-  const {
-    data: { data, isLoading },
-  } = useOfflineDictionary(keyword);
+  const { data, isLoading } = useOfflineDictionary(keyword);
   useEffect(() => {
     if (input !== keyword) {
       setKeyword(input);

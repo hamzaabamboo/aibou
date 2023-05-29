@@ -11,7 +11,7 @@ import format from "date-fns/format";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import type { NextPage } from "next";
 import { useEffect } from "react";
-import { OfflineSearch } from "../components/OfflineSearch";
+import { Search } from "../components/Search";
 import { useLastUpdatedTopics } from "../hooks/useLastUpdatedTopics";
 import { useSyncData } from "../hooks/useSyncData";
 
@@ -29,8 +29,7 @@ const Home: NextPage = () => {
       <Stack justifyContent="center" alignItems="center" h="full" pt="8">
         <Heading>相棒/ Aibou</Heading>
         <Text>Japanese-language learning companion</Text>
-        {/* <JishoSearch onSelectItem={console.log} /> */}
-        <OfflineSearch onSelectItem={console.log} />
+        <Search onSelectItem={console.log} />
         {syncEnabled && (
           <HStack>
             <Text>

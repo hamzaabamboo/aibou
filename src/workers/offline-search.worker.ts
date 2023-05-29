@@ -55,7 +55,7 @@ export type WorkerResponse = {
 
 init();
 
-addEventListener('message', async ({ type,data }: MessageEvent<WorkerMessage>) => {
+addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
   switch (data.type) {
         case "searchWord": {
           console.time("Offline Search")

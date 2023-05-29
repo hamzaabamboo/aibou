@@ -1,6 +1,5 @@
 import {
   Box,
-  BoxProps,
   Divider,
   Heading,
   Input,
@@ -12,19 +11,11 @@ import debounce from "lodash/debounce";
 import orderBy from "lodash/orderBy";
 import React, { useCallback, useEffect, useState } from "react";
 import { useJishoSearch } from "../hooks/useJishoSearch";
-import { JishoWord } from "../types/jisho";
 import { similarity } from "../utils/stringSimilarity";
+import { SearchProps } from "./Search";
 import { SearchResultItem } from "./SearchResultItem";
 
-export function JishoSearch(
-  props: {
-    inputSize?: "small" | "large";
-    onSelectItem: (word: JishoWord) => void;
-    isPopup?: boolean;
-    isShowPopup?: boolean;
-    setShowPopup?: (status: boolean) => void;
-  } & BoxProps
-) {
+export function JishoSearch(props: SearchProps) {
   const {
     inputSize = "large",
     onSelectItem,
