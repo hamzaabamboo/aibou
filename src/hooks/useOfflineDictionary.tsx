@@ -1,7 +1,8 @@
+import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { useDownloadOfflineDictionary } from "./useDownloadOfflineDictionary";
 
-export const useOfflineDictionary = () => {
+export const useOfflineDictionary = (keyword: string) => {
   const { isDBDownloaded } = useDownloadOfflineDictionary();
   const worker = useRef<Worker>();
 
@@ -22,7 +23,6 @@ export const useOfflineDictionary = () => {
   const search = async (searchTerm: string) =>
     new Promise((resolve) => {
       if (!worker.current) return;
-      console.log("seearch", searchTerm);
       worker.current.postMessage({
         type: "searchWord",
         data: searchTerm,
@@ -31,8 +31,8 @@ export const useOfflineDictionary = () => {
         data.type === "searchWordResult" && resolve(data.data);
     });
 
-  return {
-    search,
-    isDBDownloaded,
-  };
+  return useQuery(["offlineSearch", keyword], async () => {
+    if (!keyword) return [];
+    return search(keyword);
+  });
 };

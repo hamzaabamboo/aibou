@@ -65,8 +65,10 @@ export type WorkerResponse = {
 }
 
 addEventListener('message', async ({ type,data }: MessageEvent<WorkerMessage>) => {
+  console.log(data);
   switch (data.type) {
     case "download": {
+      console.log("Downlaod LAH!!!!")
       await loadDictionaryFile();
       const res = await checkIfDownloaded();
       postMessage({

@@ -38,6 +38,7 @@ export const useDownloadOfflineDictionary = () => {
   }, []);
 
   const download = () => {
+    console.log("Download!")
     if (isProcessing) return;
     worker.current?.postMessage({
       type: 'download',

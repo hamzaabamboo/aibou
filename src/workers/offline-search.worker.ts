@@ -1,5 +1,7 @@
 import initSqlJs, { Database } from 'sql.js';
 import { DictionaryDB, initDictionaryDB } from '../utils/dictionaryDB';
+import { parseOfflineDBResult } from '../utils/parseOfflineDBResult';
+import { getOfflineSearchSQL } from '../utils/sql/getOfflineSearchSQL';
 
 let isInitialized = false;
 let indexedDB: DictionaryDB|undefined = undefined; 
@@ -15,28 +17,30 @@ const loadDictionaryFile = async () => {
     });
         return data.data;
     }
-    throw new Error(" Dictionary not downloaded")
+    throw new Error("Dictionary not downloaded")
 }
 
-async function init() {
-  if (isInitialized) return ;
+async function init() : Database {
+  if (isInitialized) return db as Database;
+  console.log("Initializing Database")
   let SQL = await initSqlJs({ locateFile: file => `/sql-wasm.wasm` });
   const data = await loadDictionaryFile();
      postMessage({
         type: 'message',
         value: "Loading Database",
     });
-    db = new (SQL as any).Database(new Uint8Array(data));
-    if (!db) return;
-  db.exec(`
-    PRAGMA page_size=8192;
-    PRAGMA journal_mode=MEMORY;
-  `);
-  isInitialized = true;
-  return db;
+    console.log("Dictionary Loaded")
+    db = new (SQL as any).Database(new Uint8Array(data)) as Database;
+    db.exec(`
+      PRAGMA page_size=8192;
+      PRAGMA journal_mode=MEMORY;
+    `);
+    isInitialized = true;
+    console.log("Initialized")
+  return db as Database;
 }
 
-export type WorkerActions = 'searchWord'
+export type WorkerActions = 'searchWord' | 'init'
 export type WorkerMessage = {
   type: WorkerActions;
   data: any
@@ -51,12 +55,16 @@ export type WorkerResponse = {
 init();
 
 addEventListener('message', async ({ type,data }: MessageEvent<WorkerMessage>) => {
-    switch (data.type) {
+  switch (data.type) {
         case "searchWord": {
-            console.log(data)
-            const res = await db?.exec(`SELECT * FROM word_kanji WHERE text LIKE '%${data.data}%' `)
-            console.log(res)
-            postMessage({ type: 'searchWordResult', data: res[0]})
+           console.log("Start Searching")
+           if (!db) db = await init();
+           console.time()
+           console.log(getOfflineSearchSQL(data.data))
+            const res = await db.exec(getOfflineSearchSQL(data.data), { $searchTerm:`${data.data}`})
+            console.timeEnd()
+            postMessage({ type: 'searchWordResult', data: parseOfflineDBResult(res)})
+            console.log("Done")
          break;   
         }
     }

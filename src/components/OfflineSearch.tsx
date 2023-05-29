@@ -1,7 +1,6 @@
-import { Box, BoxProps, Heading, Input } from "@chakra-ui/react";
+import { Box, BoxProps, Heading, Input, Spinner, Text } from "@chakra-ui/react";
 import debounce from "lodash/debounce";
 import React, { useCallback, useEffect, useState } from "react";
-import { useJishoSearch } from "../hooks/useJishoSearch";
 import { useOfflineDictionary } from "../hooks/useOfflineDictionary";
 import { JishoWord } from "../types/jisho";
 
@@ -25,51 +24,21 @@ export function OfflineSearch(
   const [input, setInput] = useState("");
   const [keyword, _setKeyword] = useState("");
   const setKeyword = useCallback(debounce(_setKeyword, 1000), [_setKeyword]);
-  const { data, isLoading } = useJishoSearch(keyword);
-  const { search } = useOfflineDictionary();
+  const { data, isLoading } = useOfflineDictionary(keyword);
   useEffect(() => {
     if (input !== keyword) {
       setKeyword(input);
       setShowPopup?.(true);
-      console.log(search(input).then(console.log));
     }
   }, [input, keyword, setKeyword, setShowPopup]);
 
-  const searchResults = [];
-  //  isLoading ? (
-  //   <Spinner />
-  // ) : !data || data.length === 0 ? (
-  //   <Text>Keyword not found</Text>
-  // ) : (
-  //   <Stack>
-  //     {data?.map((item) => {
-  //       const sortedReadings = input
-  //         ? orderBy(
-  //             item.japanese,
-  //             (w) =>
-  //               Math.max(
-  //                 w.word ? similarity(w.word, input) : -Infinity,
-  //                 w.reading ? similarity(w.reading, input) : -Infinity
-  //               ),
-  //             "desc"
-  //           )
-  //         : item.japanese;
-
-  //       return (
-  //         <React.Fragment key={item.slug}>
-  //           <SearchResultItem
-  //             item={{ ...item, japanese: sortedReadings }}
-  //             onClick={() =>
-  //               onSelectItem({ ...item, japanese: sortedReadings })
-  //             }
-  //             isCard={!isPopup}
-  //           />
-  //           {isPopup && <Divider />}
-  //         </React.Fragment>
-  //       );
-  //     })}
-  //   </Stack>
-  // );
+  const searchResults = isLoading ? (
+    <Spinner />
+  ) : !data || data.length === 0 ? (
+    <Text>Keyword not found</Text>
+  ) : (
+    <Text>{JSON.stringify(data)}</Text>
+  );
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === "Escape") setShowPopup?.(false);
