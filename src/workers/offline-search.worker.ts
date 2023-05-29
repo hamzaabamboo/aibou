@@ -6,7 +6,7 @@ import { getOfflineSearchSQL } from '../utils/sql/getOfflineSearchSQL';
 let isInitialized = false;
 let indexedDB: DictionaryDB|undefined = undefined; 
 let db: Database | undefined;
-let tagsData: Record<string,string> = undefined;
+let tagsData: Record<string,string> | undefined = undefined;
 
 const loadDictionaryFile = async () => {
     const db = indexedDB ? indexedDB : await initDictionaryDB() 
