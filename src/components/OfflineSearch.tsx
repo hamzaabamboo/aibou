@@ -1,8 +1,20 @@
-import { Box, BoxProps, Heading, Input, Spinner, Text } from "@chakra-ui/react";
+import {
+  Box,
+  BoxProps,
+  Divider,
+  Heading,
+  Input,
+  Spinner,
+  Stack,
+  Text,
+} from "@chakra-ui/react";
+import { orderBy } from "lodash";
 import debounce from "lodash/debounce";
 import React, { useCallback, useEffect, useState } from "react";
 import { useOfflineDictionary } from "../hooks/useOfflineDictionary";
 import { JishoWord } from "../types/jisho";
+import { similarity } from "../utils/stringSimilarity";
+import { SearchResultItem } from "./SearchResultItem";
 
 export function OfflineSearch(
   props: {
@@ -37,7 +49,34 @@ export function OfflineSearch(
   ) : !data || data.length === 0 ? (
     <Text>Keyword not found</Text>
   ) : (
-    <Text>{JSON.stringify(data)}</Text>
+    <Stack>
+      {data?.map((item) => {
+        const sortedReadings = input
+          ? orderBy(
+              item.japanese,
+              (w) =>
+                Math.max(
+                  w.word ? similarity(w.word, input) : -Infinity,
+                  w.reading ? similarity(w.reading, input) : -Infinity
+                ),
+              "desc"
+            )
+          : item.japanese;
+
+        return (
+          <React.Fragment key={item.slug}>
+            <SearchResultItem
+              item={{ ...item, japanese: sortedReadings }}
+              onClick={() =>
+                onSelectItem({ ...item, japanese: sortedReadings })
+              }
+              isCard={!isPopup}
+            />
+            {isPopup && <Divider />}
+          </React.Fragment>
+        );
+      })}
+    </Stack>
   );
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {

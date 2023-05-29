@@ -57,14 +57,11 @@ init();
 addEventListener('message', async ({ type,data }: MessageEvent<WorkerMessage>) => {
   switch (data.type) {
         case "searchWord": {
-           console.log("Start Searching")
+          console.time("Offline Search")
            if (!db) db = await init();
-           console.time()
-           console.log(getOfflineSearchSQL(data.data))
             const res = await db.exec(getOfflineSearchSQL(data.data), { $searchTerm:`${data.data}`})
-            console.timeEnd()
+            console.timeEnd("Offline Search")
             postMessage({ type: 'searchWordResult', data: parseOfflineDBResult(res)})
-            console.log("Done")
          break;   
         }
     }

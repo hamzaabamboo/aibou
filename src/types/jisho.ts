@@ -1,19 +1,19 @@
 export type JishoWord = {
-  slug: string;
+  slug?: string;
   is_common: string;
   tags: string[];
-  jlpt: 'jlpt-n5' | 'jlpt-n4' | 'jlpt-n3' | 'jlpt-n2' | 'jlpt-n2';
+  jlpt?: 'jlpt-n5' | 'jlpt-n4' | 'jlpt-n3' | 'jlpt-n2' | 'jlpt-n1';
   japanese: KanjiReading[];
   senses: {
     english_definitions: string[];
     parts_of_speech: PartOfSpeech[];
-    links: string[];
+    links?: string[];
     tags: string[];
-    restrictions: string[];
-    see_also: string[];
-    antonyms: string[];
-    source: string[];
-    info: string[];
+    restrictions?: string[];
+    see_also?: string[];
+    antonyms?: string[];
+    source?: string[];
+    info?: string[];
   }[];
   attribution: {
     jmdict: boolean;

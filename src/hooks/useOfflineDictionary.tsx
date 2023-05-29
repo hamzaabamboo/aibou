@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
+import { JishoWord } from "../types/jisho";
 import { useDownloadOfflineDictionary } from "./useDownloadOfflineDictionary";
 
 export const useOfflineDictionary = (keyword: string) => {
@@ -20,7 +21,7 @@ export const useOfflineDictionary = (keyword: string) => {
     };
   }, []);
 
-  const search = async (searchTerm: string) =>
+  const search = async (searchTerm: string): Promise<JishoWord[]> =>
     new Promise((resolve) => {
       if (!worker.current) return;
       worker.current.postMessage({
