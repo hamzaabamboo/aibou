@@ -8,7 +8,7 @@ export class AibouDB extends Dexie {
 
   topicEntries!: Table<TopicItem>;
 
-  keyValues!: Table<{ key: string; value: object | string | number }>;
+  keyValues!: Table<{ key: string; value: object | string | number| boolean }>;
 
   constructor() {
     super('aibou-app');

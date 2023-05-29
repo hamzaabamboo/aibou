@@ -13,7 +13,6 @@ export const getOfflineSearchSQL = (searchTerm: string) => {
     : `SELECT DISTINCT word_kanji."wordId" FROM word_kanji
 	WHERE instr( word_kanji."text" ,  $searchTerm)
 	ORDER BY word_kanji.common DESC, length(word_kanji."text") ASC LIMIT 20`
-	console.log(subquery)
     return `SELECT temp."wordId", word_kanji."text" as "kanji",  word_kanji.common as "kanjiCommon", word_kana.common as "kanaCommon", word_kana."text" as "kana", partOfSpeech, antonym, related, field, misc, info, word_gloss.senseId,word_gloss.id as "glossId", word_gloss."type", word_gloss."text" as "meaning" FROM 
 	(${subquery}) AS temp
 	 INNER JOIN word_kanji ON word_kanji.wordId = temp.wordId

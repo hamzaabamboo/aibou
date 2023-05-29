@@ -6,19 +6,17 @@ import {
   AccordionPanel,
   HStack,
   Input,
-  Select,
   Stack,
-  Switch,
   Text,
-} from '@chakra-ui/react';
-import { filter, orderBy } from 'lodash';
-import { useKeyValueData } from '../hooks/useKeyValueData';
+} from "@chakra-ui/react";
+import { useKeyValueData } from "../hooks/useKeyValueData";
 
 export function SyncSettings() {
-  const [{ data: syncUrl, isLoading }, { mutate: setSyncUrl }] = useKeyValueData('syncUrl', '');
+  const [{ data: syncUrl, isLoading }, { mutate: setSyncUrl }] =
+    useKeyValueData("syncUrl", "");
   const [{ data: syncSecret }, { mutate: setSyncSecret }] = useKeyValueData(
-    'syncSecret',
-    '',
+    "syncSecret",
+    ""
   );
 
   return (
@@ -36,7 +34,7 @@ export function SyncSettings() {
               <Text>Sync URL:</Text>
               <Input
                 type="text"
-                value={syncUrl}
+                value={syncUrl ?? ""}
                 onChange={(e) => setSyncUrl(e.target.value)}
               />
             </HStack>
@@ -44,7 +42,7 @@ export function SyncSettings() {
               <Text>Secret Key:</Text>
               <Input
                 type="text"
-                value={syncSecret}
+                value={syncSecret ?? ""}
                 onChange={(e) => setSyncSecret(e.target.value)}
               />
             </HStack>

@@ -1,9 +1,11 @@
 import {
   Button,
   Container,
+  Divider,
   HStack,
   Heading,
   Stack,
+  Switch,
   Text,
 } from "@chakra-ui/react";
 import { format } from "date-fns";
@@ -18,6 +20,10 @@ const Home: NextPage = () => {
   const { download, isDBDownloaded, progressText } =
     useDownloadOfflineDictionary();
   const [{ data: lastSyncedTime }] = useKeyValueData("lastSyncedTime", 0);
+  const [
+    { data: offlineDictionaryEnabled },
+    { mutate: updateDictionaryEnabledStatus },
+  ] = useKeyValueData("offlineDictionaryEnabled", true);
   const { sync, syncEnabled } = useSyncData();
 
   return (
@@ -25,6 +31,7 @@ const Home: NextPage = () => {
       <Stack h="full" pt="8">
         <Heading>App Settings</Heading>
         <Stack>
+          <Heading size="xl">Sync</Heading>
           <HStack justifyContent="space-between">
             <Stack>
               <Text>Sync Data (Experimental)</Text>
@@ -54,17 +61,31 @@ const Home: NextPage = () => {
               Sync Everything
             </Button>
           </HStack>
-          <HStack justifyContent="space-between">
-            isDBDownloaded
-            <Text>Download offline dictionary (Work in progress)</Text>
-            {isDBDownloaded ? (
-              <Text>Already downloaded</Text>
-            ) : (
-              <Button isDisabled={isDBDownloaded} onClick={() => download()}>
-                Download
-              </Button>
+          <Divider />
+          <Stack>
+            <Heading size="lg">Sync Settings</Heading>
+            <HStack justifyContent="space-between">
+              <Text>Download offline dictionary (Work in progress)</Text>
+              {isDBDownloaded ? (
+                <Text>Already downloaded</Text>
+              ) : (
+                <Button isDisabled={isDBDownloaded} onClick={() => download()}>
+                  Download
+                </Button>
+              )}
+            </HStack>
+            {isDBDownloaded && (
+              <HStack justifyContent="space-between">
+                <Text>Enable Offline Dictionary</Text>
+                <Switch
+                  isChecked={offlineDictionaryEnabled}
+                  onChange={(e) =>
+                    updateDictionaryEnabledStatus(e.target.checked)
+                  }
+                />
+              </HStack>
             )}
-          </HStack>
+          </Stack>
         </Stack>
       </Stack>
     </Container>

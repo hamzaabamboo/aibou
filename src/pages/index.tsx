@@ -30,7 +30,7 @@ const Home: NextPage = () => {
         <Heading>相棒/ Aibou</Heading>
         <Text>Japanese-language learning companion</Text>
         {/* <JishoSearch onSelectItem={console.log} /> */}
-        <OfflineSearch />
+        <OfflineSearch onSelectItem={console.log} />
         {syncEnabled && (
           <HStack>
             <Text>

@@ -91,6 +91,9 @@ dependencies:
   untar:
     specifier: ^0.2.9
     version: 0.2.9
+  wanakana:
+    specifier: ^5.1.0
+    version: 5.1.0
 
 devDependencies:
   '@types/jlongster__sql.js':
@@ -114,6 +117,9 @@ devDependencies:
   '@types/sql.js':
     specifier: ^1.4.4
     version: 1.4.4
+  '@types/wanakana':
+    specifier: ^4.0.3
+    version: 4.0.3
   eslint:
     specifier: 8.23.0
     version: 8.23.0
@@ -2957,6 +2963,10 @@ packages:
   /@types/trusted-types@2.0.3:
     resolution: {integrity: sha512-NfQ4gyz38SL8sDNrSixxU2Os1a5xcdFxipAFxYEuLUlvU2uDwS4NUpsImcf1//SlWItCVMMLiylsxbmNMToV/g==}
     dev: false
+
+  /@types/wanakana@4.0.3:
+    resolution: {integrity: sha512-AibaWzahBKizxmsAy8rEWSIqqcT0v9KZTS8S6zPLmStGBFdccYfXydhgwYOV+6lGqQ890MpA4h2MPET3uPk9Zg==}
+    dev: true
 
   /@typescript-eslint/parser@5.59.6(eslint@8.23.0)(typescript@4.8.2):
     resolution: {integrity: sha512-7pCa6al03Pv1yf/dUg/s1pXz/yGMUBAw5EeWqNTFiSueKvRNonze3hma3lhdsOrQcaOXhbk5gKu2Fludiho9VA==}
@@ -6277,6 +6287,11 @@ packages:
   /void-elements@3.1.0:
     resolution: {integrity: sha512-Dhxzh5HZuiHQhbvTW9AMetFfBHDMYpo23Uo9btPXgdYP+3T5S+p+jgNy7spra+veYhBP2dCSgxR/i2Y02h5/6w==}
     engines: {node: '>=0.10.0'}
+    dev: false
+
+  /wanakana@5.1.0:
+    resolution: {integrity: sha512-QJ5XNTqL5gM1JR2ikESMi+xKx16TIuZDynj6LagqK4YCWnRihtxprzCnVI1SappWI8RuiSAANGoePEV5pptiiQ==}
+    engines: {node: '>=12'}
     dev: false
 
   /watchpack@2.4.0:

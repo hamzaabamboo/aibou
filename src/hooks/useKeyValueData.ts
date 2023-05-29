@@ -3,7 +3,7 @@ import {
 } from '@tanstack/react-query';
 import { db } from '../utils/db';
 
-export const useKeyValueData = <T extends object | string | number>(
+export const useKeyValueData = <T extends object | string | number | boolean>(
   key: string,
   defaultValue: T,
 ) => {

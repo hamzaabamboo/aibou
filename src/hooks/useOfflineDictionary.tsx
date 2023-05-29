@@ -2,11 +2,17 @@ import { useQuery } from "@tanstack/react-query";
 import { useEffect, useRef } from "react";
 import { JishoWord } from "../types/jisho";
 import { useDownloadOfflineDictionary } from "./useDownloadOfflineDictionary";
+import { useKeyValueData } from "./useKeyValueData";
 
 export const useOfflineDictionary = (keyword: string) => {
   const { isDBDownloaded } = useDownloadOfflineDictionary();
+  const [
+    { data: offlineDictionaryEnabled },
+    { mutate: updateDictionaryEnabledStatus },
+  ] = useKeyValueData("offlineDictionaryEnabled", true);
   const worker = useRef<Worker>();
 
+  const isAvailable = isDBDownloaded && (offlineDictionaryEnabled ?? false);
   useEffect(() => {
     worker.current = new Worker(
       new URL("../workers/offline-search.worker.ts", import.meta.url)
@@ -32,8 +38,11 @@ export const useOfflineDictionary = (keyword: string) => {
         data.type === "searchWordResult" && resolve(data.data);
     });
 
-  return useQuery(["offlineSearch", keyword], async () => {
-    if (!keyword) return [];
-    return search(keyword);
-  });
+  return {
+    isAvailable,
+    data: useQuery(["offlineSearch", keyword], async () => {
+      if (!keyword) return [];
+      return search(keyword);
+    }),
+  };
 };

@@ -1,4 +1,5 @@
 import initSqlJs, { Database } from 'sql.js';
+import { isRomaji, toKana } from 'wanakana';
 import { DictionaryDB, initDictionaryDB } from '../utils/dictionaryDB';
 import { parseOfflineDBResult } from '../utils/parseOfflineDBResult';
 import { getOfflineSearchSQL } from '../utils/sql/getOfflineSearchSQL';
@@ -21,9 +22,8 @@ const loadDictionaryFile = async () => {
     throw new Error("Dictionary not downloaded")
 }
 
-async function init() : Database {
+async function init() : Promise<Database> {
   if (isInitialized) return db as Database;
-  console.log("Initializing Database")
   let SQL = await initSqlJs({ locateFile: file => `/sql-wasm.wasm` });
   const data = await loadDictionaryFile();
      postMessage({
@@ -60,12 +60,13 @@ addEventListener('message', async ({ type,data }: MessageEvent<WorkerMessage>) =
         case "searchWord": {
           console.time("Offline Search")
            if (!db) db = await init();
-            const res = await db.exec(getOfflineSearchSQL(data.data), { $searchTerm:`${data.data}`})
+            const searchTerm = isRomaji(data.data) && /^[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f]+$/.test(toKana(data.data)) ? toKana(data.data) : data.data
+            const res = await db.exec(getOfflineSearchSQL(searchTerm), { $searchTerm:`${searchTerm}`})
             if (!tagsData) {
               tagsData = Object.fromEntries(await db.exec('SELECT * FROM tags')[0].values)
             }
             console.timeEnd("Offline Search")
-            postMessage({ type: 'searchWordResult', data: parseOfflineDBResult(res, tagsData)})
+            postMessage({ type: 'searchWordResult', data: parseOfflineDBResult(res, tagsData!)})
          break;   
         }
     }

@@ -36,7 +36,9 @@ export function OfflineSearch(
   const [input, setInput] = useState("");
   const [keyword, _setKeyword] = useState("");
   const setKeyword = useCallback(debounce(_setKeyword, 1000), [_setKeyword]);
-  const { data, isLoading } = useOfflineDictionary(keyword);
+  const {
+    data: { data, isLoading },
+  } = useOfflineDictionary(keyword);
   useEffect(() => {
     if (input !== keyword) {
       setKeyword(input);
