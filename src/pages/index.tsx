@@ -74,6 +74,7 @@ const Home: NextPage = () => {
             jishoData: selectedWord,
           }}
           onClose={() => setSelectedWord(undefined)}
+          isAddable
         />
       )}
     </>

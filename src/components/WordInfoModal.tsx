@@ -15,8 +15,12 @@ import {
   Select,
   Stack,
   Text,
+  useToast,
 } from "@chakra-ui/react";
+import { useRouter } from "next/router";
 import { useState } from "react";
+import { useAddTopicItem } from "../hooks/useAddTopicItem";
+import { useGetTopicsList } from "../hooks/useGetTopicsList";
 import { useUpdateTopicItem } from "../hooks/useUpdateTopicItem";
 import { JishoWord } from "../types/jisho";
 import { TopicItem } from "../types/topic";
@@ -29,11 +33,24 @@ export function WordInfoModal(props: {
   isOpen: boolean;
   onClose: () => void;
   isEditable?: boolean;
+  isAddable?: boolean;
 }) {
-  const { isOpen, onClose, item, isEditable = false } = props;
+  const {
+    isOpen,
+    onClose,
+    item,
+    isEditable = false,
+    isAddable = false,
+  } = props;
   const [isDeleting, setDeleting] = useState(false);
+  const [topicIDToAdd, setTopicIDToAdd] = useState<string | undefined>();
 
-  const { mutate: updateTopicItem } = useUpdateTopicItem(item.topicId);
+  const { mutate: updateTopicItem, isLoading: isLoadingTopics } =
+    useUpdateTopicItem();
+  const { data: topics } = useGetTopicsList();
+  const { mutate: addTopicItem, isLoading } = useAddTopicItem();
+  const { push } = useRouter();
+  const toast = useToast();
 
   const handleChangeReading = (index: number) => {
     updateTopicItem({
@@ -52,6 +69,32 @@ export function WordInfoModal(props: {
             : item.jishoData?.japanese ?? [],
       },
     });
+  };
+
+  const handleAddToTopic = async () => {
+    const word =
+      item.jishoData?.japanese[0].word ?? item.jishoData?.japanese[0].reading;
+    const topicId = topicIDToAdd ?? topics?.[0].id;
+    if (!topicId || isLoading || !item?.jishoData || !word) return;
+
+    await addTopicItem(
+      {
+        topicId,
+        word,
+        jishoData: item.jishoData,
+      },
+      {
+        onSuccess: () => {
+          push(`/topics/${topicId}`);
+        },
+        onError: (error) => {
+          toast({
+            status: "warning",
+            title: (error as Error).message,
+          });
+        },
+      }
+    );
   };
 
   return (
@@ -130,6 +173,31 @@ export function WordInfoModal(props: {
                         </option>
                       ))}
                     </Select>
+                  </HStack>
+                </Stack>
+              )}
+              {isAddable && (
+                <Stack>
+                  <Heading size="md">Add to topic</Heading>
+                  <HStack>
+                    <Text>Select Topic:</Text>
+                    <Select
+                      isDisabled={isLoadingTopics}
+                      value={topicIDToAdd}
+                      onChange={(e) => setTopicIDToAdd(e.target.value)}
+                    >
+                      {topics?.map((o) => (
+                        <option key={o.id} value={o.id}>
+                          {o.name}
+                        </option>
+                      ))}
+                    </Select>
+                    <Button
+                      isDisabled={isLoadingTopics}
+                      onClick={(e) => handleAddToTopic()}
+                    >
+                      Add
+                    </Button>
                   </HStack>
                 </Stack>
               )}

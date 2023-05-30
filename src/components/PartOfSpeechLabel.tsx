@@ -20,8 +20,9 @@ export const parsePartOfSpeech = (
       return "wiki";
     default: {
       if (partOfSpeech.includes("xpressions")) return "Expressions";
-      if (partOfSpeech.includes("noun")) {
-        if (partOfSpeech.includes("futsuumeishi")) return "n";
+      if (partOfSpeech.includes("noun") || partOfSpeech.includes("Noun")) {
+        if (partOfSpeech.includes("futsuumeishi") || partOfSpeech === "Noun")
+          return "n";
         return partOfSpeech;
       }
       if (partOfSpeech.includes("adv")) {
@@ -76,7 +77,7 @@ export function PartOfSpeechLabel(props: { partOfSpeech: PartOfSpeech }) {
 
   const color = (() => {
     if (partOfSpeech.includes("adv")) return "cyan";
-    if (partOfSpeech.includes("noun")) return "green";
+    if (partOfSpeech.includes("oun")) return "green";
     if (partOfSpeech.includes("verb")) return "purple";
     if (partOfSpeech.includes("adj")) return "yellow";
     switch (partOfSpeech) {

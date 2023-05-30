@@ -2,11 +2,27 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { nanoid } from 'nanoid';
 import { JishoWord } from '../types/jisho';
 import { db } from '../utils/db';
+import { useUpdateTopicItem } from './useUpdateTopicItem';
 
-export const useAddTopicItem = (topicId: string) => {
+export const useAddTopicItem = () => {
   const queryClient = useQueryClient();
+  const { mutate: editItem, isLoading: isUpdating } = useUpdateTopicItem();
+  
   return useMutation(
-    async (data: { word: string; jishoData: JishoWord }) => {
+    async (data: { word: string; jishoData: JishoWord, topicId:string }) => {
+      const {word, topicId} = data;
+      const wordAlreadyExist =
+      (await db?.topicEntries?.where({ word, topicId }).count()) ?? 0;
+      if (wordAlreadyExist > 0) {
+        const a = (
+          await db?.topicEntries?.where({ word, topicId }).toArray()
+        )?.[0];
+        if (a?.isDeleted) {
+          await editItem({ id: a.id, isDeleted: false });
+          return;
+        }
+        throw new Error("Word Already Exist")
+      }
       try {
         await db?.topicEntries.add({
           ...data,
@@ -16,16 +32,17 @@ export const useAddTopicItem = (topicId: string) => {
           createdAt: new Date(),
           lastUpdatedAt: new Date(),
         });
-        const idNumber = Number(topicId);
+        const idNumber = Number(topicId)
         await db?.topics.update(isNaN(idNumber) ? topicId : idNumber, {
           lastUpdatedAt: new Date(),
         });
+        return topicId;
       } catch (e) {
         console.error('Error adding')
       }
     },
     {
-      onSuccess: () => {
+      onSuccess: (topicId) => {
         queryClient.invalidateQueries(['fetchTopicItems', topicId]);
         queryClient.invalidateQueries(['fetchLastUpdatedTopics']);
       },

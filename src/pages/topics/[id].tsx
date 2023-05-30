@@ -42,10 +42,8 @@ import { useFetchJishoResults } from "../../hooks/useFetchJishoResults";
 import { useGetTopic } from "../../hooks/useGetTopic";
 import { useGetTopicItems } from "../../hooks/useGetTopicItems";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
-import { useUpdateTopicItem } from "../../hooks/useUpdateTopicItem";
 import { JishoWord } from "../../types/jisho";
 import { Topic } from "../../types/topic";
-import { db } from "../../utils/db";
 import { download } from "../../utils/downloadFile";
 import { filterTopicItemsByKeywords } from "../../utils/filterTopicItemsByKeywords";
 import { sortTopicItems } from "../../utils/sortTopicItems";
@@ -70,9 +68,7 @@ const TopicDetailPage: NextPage = () => {
     isLoading: isLoadingTopic,
   } = useGetTopic(topicId);
   const { data: words, isLoading: isLoadingItems } = useGetTopicItems(topicId);
-  const { mutate, isLoading: isAdding } = useAddTopicItem(topicId);
-  const { mutate: editItem, isLoading: isUpdating } =
-    useUpdateTopicItem(topicId);
+  const { mutate, isLoading: isAdding } = useAddTopicItem();
   const { mutate: fetchJishoResults, isLoading: isFetchingJishoResults } =
     useFetchJishoResults(topicId);
   const router = useRouter();
@@ -128,29 +124,24 @@ const TopicDetailPage: NextPage = () => {
   const handleAddTopicItem = async (data: JishoWord) => {
     if (!data || isAdding) return;
     const word = data.japanese[0].word ?? data.japanese[0].reading;
-    const wordAlreadyExist =
-      (await db?.topicEntries?.where({ word, topicId }).count()) ?? 0;
-    if (wordAlreadyExist > 0) {
-      const a = (
-        await db?.topicEntries?.where({ word, topicId }).toArray()
-      )?.[0];
-      if (a?.isDeleted) {
-        await editItem({ id: a.id, isDeleted: false });
-        setShowPopup(false);
-        return;
+    await mutate(
+      { topicId, word, jishoData: data },
+      {
+        onSuccess: () => {
+          setShowPopup(false);
+          toast({
+            status: "success",
+            title: "Word successfully added",
+          });
+        },
+        onError: (error) => {
+          toast({
+            status: "warning",
+            title: (error as Error).message,
+          });
+        },
       }
-      toast({
-        status: "warning",
-        title: "Word already exist in this topic",
-      });
-      return;
-    }
-    await mutate({ word, jishoData: data });
-    setShowPopup(false);
-    toast({
-      status: "success",
-      title: "Word successfully added",
-    });
+    );
   };
 
   return (
