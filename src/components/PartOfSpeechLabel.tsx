@@ -1,75 +1,89 @@
 import { Tag } from "@chakra-ui/react";
-import { PartOfSpeech } from "../types/jisho";
+import { toKana } from "wanakana";
+import { JishoPartOfSpeech } from "../types/jisho";
 
-export const parsePartOfSpeech = (partOfSpeech: PartOfSpeech) => {
+export const parsePartOfSpeech = (
+  partOfSpeech: JishoPartOfSpeech | string
+): string | null => {
   switch (partOfSpeech) {
-    case PartOfSpeech.Noun:
-      return "n";
-    case PartOfSpeech.PrenominallyNoun:
-    case PartOfSpeech.NounWithNo:
-      return null;
-    case PartOfSpeech.SuruVerb:
-    case PartOfSpeech.SuruVerbIncluded:
+    case JishoPartOfSpeech.SuruVerb:
+    case JishoPartOfSpeech.SuruVerbIncluded:
       return "v-する";
-    case PartOfSpeech.IchidanVerb:
+    case JishoPartOfSpeech.IchidanVerb:
       return "v-る";
-    case PartOfSpeech.GodanVerU:
-    case PartOfSpeech.GodanVerbMu:
-    case PartOfSpeech.GodanVerbSu:
-    case PartOfSpeech.GodanVerbRu:
+    case JishoPartOfSpeech.GodanVerU:
+    case JishoPartOfSpeech.GodanVerbMu:
+    case JishoPartOfSpeech.GodanVerbSu:
+    case JishoPartOfSpeech.GodanVerbRu:
       return "v-いる";
-    case PartOfSpeech.TransitiveVerb:
-      return "自";
-    case PartOfSpeech.IntransitiveVerb:
-      return "他";
-    case PartOfSpeech.IAdj:
-      return "い-adj";
-    case PartOfSpeech.OldNaAdj:
-    case PartOfSpeech.NaAdj:
-      return "な-adj";
-    case PartOfSpeech.Adverb:
-      return "adv";
-    case PartOfSpeech.AdverbTo:
-      return "と-adv";
-    case PartOfSpeech.Expressions:
+    case JishoPartOfSpeech.Expressions:
       return "Expressions";
-    case PartOfSpeech.WikipediaDefinition:
+    case JishoPartOfSpeech.WikipediaDefinition:
       return "wiki";
-    default:
+    default: {
+      if (partOfSpeech.includes("noun")) {
+        if (partOfSpeech.includes("futsuumeishi")) return "n";
+        return null;
+      }
+      if (partOfSpeech.includes("adv")) {
+        if (partOfSpeech.includes("to")) return "と-adv";
+        return "adv";
+      }
+      if (partOfSpeech.includes("verb")) {
+        if (partOfSpeech.includes("ntransitive")) return "自";
+        if (partOfSpeech.includes("ransitive")) return "他";
+        if (/(.*?) verb.*?with '?(.+?)'? ending/.test(partOfSpeech))
+          return partOfSpeech.replace(
+            /(.*?) verb(?:.*?with '?(.+?)'? ending)?/,
+            (_, type, ending) => {
+              const dan =
+                type === "Godan"
+                  ? "五"
+                  : type === "Nidan"
+                  ? "二"
+                  : type === "Yodan"
+                  ? "四"
+                  : type === "Ichidan"
+                  ? "一"
+                  : "v";
+              return `${dan}-${
+                type === "Ichidan"
+                  ? "る"
+                  : type === "Suru"
+                  ? "する"
+                  : toKana(ending)
+              }`;
+            }
+          );
+        return partOfSpeech;
+      }
+      if (partOfSpeech.includes("adjective")) {
+        if (partOfSpeech.includes("keiyoushi")) return "い-adj";
+        if (
+          partOfSpeech.includes("keiyoudoushi") ||
+          partOfSpeech.includes("na-adjective")
+        )
+          return "な-adj";
+        return partOfSpeech;
+      }
       return partOfSpeech;
+    }
   }
 };
-export function PartOfSpeechLabel(props: { partOfSpeech: PartOfSpeech }) {
+export function PartOfSpeechLabel(props: { partOfSpeech: JishoPartOfSpeech }) {
   const { partOfSpeech } = props;
 
   const text = parsePartOfSpeech(partOfSpeech);
 
   const color = (() => {
+    if (partOfSpeech.includes("adv")) return "cyan";
+    if (partOfSpeech.includes("noun")) return "green";
+    if (partOfSpeech.includes("verb")) return "purple";
+    if (partOfSpeech.includes("adj")) return "yellow";
     switch (partOfSpeech) {
-      case PartOfSpeech.Noun:
-      case PartOfSpeech.NounWithNo:
-      case PartOfSpeech.PrenominallyNoun:
-        return "green";
-      case PartOfSpeech.SuruVerb:
-      case PartOfSpeech.SuruVerbIncluded:
-      case PartOfSpeech.IchidanVerb:
-      case PartOfSpeech.GodanVerU:
-      case PartOfSpeech.GodanVerbMu:
-      case PartOfSpeech.GodanVerbSu:
-      case PartOfSpeech.GodanVerbRu:
-      case PartOfSpeech.TransitiveVerb:
-      case PartOfSpeech.IntransitiveVerb:
-        return "purple";
-      case PartOfSpeech.IAdj:
-      case PartOfSpeech.NaAdj:
-      case PartOfSpeech.OldNaAdj:
-        return "yellow";
-      case PartOfSpeech.Adverb:
-      case PartOfSpeech.AdverbTo:
-        return "cyan";
-      case PartOfSpeech.Expressions:
+      case JishoPartOfSpeech.Expressions:
         return "red";
-      case PartOfSpeech.WikipediaDefinition:
+      case JishoPartOfSpeech.WikipediaDefinition:
         return "wiki.";
       default:
         return "gray";

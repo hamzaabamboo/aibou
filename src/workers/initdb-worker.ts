@@ -57,7 +57,7 @@ const deleteDictionaryFile = async () => {
   await db.database.delete('latest');
 }
 
-export type WorkerActions = 'download' | 'check' | 'error' 
+export type WorkerActions = 'download' | 'check' | 'error' | 'delete'
 export type WorkerMessage = {
   type: WorkerActions;
   data: any
@@ -70,7 +70,6 @@ export type WorkerResponse = {
 }
 
 addEventListener('message', async ({ type,data }: MessageEvent<WorkerMessage>) => {
-  console.log(data);
   switch (data.type) {
     case "download": {
       console.log("Downlaod LAH!!!!")

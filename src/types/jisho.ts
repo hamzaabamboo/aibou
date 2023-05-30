@@ -27,7 +27,7 @@ export type KanjiReading = {
   reading: string;
 };
 
-export enum PartOfSpeech {
+export enum JishoPartOfSpeech {
   Noun = 'Noun',
   NounWithNo = "Noun which may take the genitive case particle 'no'",
   PrenominallyNoun = 'Noun or verb acting prenominally',
