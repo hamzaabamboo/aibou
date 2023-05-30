@@ -1,4 +1,4 @@
-import { DeleteIcon, ExternalLinkIcon } from "@chakra-ui/icons";
+import { DeleteIcon, DownloadIcon, ExternalLinkIcon } from "@chakra-ui/icons";
 import {
   Button,
   HStack,
@@ -20,6 +20,7 @@ import {
 import { useRouter } from "next/router";
 import { useState } from "react";
 import { useAddTopicItem } from "../hooks/useAddTopicItem";
+import { useFetchJishoResults } from "../hooks/useFetchJishoResults";
 import { useGetTopicsList } from "../hooks/useGetTopicsList";
 import { useUpdateTopicItem } from "../hooks/useUpdateTopicItem";
 import { JishoWord } from "../types/jisho";
@@ -49,6 +50,8 @@ export function WordInfoModal(props: {
     useUpdateTopicItem();
   const { data: topics } = useGetTopicsList();
   const { mutate: addTopicItem, isLoading } = useAddTopicItem();
+  const { mutate: fetchJishoResults, isLoading: isFetchingJishoResults } =
+    useFetchJishoResults(item?.topicId);
   const { push } = useRouter();
   const toast = useToast();
 
@@ -76,7 +79,6 @@ export function WordInfoModal(props: {
       item.jishoData?.japanese[0].word ?? item.jishoData?.japanese[0].reading;
     const topicId = topicIDToAdd ?? topics?.[0].id;
     if (!topicId || isLoading || !item?.jishoData || !word) return;
-
     await addTopicItem(
       {
         topicId,
@@ -159,8 +161,8 @@ export function WordInfoModal(props: {
               {isEditable && (
                 <Stack>
                   <Heading size="lg">Edit</Heading>
-                  <HStack>
-                    <Text>Change Reading:</Text>
+                  <HStack justifyContent="space-between">
+                    <Text>Change Reading</Text>
                     <Select
                       value={0}
                       onChange={(e) =>
@@ -173,6 +175,14 @@ export function WordInfoModal(props: {
                         </option>
                       ))}
                     </Select>
+                  </HStack>
+                  <HStack justifyContent="space-between">
+                    <Text>Download Data from Jisho</Text>
+                    <IconButton
+                      aria-label="download"
+                      icon={<DownloadIcon />}
+                      onClick={(e) => fetchJishoResults([item])}
+                    />
                   </HStack>
                 </Stack>
               )}

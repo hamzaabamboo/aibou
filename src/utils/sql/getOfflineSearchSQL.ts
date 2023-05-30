@@ -16,8 +16,8 @@ export const getOfflineSearchSQL = (searchTerm: string) => {
 	ORDER BY word_kanji.common DESC, length(word_kanji."text") ASC LIMIT 20`
     return `SELECT temp."wordId", word_kanji."text" as "kanji",  word_kanji.common as "kanjiCommon", word_kana.common as "kanaCommon", word_kana."text" as "kana", partOfSpeech, antonym, related, field, misc, info, word_gloss.senseId,word_gloss.id as "glossId", word_gloss."type", word_gloss."text" as "meaning" FROM 
 	(${subquery}) AS temp
-	LEFT JOIN word_kanji ON word_kanji.wordId = temp.wordId
-	LEFT JOIN word_kana ON word_kana.wordId = temp.wordId AND (word_kana.appliesToKanji = "*" OR instr(word_kana.appliesToKanji, word_kanji."text") )
+	LEFT JOIN word_kana ON word_kana.wordId = temp.wordId 
+	LEFT JOIN word_kanji ON word_kanji.wordId = temp.wordId AND ( word_kanji."text" is not NULL AND ( word_kana.appliesToKanji = "*" OR instr(word_kana.appliesToKanji,word_kanji."text") ) )
 	LEFT JOIN word_sense ON word_sense.wordId = temp.wordId AND (word_sense.appliesToKanji = "*" OR instr(word_sense.appliesToKanji, word_kanji."text") ) AND (word_sense.appliesToKana = "*" OR instr(word_sense.appliesToKanji, word_kana."text") )
 	LEFT JOIN word_gloss ON word_gloss.senseId = word_sense.id 
      `

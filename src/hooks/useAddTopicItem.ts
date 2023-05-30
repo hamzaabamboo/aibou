@@ -11,6 +11,7 @@ export const useAddTopicItem = () => {
   return useMutation(
     async (data: { word: string; jishoData: JishoWord, topicId:string }) => {
       const {word, topicId} = data;
+      const idNumber = Number(topicId)
       const wordAlreadyExist =
       (await db?.topicEntries?.where({ word, topicId }).count()) ?? 0;
       if (wordAlreadyExist > 0) {
@@ -18,7 +19,10 @@ export const useAddTopicItem = () => {
           await db?.topicEntries?.where({ word, topicId }).toArray()
         )?.[0];
         if (a?.isDeleted) {
-          await editItem({ id: a.id, isDeleted: false });
+          await editItem({ id: a.id, topicId, isDeleted: false });
+          await db?.topics.update(isNaN(idNumber) ? topicId : idNumber, {
+            lastUpdatedAt: new Date(),
+          });
           return;
         }
         throw new Error("Word Already Exist")
@@ -32,7 +36,6 @@ export const useAddTopicItem = () => {
           createdAt: new Date(),
           lastUpdatedAt: new Date(),
         });
-        const idNumber = Number(topicId)
         await db?.topics.update(isNaN(idNumber) ? topicId : idNumber, {
           lastUpdatedAt: new Date(),
         });

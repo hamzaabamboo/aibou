@@ -1,9 +1,11 @@
+import { DownloadIcon } from "@chakra-ui/icons";
 import {
   Button,
   Container,
   Divider,
   HStack,
   Heading,
+  IconButton,
   Stack,
   Switch,
   Text,
@@ -69,9 +71,12 @@ const Home: NextPage = () => {
               {isDBDownloaded ? (
                 <Text>Already downloaded</Text>
               ) : (
-                <Button isDisabled={isDBDownloaded} onClick={() => download()}>
-                  Download
-                </Button>
+                <IconButton
+                  aria-label="download"
+                  icon={<DownloadIcon />}
+                  isDisabled={isDBDownloaded}
+                  onClick={() => download()}
+                />
               )}
             </HStack>
             {progressText && <Text>{progressText}</Text>}

@@ -20,6 +20,7 @@ import {
   MenuList,
   Spinner,
   Stack,
+  Switch,
   Text,
   useToast,
 } from "@chakra-ui/react";
@@ -33,14 +34,15 @@ import {
   ItemViewOptions,
   ItemViewSettings,
 } from "../../components/ItemViewSettings";
-import { JishoSearch } from "../../components/JishoSearch";
 import { parsePartOfSpeech } from "../../components/PartOfSpeechLabel";
+import { Search } from "../../components/Search";
 import { WordInfoModal } from "../../components/WordInfoModal";
 import { WordItem } from "../../components/WordItem";
 import { useAddTopicItem } from "../../hooks/useAddTopicItem";
 import { useFetchJishoResults } from "../../hooks/useFetchJishoResults";
 import { useGetTopic } from "../../hooks/useGetTopic";
 import { useGetTopicItems } from "../../hooks/useGetTopicItems";
+import { useKeyValueData } from "../../hooks/useKeyValueData";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
 import { JishoWord } from "../../types/jisho";
 import { Topic } from "../../types/topic";
@@ -71,6 +73,10 @@ const TopicDetailPage: NextPage = () => {
   const { mutate, isLoading: isAdding } = useAddTopicItem();
   const { mutate: fetchJishoResults, isLoading: isFetchingJishoResults } =
     useFetchJishoResults(topicId);
+  const [
+    { data: offlineDictionaryEnabled },
+    { mutate: updateDictionaryEnabledStatus },
+  ] = useKeyValueData("offlineDictionaryEnabled", true);
   const router = useRouter();
   const toast = useToast();
 
@@ -175,36 +181,47 @@ const TopicDetailPage: NextPage = () => {
                       Load Definition
                     </Button>
                   )}
-                  <Menu>
-                    <MenuButton as={Button} rightIcon={<HamburgerIcon />}>
-                      Menu
-                    </MenuButton>
-                    <MenuList>
-                      <MenuItem
-                        icon={<EditIcon />}
-                        onClick={() => setEditingTopic(topic)}
-                      >
-                        Edit Topic
-                      </MenuItem>
-                      <MenuItem
-                        icon={<DownloadIcon />}
-                        onClick={() => handleDownloadCSV()}
-                      >
-                        Download Data (Kotobot CSV)
-                      </MenuItem>
-                      <MenuItem
-                        icon={<DeleteIcon />}
-                        onClick={() => setDeleteTopic(topic)}
-                      >
-                        Delete Topic
-                      </MenuItem>
-                    </MenuList>
-                  </Menu>
+                  <HStack>
+                    <HStack justifyContent="space-between">
+                      <Text>Offline Dictionary</Text>
+                      <Switch
+                        isChecked={offlineDictionaryEnabled}
+                        onChange={(e) =>
+                          updateDictionaryEnabledStatus(e.target.checked)
+                        }
+                      />
+                    </HStack>
+                    <Menu>
+                      <MenuButton as={Button} rightIcon={<HamburgerIcon />}>
+                        Menu
+                      </MenuButton>
+                      <MenuList>
+                        <MenuItem
+                          icon={<EditIcon />}
+                          onClick={() => setEditingTopic(topic)}
+                        >
+                          Edit Topic
+                        </MenuItem>
+                        <MenuItem
+                          icon={<DownloadIcon />}
+                          onClick={() => handleDownloadCSV()}
+                        >
+                          Download Data (Kotobot CSV)
+                        </MenuItem>
+                        <MenuItem
+                          icon={<DeleteIcon />}
+                          onClick={() => setDeleteTopic(topic)}
+                        >
+                          Delete Topic
+                        </MenuItem>
+                      </MenuList>
+                    </Menu>
+                  </HStack>
                 </HStack>
               </HStack>
               {topic?.description && <Text>{topic?.description}</Text>}
               <Stack direction={["column"]}>
-                <JishoSearch
+                <Search
                   onSelectItem={(word) => handleAddTopicItem(word)}
                   inputSize="small"
                   w="full"
