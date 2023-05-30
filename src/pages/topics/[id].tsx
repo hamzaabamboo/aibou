@@ -35,7 +35,7 @@ import {
 } from "../../components/ItemViewSettings";
 import { JishoSearch } from "../../components/JishoSearch";
 import { parsePartOfSpeech } from "../../components/PartOfSpeechLabel";
-import { TopicItemModal } from "../../components/TopicItemModal";
+import { WordInfoModal } from "../../components/WordInfoModal";
 import { WordItem } from "../../components/WordItem";
 import { useAddTopicItem } from "../../hooks/useAddTopicItem";
 import { useFetchJishoResults } from "../../hooks/useFetchJishoResults";
@@ -292,10 +292,11 @@ const TopicDetailPage: NextPage = () => {
         />
       )}
       {viewingItem && (
-        <TopicItemModal
+        <WordInfoModal
           item={words?.find((v) => v.id === viewingItem)!}
           isOpen={!!viewingItem}
           onClose={() => setViewingItem(undefined)}
+          isEditable
         />
       )}
     </>

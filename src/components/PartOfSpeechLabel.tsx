@@ -1,9 +1,9 @@
 import { Tag } from "@chakra-ui/react";
 import { toKana } from "wanakana";
-import { JishoPartOfSpeech } from "../types/jisho";
+import { JishoPartOfSpeech, PartOfSpeech } from "../types/jisho";
 
 export const parsePartOfSpeech = (
-  partOfSpeech: JishoPartOfSpeech | string
+  partOfSpeech: PartOfSpeech | string
 ): string | null => {
   switch (partOfSpeech) {
     case JishoPartOfSpeech.SuruVerb:
@@ -16,14 +16,13 @@ export const parsePartOfSpeech = (
     case JishoPartOfSpeech.GodanVerbSu:
     case JishoPartOfSpeech.GodanVerbRu:
       return "v-いる";
-    case JishoPartOfSpeech.Expressions:
-      return "Expressions";
     case JishoPartOfSpeech.WikipediaDefinition:
       return "wiki";
     default: {
+      if (partOfSpeech.includes("xpressions")) return "Expressions";
       if (partOfSpeech.includes("noun")) {
         if (partOfSpeech.includes("futsuumeishi")) return "n";
-        return null;
+        return partOfSpeech;
       }
       if (partOfSpeech.includes("adv")) {
         if (partOfSpeech.includes("to")) return "と-adv";
@@ -70,7 +69,7 @@ export const parsePartOfSpeech = (
     }
   }
 };
-export function PartOfSpeechLabel(props: { partOfSpeech: JishoPartOfSpeech }) {
+export function PartOfSpeechLabel(props: { partOfSpeech: PartOfSpeech }) {
   const { partOfSpeech } = props;
 
   const text = parsePartOfSpeech(partOfSpeech);

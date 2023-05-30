@@ -16,7 +16,7 @@ export type TopicItem = {
   notes?: string;
   jishoData?: JishoWord;
   isDeleted?: boolean;
-  tags: string[];
-  createdAt: Date;
-  lastUpdatedAt: Date;
+  tags?: string[];
+  createdAt?: Date;
+  lastUpdatedAt?: Date;
 };

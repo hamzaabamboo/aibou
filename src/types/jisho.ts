@@ -1,3 +1,7 @@
+import { OfflineDictPartOfSpeech } from "./offlineDictPartsOfSpeech";
+
+export type PartOfSpeech = JishoPartOfSpeech | OfflineDictPartOfSpeech;
+
 export type JishoWord = {
   slug?: string;
   is_common: string;
