@@ -72,6 +72,8 @@ const Home: NextPage = () => {
             word:
               selectedWord.japanese[0].word ?? selectedWord.japanese[0].reading,
             jishoData: selectedWord,
+            createdAt: new Date(),
+            lastUpdatedAt: new Date(),
           }}
           onClose={() => setSelectedWord(undefined)}
           isAddable

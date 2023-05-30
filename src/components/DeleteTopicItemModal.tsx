@@ -1,28 +1,19 @@
-import { AddIcon, EditIcon } from "@chakra-ui/icons";
+import { EditIcon } from "@chakra-ui/icons";
 import {
   Button,
-  FormControl,
-  Grid,
-  GridItem,
   HStack,
   Heading,
-  Input,
   Modal,
   ModalBody,
   ModalContent,
   ModalFooter,
   ModalHeader,
   ModalOverlay,
-  Stack,
   Text,
-  Textarea,
   useToast,
 } from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useAddTopic } from "../hooks/useAddTopic";
-import { useUpdateTopic } from "../hooks/useUpdateTopic";
-import { Topic, TopicItem } from "../types/topic";
 import { useUpdateTopicItem } from "../hooks/useUpdateTopicItem";
+import { TopicItem } from "../types/topic";
 
 // TODO: Refactor modals
 export function DeleteTopicItemModal(props: {
@@ -31,7 +22,7 @@ export function DeleteTopicItemModal(props: {
   onDeleteSuccess: () => void;
 }) {
   const { topicItem, onClose, onDeleteSuccess } = props;
-  const { mutate, isLoading } = useUpdateTopicItem(topicItem.topicId ?? "");
+  const { mutate, isLoading } = useUpdateTopicItem();
   const toast = useToast();
 
   const handleDeleteItem = async () => {
