@@ -4,7 +4,7 @@ import {
   DownloadIcon,
   EditIcon,
   HamburgerIcon,
-} from '@chakra-ui/icons';
+} from "@chakra-ui/icons";
 import {
   Box,
   Button,
@@ -18,40 +18,37 @@ import {
   MenuButton,
   MenuItem,
   MenuList,
+  Spinner,
   Stack,
-  Switch,
   Text,
   useToast,
-} from '@chakra-ui/react';
-import type { NextPage } from 'next';
-import { useRouter } from 'next/router';
-import { useEffect, useMemo, useState } from 'react';
-import { uniq } from 'lodash';
-import { DeleteTopicModal } from '../../components/DeleteTopicModal';
-import { EditTopicModal } from '../../components/EditTopicModal';
+} from "@chakra-ui/react";
+import { uniq } from "lodash";
+import type { NextPage } from "next";
+import { useRouter } from "next/router";
+import { useEffect, useMemo, useState } from "react";
+import { DeleteTopicModal } from "../../components/DeleteTopicModal";
+import { EditTopicModal } from "../../components/EditTopicModal";
 import {
   ItemViewOptions,
   ItemViewSettings,
-} from '../../components/ItemViewSettings';
-import { JishoSearch } from '../../components/JishoSearch';
-import { KanjiDisplay } from '../../components/KanjiDisplay';
-import { SearchResultItem } from '../../components/SearchResultItem';
-import { useAddTopicItem } from '../../hooks/useAddTopicItem';
-import { useFetchJishoResults } from '../../hooks/useFetchJishoResults';
-import { useGetTopic } from '../../hooks/useGetTopic';
-import { useGetTopicItems } from '../../hooks/useGetTopicItems';
-import { useLocalStorage } from '../../hooks/useLocalStorage';
-import { useUpdateTopic } from '../../hooks/useUpdateTopic';
-import { JishoWord } from '../../types/jisho';
-import { Topic, TopicItem } from '../../types/topic';
-import { db } from '../../utils/db';
-import { filterTopicItemsByKeywords } from '../../utils/filterTopicItemsByKeywords';
-import { sortTopicItems } from '../../utils/sortTopicItems';
-import { WordItem } from '../../components/WordItem';
-import { download } from '../../utils/downloadFile';
-import { parsePartOfSpeech } from '../../components/PartOfSpeechLabel';
-import { TopicItemModal } from '../../components/TopicItemModal';
-import { useUpdateTopicItem } from '../../hooks/useUpdateTopicItem';
+} from "../../components/ItemViewSettings";
+import { JishoSearch } from "../../components/JishoSearch";
+import { parsePartOfSpeech } from "../../components/PartOfSpeechLabel";
+import { TopicItemModal } from "../../components/TopicItemModal";
+import { WordItem } from "../../components/WordItem";
+import { useAddTopicItem } from "../../hooks/useAddTopicItem";
+import { useFetchJishoResults } from "../../hooks/useFetchJishoResults";
+import { useGetTopic } from "../../hooks/useGetTopic";
+import { useGetTopicItems } from "../../hooks/useGetTopicItems";
+import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { useUpdateTopicItem } from "../../hooks/useUpdateTopicItem";
+import { JishoWord } from "../../types/jisho";
+import { Topic } from "../../types/topic";
+import { db } from "../../utils/db";
+import { download } from "../../utils/downloadFile";
+import { filterTopicItemsByKeywords } from "../../utils/filterTopicItemsByKeywords";
+import { sortTopicItems } from "../../utils/sortTopicItems";
 
 const TopicDetailPage: NextPage = () => {
   const { query } = useRouter();
@@ -63,54 +60,65 @@ const TopicDetailPage: NextPage = () => {
   const [viewingItem, setViewingItem] = useState<string>();
 
   const [settingsData, setSettingsData] = useLocalStorage<ItemViewOptions>(
-    'search-view-settings',
-    { showMeaning: true, reverseSortOrder: true, orderBy: 'createdAt' },
+    "search-view-settings",
+    { showMeaning: true, reverseSortOrder: true, orderBy: "createdAt" }
   );
 
-  const { data: topic, refetch, isLoading } = useGetTopic(topicId);
-  const { data: words } = useGetTopicItems(topicId);
+  const {
+    data: topic,
+    refetch,
+    isLoading: isLoadingTopic,
+  } = useGetTopic(topicId);
+  const { data: words, isLoading: isLoadingItems } = useGetTopicItems(topicId);
   const { mutate, isLoading: isAdding } = useAddTopicItem(topicId);
-  const { mutate: editItem, isLoading: isUpdating } = useUpdateTopicItem(topicId);
-  const { mutate: fetchJishoResults, isLoading: isFetchingJishoResults } = useFetchJishoResults(topicId);
+  const { mutate: editItem, isLoading: isUpdating } =
+    useUpdateTopicItem(topicId);
+  const { mutate: fetchJishoResults, isLoading: isFetchingJishoResults } =
+    useFetchJishoResults(topicId);
   const router = useRouter();
   const toast = useToast();
 
-  const {
-    showMeaning, filter, numberOfColumns, orderBy, reverseSortOrder,
-  } = settingsData ?? {};
+  const { showMeaning, filter, numberOfColumns, orderBy, reverseSortOrder } =
+    settingsData ?? {};
 
   const filteredList = useMemo(
-    () => sortTopicItems(
-      orderBy,
-      reverseSortOrder,
-    )(filterTopicItemsByKeywords(filter)(words ?? [])),
-    [filter, words, orderBy, reverseSortOrder],
+    () =>
+      sortTopicItems(
+        orderBy,
+        reverseSortOrder
+      )(filterTopicItemsByKeywords(filter)(words ?? [])),
+    [filter, words, orderBy, reverseSortOrder]
   );
 
+  const isLoading = !topicId || isLoadingTopic || isLoadingItems;
+
   const handleDownloadCSV = () => {
-    const header = 'Question,Answers,Comment,Instructions,Render as\n';
+    const header = "Question,Answers,Comment,Instructions,Render as\n";
     const data = words
       ?.filter((w) => !!w.jishoData)
       ?.reverse()
       ?.map(
-        (w) => `${w.word},"${uniq(w.jishoData?.japanese.map((w) => w.reading)).join(
-          ',',
-        )}","${w.jishoData?.senses
-          .map((s) => `(${s.parts_of_speech
-            .map(parsePartOfSpeech)
-            .join(',')}) ${s.english_definitions.join(',')}`.replace(
-            '"',
-            '""',
-          ))
-          .join('/')}",Type the reading!,Image`,
+        (w) =>
+          `${w.word},"${uniq(w.jishoData?.japanese.map((w) => w.reading)).join(
+            ","
+          )}","${w.jishoData?.senses
+            .map((s) =>
+              `(${s.parts_of_speech
+                .map(parsePartOfSpeech)
+                .join(",")}) ${s.english_definitions.join(",")}`.replace(
+                '"',
+                '""'
+              )
+            )
+            .join("/")}",Type the reading!,Image`
       )
-      .join('\n');
+      .join("\n");
     const csv = header + data;
     download(`${topic?.name}.csv`, csv);
   };
   const needsSync = useMemo(
     () => words?.filter((w) => !w.jishoData) ?? [],
-    [words],
+    [words]
   );
 
   useEffect(() => {
@@ -120,7 +128,8 @@ const TopicDetailPage: NextPage = () => {
   const handleAddTopicItem = async (data: JishoWord) => {
     if (!data || isAdding) return;
     const word = data.japanese[0].word ?? data.japanese[0].reading;
-    const wordAlreadyExist = (await db?.topicEntries?.where({ word, topicId }).count()) ?? 0;
+    const wordAlreadyExist =
+      (await db?.topicEntries?.where({ word, topicId }).count()) ?? 0;
     if (wordAlreadyExist > 0) {
       const a = (
         await db?.topicEntries?.where({ word, topicId }).toArray()
@@ -131,16 +140,16 @@ const TopicDetailPage: NextPage = () => {
         return;
       }
       toast({
-        status: 'warning',
-        title: 'Word already exist in this topic',
+        status: "warning",
+        title: "Word already exist in this topic",
       });
       return;
     }
     await mutate({ word, jishoData: data });
     setShowPopup(false);
     toast({
-      status: 'success',
-      title: 'Word successfully added',
+      status: "success",
+      title: "Word successfully added",
     });
   };
 
@@ -152,112 +161,118 @@ const TopicDetailPage: NextPage = () => {
             <Button
               leftIcon={<ArrowBackIcon />}
               variant="ghost"
-              onClick={() => router.push('/topics')}
+              onClick={() => router.push("/topics")}
             >
               Back to Topics
             </Button>
           </Box>
-          <HStack justifyContent="space-between">
-            <Heading>{topic?.name}</Heading>
-            <HStack>
-              {needsSync.length > 0 && (
-                <Button
-                  colorScheme="green"
-                  isLoading={isFetchingJishoResults}
-                  onClick={() => fetchJishoResults(needsSync)}
-                >
-                  Load Definition
-                </Button>
-              )}
-              <Menu>
-                <MenuButton as={Button} rightIcon={<HamburgerIcon />}>
-                  Menu
-                </MenuButton>
-                <MenuList>
-                  <MenuItem
-                    icon={<EditIcon />}
-                    onClick={() => setEditingTopic(topic)}
-                  >
-                    Edit Topic
-                  </MenuItem>
-                  <MenuItem
-                    icon={<DownloadIcon />}
-                    onClick={() => handleDownloadCSV()}
-                  >
-                    Download Data (Kotobot CSV)
-                  </MenuItem>
-                  <MenuItem
-                    icon={<DeleteIcon />}
-                    onClick={() => setDeleteTopic(topic)}
-                  >
-                    Delete Topic
-                  </MenuItem>
-                </MenuList>
-              </Menu>
+          {isLoading ? (
+            <HStack justifyContent="center">
+              <Spinner size="xl" my={8} />
             </HStack>
-          </HStack>
-          {topic?.description && <Text>{topic?.description}</Text>}
-          <Stack direction={['column']}>
-            <JishoSearch
-              onSelectItem={(word) => handleAddTopicItem(word)}
-              inputSize="small"
-              w="full"
-              isShowPopup={showPopup}
-              setShowPopup={setShowPopup}
-              isPopup
-            />
-            <Box w="full">
-              {!words || words.length === 0 ? (
-                <Heading fontSize="xl" textAlign="center">
-                  No saved words
-                </Heading>
-              ) : (
-                <Stack>
-                  {settingsData && (
-                    <ItemViewSettings
-                      data={settingsData}
-                      setData={setSettingsData}
-                    />
+          ) : (
+            <>
+              <HStack justifyContent="space-between">
+                <Heading>{topic?.name}</Heading>
+                <HStack>
+                  {needsSync.length > 0 && (
+                    <Button
+                      colorScheme="green"
+                      isLoading={isFetchingJishoResults}
+                      onClick={() => fetchJishoResults(needsSync)}
+                    >
+                      Load Definition
+                    </Button>
                   )}
-                  <Grid
-                    gridTemplateColumns={[
-                      '1fr',
-                      `repeat(min(${numberOfColumns}, 2), 1fr)`,
-                      `repeat(min(${numberOfColumns}, 3), 1fr)`,
-                      `repeat(min(${numberOfColumns}, 4), 1fr)`,
-                    ]}
-                    alignItems="stretch"
-                  >
-                    {filteredList.map((item, idx) => {
-                      const {
-                        id, jishoData, word, ...rest
-                      } = item;
-                      return (
-                        <GridItem
-                          key={id}
-                          onClick={() => {
-                            if (!jishoData) {
-                              fetchJishoResults([item]);
-                            } else {
-                              setViewingItem(item.id);
-                            }
-                          }}
-                        >
-                          <WordItem
-                            word={word}
-                            showMeaning={showMeaning}
-                            item={jishoData}
-                            showCopy
-                          />
-                          <Divider />
-                        </GridItem>
-                      );
-                    })}
-                  </Grid>
-                </Stack>
-              )}
-            </Box>
-          </Stack>
+                  <Menu>
+                    <MenuButton as={Button} rightIcon={<HamburgerIcon />}>
+                      Menu
+                    </MenuButton>
+                    <MenuList>
+                      <MenuItem
+                        icon={<EditIcon />}
+                        onClick={() => setEditingTopic(topic)}
+                      >
+                        Edit Topic
+                      </MenuItem>
+                      <MenuItem
+                        icon={<DownloadIcon />}
+                        onClick={() => handleDownloadCSV()}
+                      >
+                        Download Data (Kotobot CSV)
+                      </MenuItem>
+                      <MenuItem
+                        icon={<DeleteIcon />}
+                        onClick={() => setDeleteTopic(topic)}
+                      >
+                        Delete Topic
+                      </MenuItem>
+                    </MenuList>
+                  </Menu>
+                </HStack>
+              </HStack>
+              {topic?.description && <Text>{topic?.description}</Text>}
+              <Stack direction={["column"]}>
+                <JishoSearch
+                  onSelectItem={(word) => handleAddTopicItem(word)}
+                  inputSize="small"
+                  w="full"
+                  isShowPopup={showPopup}
+                  setShowPopup={setShowPopup}
+                  isPopup
+                />
+                <Box w="full">
+                  {!words || words.length === 0 ? (
+                    <Heading fontSize="xl" textAlign="center">
+                      No saved words
+                    </Heading>
+                  ) : (
+                    <Stack>
+                      {settingsData && (
+                        <ItemViewSettings
+                          data={settingsData}
+                          setData={setSettingsData}
+                        />
+                      )}
+                      <Grid
+                        gridTemplateColumns={[
+                          "1fr",
+                          `repeat(min(${numberOfColumns}, 2), 1fr)`,
+                          `repeat(min(${numberOfColumns}, 3), 1fr)`,
+                          `repeat(min(${numberOfColumns}, 4), 1fr)`,
+                        ]}
+                        alignItems="stretch"
+                      >
+                        {filteredList.map((item, idx) => {
+                          const { id, jishoData, word, ...rest } = item;
+                          return (
+                            <GridItem
+                              key={id}
+                              onClick={() => {
+                                if (!jishoData) {
+                                  fetchJishoResults([item]);
+                                } else {
+                                  setViewingItem(item.id);
+                                }
+                              }}
+                            >
+                              <WordItem
+                                word={word}
+                                showMeaning={showMeaning}
+                                item={jishoData}
+                                showCopy
+                              />
+                              <Divider />
+                            </GridItem>
+                          );
+                        })}
+                      </Grid>
+                    </Stack>
+                  )}
+                </Box>
+              </Stack>
+            </>
+          )}
         </Stack>
       </Container>
       {editingTopic && (
@@ -272,7 +287,7 @@ const TopicDetailPage: NextPage = () => {
           onClose={() => setDeleteTopic(undefined)}
           onDeleteSuccess={() => {
             setDeleteTopic(undefined);
-            router.push('/topics/');
+            router.push("/topics/");
           }}
         />
       )}

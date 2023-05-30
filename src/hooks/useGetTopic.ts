@@ -15,4 +15,5 @@ export const useGetTopic = (topicId: string) => useQuery(
       return undefined;
     }
   },
+  { enabled: !!topicId}
 );
