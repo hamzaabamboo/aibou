@@ -78,9 +78,5 @@ export function PartOfSpeechLabel(props: { partOfSpeech: PartOfSpeech }) {
 
   if (!text) return null;
 
-  return (
-    <Tag colorScheme={color} my="1">
-      {text}
-    </Tag>
-  );
+  return <Tag colorScheme={color}>{text}</Tag>;
 }

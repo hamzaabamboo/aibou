@@ -17,7 +17,7 @@ import { useKeyValueData } from "../hooks/useKeyValueData";
 import { useSyncData } from "../hooks/useSyncData";
 
 const Home: NextPage = () => {
-  const { download, isDBDownloaded, progressText } =
+  const { download, isDBDownloaded, progressText, deleteDictionary } =
     useDownloadOfflineDictionary();
   const [{ data: lastSyncedTime }] = useKeyValueData("lastSyncedTime", 0);
   const [
@@ -74,16 +74,25 @@ const Home: NextPage = () => {
                 </Button>
               )}
             </HStack>
+            {progressText && <Text>{progressText}</Text>}
             {isDBDownloaded && (
-              <HStack justifyContent="space-between">
-                <Text>Enable Offline Dictionary</Text>
-                <Switch
-                  isChecked={offlineDictionaryEnabled}
-                  onChange={(e) =>
-                    updateDictionaryEnabledStatus(e.target.checked)
-                  }
-                />
-              </HStack>
+              <>
+                <HStack justifyContent="space-between">
+                  <Text>Enable Offline Dictionary</Text>
+                  <Switch
+                    isChecked={offlineDictionaryEnabled}
+                    onChange={(e) =>
+                      updateDictionaryEnabledStatus(e.target.checked)
+                    }
+                  />
+                </HStack>
+                <HStack justifyContent="space-between">
+                  <Text>Delete Offline Dictionary</Text>
+                  <Button colorScheme="red" onClick={(e) => deleteDictionary()}>
+                    Delete
+                  </Button>
+                </HStack>
+              </>
             )}
           </Stack>
         </Stack>

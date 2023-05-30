@@ -52,6 +52,11 @@ const loadDictionaryFile = async () => {
     return file;
 }
 
+const deleteDictionaryFile = async () => {
+  const db = indexedDB ? indexedDB : await initDictionaryDB() 
+  await db.database.delete('latest');
+}
+
 export type WorkerActions = 'download' | 'check' | 'error' 
 export type WorkerMessage = {
   type: WorkerActions;
@@ -70,6 +75,15 @@ addEventListener('message', async ({ type,data }: MessageEvent<WorkerMessage>) =
     case "download": {
       console.log("Downlaod LAH!!!!")
       await loadDictionaryFile();
+      const res = await checkIfDownloaded();
+      postMessage({
+        type: 'checkResult',
+        value: res
+      })
+      break;
+    }
+    case "delete": {
+      await deleteDictionaryFile();
       const res = await checkIfDownloaded();
       postMessage({
         type: 'checkResult',

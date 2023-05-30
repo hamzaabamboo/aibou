@@ -22,6 +22,8 @@ export const useDownloadOfflineDictionary = () => {
           setProgress(data.value);
           break;
         case 'checkResult':
+          setProcessing(false);
+          setProgressText('');
           setIsDBDownloaded(data.value)
           break;
         default:
@@ -29,6 +31,7 @@ export const useDownloadOfflineDictionary = () => {
           break;
       }
     };
+    setProcessing(true);
     worker.current.postMessage({
       type: 'check'
     })
@@ -40,11 +43,19 @@ export const useDownloadOfflineDictionary = () => {
   const download = () => {
     console.log("Download!")
     if (isProcessing) return;
+    setProcessing(true);
     worker.current?.postMessage({
       type: 'download',
     });
   };
+
+  const deleteDictionary = () => {
+    if (isProcessing) return;
+    worker.current?.postMessage({
+      type: 'delete',
+    });
+  }
   return {
-    download, error, progress, progressText,isDBDownloaded
+    download, error, progress, progressText, isProcessing, isDBDownloaded, deleteDictionary
   };
 };
