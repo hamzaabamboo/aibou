@@ -9,6 +9,20 @@ let indexedDB: DictionaryDB | undefined
 let db: Database | undefined
 let tagsData: Record<string, string> | undefined
 
+export type WorkerActions = 'searchWord' | 'searchWords' | 'init'
+export interface WorkerMessage {
+  type: WorkerActions
+  data: any
+}
+
+export type WorkerResponseType = 'searchWordResult' | 'searchWordsResult'
+export interface WorkerResponse {
+  type: WorkerResponseType
+  value: any
+}
+
+let initializingPromise: Promise<Database> | undefined
+
 const loadDictionaryFile = async () => {
   const db = (indexedDB != null) ? indexedDB : await initDictionaryDB()
   const data = await db.database.get({ id: 'latest' })
@@ -24,6 +38,7 @@ const loadDictionaryFile = async () => {
 
 async function init (): Promise<Database> {
   if (isInitialized) return db as Database
+  if (initializingPromise) return await initializingPromise
   const SQL = await initSqlJs({ locateFile: file => '/sql-wasm.wasm' })
   const data = await loadDictionaryFile()
   postMessage({
@@ -33,27 +48,16 @@ async function init (): Promise<Database> {
   console.log('Dictionary Loaded')
   db = new (SQL as any).Database(new Uint8Array(data)) as Database
   db.exec(`
-      PRAGMA page_size=8192;
+      PRAGMA page_size=4096;
       PRAGMA journal_mode=MEMORY;
     `)
   isInitialized = true
+  initializingPromise = undefined
   console.log('Initialized')
   return db
 }
 
-export type WorkerActions = 'searchWord' | 'searchWords' | 'init'
-export interface WorkerMessage {
-  type: WorkerActions
-  data: any
-}
-
-export type WorkerResponseType = 'searchWordResult' | 'searchWordsResult'
-export interface WorkerResponse {
-  type: WorkerResponseType
-  value: any
-}
-
-init()
+initializingPromise = init()
 
 addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
   switch (data.type) {

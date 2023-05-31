@@ -14,8 +14,8 @@ export type SearchProps = {
 } & BoxProps
 
 export const Search = (props: SearchProps) => {
-  const isOfflineDictionaryAvailable = useOfflineDictionaryAvailability()
-  if (isOfflineDictionaryAvailable) {
+  const { isAvailable } = useOfflineDictionaryAvailability()
+  if (isAvailable) {
     return <OfflineSearch {...props} />
   }
   return <JishoSearch {...props} />

@@ -8,5 +8,5 @@ export const useOfflineDictionaryAvailability = () => {
   ] = useKeyValueData('offlineDictionaryEnabled', true)
   const isAvailable = isDBDownloaded && (offlineDictionaryEnabled ?? false)
 
-  return isAvailable
+  return { isDBDownloaded, isAvailable }
 }

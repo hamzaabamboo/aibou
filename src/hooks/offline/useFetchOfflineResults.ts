@@ -1,42 +1,27 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import { orderBy } from 'lodash'
-import { useEffect, useRef } from 'react'
 import { type JishoWord } from '../../types/jisho'
 import { type TopicItem } from '../../types/topic'
 import { similarity } from '../../utils/stringSimilarity'
 import { useDBContext } from '../contexts/useDBContext'
+import { useOfflineDictionaryContext } from '../contexts/useOfflineDictionaryContext'
 
 export const useFetchOfflineResults = (topicId: string) => {
   const { db } = useDBContext()
+  const { worker } = useOfflineDictionaryContext()
   const queryClient = useQueryClient()
-
-  const worker = useRef<Worker>()
-
-  useEffect(() => {
-    worker.current = new Worker(
-      new URL('../../workers/offline-search.worker.ts', import.meta.url)
-    )
-    worker.current.onmessage = async ({ data }) => {
-      switch (data.type) {
-        case 'searchWordResult':
-      }
-    }
-    return () => {
-      worker.current?.terminate()
-    }
-  }, [])
 
   return useMutation(
     ['updateOfflineResults'],
     async (words?: TopicItem[]) => {
       if (words == null) return
       const searchResults: any = await new Promise((resolve) => {
-        if (worker.current == null) return
-        worker.current.postMessage({
+        if (!worker) return
+        worker.postMessage({
           type: 'searchWords',
           data: words.map(w => w.word)
         })
-        worker.current.onmessage = ({ data }) => { data.type === 'searchWordsResult' && resolve(data.data) }
+        worker.onmessage = ({ data }) => { data.type === 'searchWordsResult' && resolve(data.data) }
       })
       for (let i = 0; i < words.length; i++) {
         const word = words[i]

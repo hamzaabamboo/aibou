@@ -5,7 +5,7 @@ export const useGetTopicItems = (topicId: string) => {
   const { db } = useDBContext()
   return useQuery(['fetchTopicItems', topicId], async () => {
     const idNumber = parseInt(topicId)
-    let q = await db?.topicEntries.where('topicId').equals(topicId)
+    let q = db?.topicEntries.where('topicId').equals(topicId ?? '')
     if (!isNaN(idNumber)) {
       q = q?.or('topicId').equals(idNumber)
     }

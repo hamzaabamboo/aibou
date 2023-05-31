@@ -39,6 +39,7 @@ import {
   type ItemViewOptions
 } from '../../components/topic/ItemViewSettings'
 import { useFetchOfflineResults } from '../../hooks/offline/useFetchOfflineResults'
+import { useOfflineDictionaryAvailability } from '../../hooks/offline/useOfflineDictionaryAvailability'
 import { useAddTopicItem } from '../../hooks/topic-item/useAddTopicItem'
 import { useGetTopic } from '../../hooks/topic/useGetTopic'
 import { useFetchJishoResults } from '../../hooks/useFetchJishoResults'
@@ -76,6 +77,7 @@ const TopicDetailPage: NextPage = () => {
     useFetchJishoResults(topicId)
   const { mutate: fetchOfflineResults, isLoading: isFetchingOfflineResults } =
     useFetchOfflineResults(topicId)
+  const { isAvailable, isDBDownloaded } = useOfflineDictionaryAvailability()
   const [
     { data: offlineDictionaryEnabled },
     { mutate: updateDictionaryEnabledStatus }
@@ -192,14 +194,14 @@ const TopicDetailPage: NextPage = () => {
                 <Heading>{topic?.name}</Heading>
                 <HStack alignSelf="flex-end">
                   <HStack>
-                    <HStack justifyContent="space-between">
+                    {isDBDownloaded && <HStack justifyContent="space-between">
                       <Text>Offline Dict.</Text>
                       <Switch
                         isChecked={offlineDictionaryEnabled}
                         onChange={(e) => { updateDictionaryEnabledStatus(e.target.checked) }
                         }
                       />
-                    </HStack>
+                    </HStack>}
                     <Menu>
                       <MenuButton as={Button} rightIcon={<HamburgerIcon />}>
                         Menu
@@ -214,7 +216,7 @@ const TopicDetailPage: NextPage = () => {
                             Load Definition from Jisho
                           </MenuItem>
                         )}
-                        {needsSync.length > 0 && (
+                        {isAvailable && needsSync.length > 0 && (
                           <MenuItem
                             icon={<DownloadIcon />}
                             isDisabled={isFetchingOfflineResults}
