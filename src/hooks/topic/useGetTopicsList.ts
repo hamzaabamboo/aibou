@@ -6,5 +6,5 @@ export const useGetTopicsList = () => {
   return useQuery(['fetchTopicsList'], async () => {
     const data = await db?.topics.orderBy('lastUpdatedAt').reverse().toArray()
     return (data ?? []).filter((f) => !f.isDeleted)
-  })
+  }, { enabled: db !== undefined })
 }
