@@ -1,5 +1,4 @@
 import { useQuery } from '@tanstack/react-query'
-import { type Topic } from '../types/topic'
 import { useDBContext } from './contexts/useDBContext'
 
 export const useLastUpdatedTopics = () => {
@@ -9,5 +8,5 @@ export const useLastUpdatedTopics = () => {
       await db?.topics.orderBy('lastUpdatedAt').reverse().limit(3).toArray()
     )?.values()
     return Array.from(data ?? []).filter(d => !d.isDeleted)
-  })
+  }, {enabled: !!db})
 }

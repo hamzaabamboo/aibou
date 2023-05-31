@@ -1,5 +1,6 @@
 import {
-  type UseMutationResult, type UseQueryResult, useMutation, useQuery, useQueryClient
+  useMutation, useQuery, useQueryClient,
+  type UseMutationResult, type UseQueryResult
 } from '@tanstack/react-query'
 import { useDBContext } from '../contexts/useDBContext'
 
@@ -21,7 +22,7 @@ export const useKeyValueData = <T extends object | string | number | boolean>(
       await db?.keyValues.add({ key, value: defaultValue })
       return defaultValue
     }
-  })
+  }, {enabled: !!db})
 
   const setData = useMutation(
     async (data: T) => {

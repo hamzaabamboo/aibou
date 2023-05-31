@@ -13,7 +13,6 @@ export const useSyncData = () => {
   const [{ data: lastSyncedTime }, { mutate: updateLastUpdatedTime }] = useKeyValueData('lastSyncedTime', '')
   const toast = useToast()
   const queryClient = useQueryClient()
-
   const syncEnabled = syncUrl && syncSecret
 
   return {
