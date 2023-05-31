@@ -169,21 +169,16 @@ const TopicDetailPage: NextPage = () => {
             </HStack>
           ) : (
             <>
-              <HStack justifyContent="space-between">
+              <HStack
+                justifyContent="space-between"
+                alignItems="flex-start"
+                flexDir={["column", "row"]}
+              >
                 <Heading>{topic?.name}</Heading>
-                <HStack>
-                  {needsSync.length > 0 && (
-                    <Button
-                      colorScheme="green"
-                      isLoading={isFetchingJishoResults}
-                      onClick={() => fetchJishoResults(needsSync)}
-                    >
-                      Load Definition
-                    </Button>
-                  )}
+                <HStack alignSelf="flex-end">
                   <HStack>
                     <HStack justifyContent="space-between">
-                      <Text>Offline Dictionary</Text>
+                      <Text>Offline Dict.</Text>
                       <Switch
                         isChecked={offlineDictionaryEnabled}
                         onChange={(e) =>
@@ -196,6 +191,15 @@ const TopicDetailPage: NextPage = () => {
                         Menu
                       </MenuButton>
                       <MenuList>
+                        {needsSync.length > 0 && (
+                          <MenuItem
+                            icon={<DownloadIcon />}
+                            isDisabled={isFetchingJishoResults}
+                            onClick={() => fetchJishoResults(needsSync)}
+                          >
+                            Load Definition from Jisho
+                          </MenuItem>
+                        )}
                         <MenuItem
                           icon={<EditIcon />}
                           onClick={() => setEditingTopic(topic)}

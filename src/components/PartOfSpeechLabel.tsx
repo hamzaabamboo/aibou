@@ -25,7 +25,7 @@ export const parsePartOfSpeech = (
           return "n";
         return partOfSpeech;
       }
-      if (partOfSpeech.includes("adv")) {
+      if (partOfSpeech.includes("dverb")) {
         if (partOfSpeech.includes("to")) return "と-adv";
         return "adv";
       }
@@ -60,8 +60,8 @@ export const parsePartOfSpeech = (
       if (partOfSpeech.includes("adjective")) {
         if (partOfSpeech.includes("keiyoushi")) return "い-adj";
         if (
-          partOfSpeech.includes("keiyoudoushi") ||
-          partOfSpeech.includes("na-adjective")
+          partOfSpeech.includes("keiyoudoshi") ||
+          partOfSpeech.includes("a-adjective")
         )
           return "な-adj";
         return partOfSpeech;
@@ -76,7 +76,7 @@ export function PartOfSpeechLabel(props: { partOfSpeech: PartOfSpeech }) {
   const text = parsePartOfSpeech(partOfSpeech);
 
   const color = (() => {
-    if (partOfSpeech.includes("adv")) return "cyan";
+    if (partOfSpeech.includes("dverb")) return "cyan";
     if (partOfSpeech.includes("oun")) return "green";
     if (partOfSpeech.includes("verb")) return "purple";
     if (partOfSpeech.includes("adj")) return "yellow";

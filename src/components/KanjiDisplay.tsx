@@ -20,6 +20,14 @@ export function KanjiDisplay(props: {
     );
   }
 
+  if (hideRuby) {
+    return (
+      <Text as="span" fontWeight={fontWeight}>
+        {word} ({reading})
+      </Text>
+    );
+  }
+
   return (
     <chakra.ruby fontSize={fontSize} textAlign="center">
       <Text as="span" fontWeight={fontWeight}>
