@@ -12,5 +12,5 @@ export const useGetTopicItems = (topicId: string) => {
     return ((await q?.reverse().sortBy('createdAt')) ?? []).filter(
       (f) => !f.isDeleted
     )
-  }, { enabled: !(db == null) })
+  }, { enabled: db !== undefined && topicId !== '' })
 }

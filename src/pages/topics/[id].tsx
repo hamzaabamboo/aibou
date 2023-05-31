@@ -35,9 +35,10 @@ import { WordItem } from '../../components/jisho/WordItem'
 import { DeleteTopicModal } from '../../components/topic/DeleteTopicModal'
 import { EditTopicModal } from '../../components/topic/EditTopicModal'
 import {
-  type ItemViewOptions,
-  ItemViewSettings
+  ItemViewSettings,
+  type ItemViewOptions
 } from '../../components/topic/ItemViewSettings'
+import { useFetchOfflineResults } from '../../hooks/offline/useFetchOfflineResults'
 import { useAddTopicItem } from '../../hooks/topic-item/useAddTopicItem'
 import { useGetTopic } from '../../hooks/topic/useGetTopic'
 import { useFetchJishoResults } from '../../hooks/useFetchJishoResults'
@@ -73,6 +74,8 @@ const TopicDetailPage: NextPage = () => {
   const { mutate, isLoading: isAdding } = useAddTopicItem()
   const { mutate: fetchJishoResults, isLoading: isFetchingJishoResults } =
     useFetchJishoResults(topicId)
+  const { mutate: fetchOfflineResults, isLoading: isFetchingOfflineResults } =
+    useFetchOfflineResults(topicId)
   const [
     { data: offlineDictionaryEnabled },
     { mutate: updateDictionaryEnabledStatus }
@@ -118,7 +121,15 @@ const TopicDetailPage: NextPage = () => {
     const csv = header + data
     download(`${topic?.name}.csv`, csv)
   }
+
   const needsSync = useMemo(
+    () =>
+      words?.filter((w) => (w.jishoData == null)) ??
+      [],
+    [words]
+  )
+
+  const needsSyncJisho = useMemo(
     () =>
       words?.filter((w) => (w.jishoData == null) || w?.jishoData?.attribution.jisho) ??
       [],
@@ -194,13 +205,22 @@ const TopicDetailPage: NextPage = () => {
                         Menu
                       </MenuButton>
                       <MenuList>
-                        {needsSync.length > 0 && (
+                        {needsSyncJisho.length > 0 && (
                           <MenuItem
                             icon={<DownloadIcon />}
                             isDisabled={isFetchingJishoResults}
                             onClick={() => { fetchJishoResults(needsSync) }}
                           >
                             Load Definition from Jisho
+                          </MenuItem>
+                        )}
+                        {needsSync.length > 0 && (
+                          <MenuItem
+                            icon={<DownloadIcon />}
+                            isDisabled={isFetchingOfflineResults}
+                            onClick={() => { fetchOfflineResults(needsSync) }}
+                          >
+                            Load Definition Offline
                           </MenuItem>
                         )}
                         <MenuItem
