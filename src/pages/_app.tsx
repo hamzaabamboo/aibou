@@ -1,11 +1,12 @@
-import type { AppProps } from 'next/app';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { Box, ChakraProvider, Stack } from '@chakra-ui/react';
-import { useEffect } from 'react';
-import Head from 'next/head';
-import { Navigation } from '../components/Navigation';
-import { initDexie } from '../utils/db';
-import { requestPersistentStoragePermission } from '../utils/requestPersistentStoragePermission';
+import { Box, ChakraProvider, Stack } from "@chakra-ui/react";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import type { AppProps } from "next/app";
+import Head from "next/head";
+import { useEffect } from "react";
+import { Footer } from "../components/Footer";
+import { Navigation } from "../components/Navigation";
+import { initDexie } from "../utils/db";
+import { requestPersistentStoragePermission } from "../utils/requestPersistentStoragePermission";
 
 const queryClient = new QueryClient();
 
@@ -34,6 +35,7 @@ function MyApp({ Component, pageProps }: AppProps) {
             >
               <Component {...pageProps} />
             </Box>
+            <Footer />
           </Stack>
         </QueryClientProvider>
       </ChakraProvider>

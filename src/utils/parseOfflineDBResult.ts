@@ -27,7 +27,7 @@ export const parseOfflineDBResult = (data: { columns: string[], values: SqlValue
                     see_also: sense.related?.split(',')
                 })
             }),
-            attribution: {jmdict: true, jmnedict: false, dbpedia: false}
+            attribution: {offlineDict: true, jisho: false, jmdict: true, jmnedict: false, dbpedia: false}
         } as JishoWord
     })
     return words

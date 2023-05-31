@@ -19,6 +19,15 @@ export const parsePartOfSpeech = (
     case JishoPartOfSpeech.WikipediaDefinition:
       return "wiki";
     default: {
+      if (partOfSpeech.includes("adjective")) {
+        if (partOfSpeech.includes("keiyoushi")) return "い-adj";
+        if (
+          partOfSpeech.includes("keiyodoshi") ||
+          partOfSpeech.includes("a-adjective")
+        )
+          return "な-adj";
+        return partOfSpeech;
+      }
       if (partOfSpeech.includes("xpressions")) return "Expressions";
       if (partOfSpeech.includes("noun") || partOfSpeech.includes("Noun")) {
         if (partOfSpeech.includes("futsuumeishi") || partOfSpeech === "Noun")
@@ -57,15 +66,6 @@ export const parsePartOfSpeech = (
           );
         return partOfSpeech;
       }
-      if (partOfSpeech.includes("adjective")) {
-        if (partOfSpeech.includes("keiyoushi")) return "い-adj";
-        if (
-          partOfSpeech.includes("keiyoudoshi") ||
-          partOfSpeech.includes("a-adjective")
-        )
-          return "な-adj";
-        return partOfSpeech;
-      }
       return partOfSpeech;
     }
   }
@@ -76,10 +76,10 @@ export function PartOfSpeechLabel(props: { partOfSpeech: PartOfSpeech }) {
   const text = parsePartOfSpeech(partOfSpeech);
 
   const color = (() => {
+    if (partOfSpeech.includes("djective")) return "yellow";
     if (partOfSpeech.includes("dverb")) return "cyan";
     if (partOfSpeech.includes("oun")) return "green";
     if (partOfSpeech.includes("verb")) return "purple";
-    if (partOfSpeech.includes("adj")) return "yellow";
     switch (partOfSpeech) {
       case JishoPartOfSpeech.Expressions:
         return "red";

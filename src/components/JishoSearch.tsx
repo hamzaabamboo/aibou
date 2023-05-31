@@ -98,12 +98,14 @@ export function JishoSearch(props: SearchProps) {
           shadow={isPopup ? "md" : "none"}
           zIndex={2}
         >
-          {!isPopup && (
-            <Heading fontSize="2xl" as="h3" mb={2}>
-              Search Results
-            </Heading>
-          )}
-          <Box>{searchResults}</Box>
+          <Box overflowY="auto" w="100%" maxH="50vh">
+            {!isPopup && (
+              <Heading fontSize="2xl" as="h3" mb={2}>
+                Search Results
+              </Heading>
+            )}
+            <Box>{searchResults}</Box>
+          </Box>
         </Box>
       )}
     </Box>

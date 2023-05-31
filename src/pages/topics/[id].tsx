@@ -119,7 +119,9 @@ const TopicDetailPage: NextPage = () => {
     download(`${topic?.name}.csv`, csv);
   };
   const needsSync = useMemo(
-    () => words?.filter((w) => !w.jishoData) ?? [],
+    () =>
+      words?.filter((w) => !w.jishoData || w?.jishoData?.attribution.jisho) ??
+      [],
     [words]
   );
 

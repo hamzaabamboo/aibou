@@ -20,9 +20,11 @@ export type JishoWord = {
     info?: string[];
   }[];
   attribution: {
-    jmdict: boolean;
-    jmnedict: boolean;
-    dbpedia: boolean;
+    offlineDict?: boolean;
+    jmdict?: boolean;
+    jmnedict?: boolean;
+    dbpedia?: boolean;
+    jisho?: boolean;
   };
 };
 
