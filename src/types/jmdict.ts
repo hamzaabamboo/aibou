@@ -1,37 +1,37 @@
-export type JMDictWord = {
-  id: string;
-  kanji: { common: boolean; text: string; tags: JMDictTags[] }[];
-  kana: {
-    common: boolean;
-    text: string;
-    tags: JMDictTags[];
-    appliesToKanji: (string | '*')[];
-  }[];
+export interface JMDictWord {
+  id: string
+  kanji: Array<{ common: boolean, text: string, tags: JMDictTags[] }>
+  kana: Array<{
+    common: boolean
+    text: string
+    tags: JMDictTags[]
+    appliesToKanji: Array<string | '*'>
+  }>
   sense: [
     {
-      partOfSpeech: JMDictTags[];
-      appliesToKanji: (string | '*')[];
-      appliesToKana: (string | '*')[];
-      related: string[][];
-      antonym: string[][];
-      field: JMDictTags[];
-      dialect: JMDictTags[];
-      misc: JMDictTags[];
-      info: string[];
-      languageSource: {
-        lang: string;
-        full: boolean;
-        wasei: boolean;
-        text: string;
-      }[];
-      gloss: {
-        type: 'literal' | 'figurative' | 'explanation' | null;
-        lang: string;
-        text: string;
-      }[];
+      partOfSpeech: JMDictTags[]
+      appliesToKanji: Array<string | '*'>
+      appliesToKana: Array<string | '*'>
+      related: string[][]
+      antonym: string[][]
+      field: JMDictTags[]
+      dialect: JMDictTags[]
+      misc: JMDictTags[]
+      info: string[]
+      languageSource: Array<{
+        lang: string
+        full: boolean
+        wasei: boolean
+        text: string
+      }>
+      gloss: Array<{
+        type: 'literal' | 'figurative' | 'explanation' | null
+        lang: string
+        text: string
+      }>
     }
-  ];
-};
+  ]
+}
 
 export enum JMDictTags {
   MA = 'martial arts term',
@@ -224,47 +224,47 @@ export enum JMDictTags {
   organization = 'organization name',
 }
 
-export type JMDictFile = {
-  dictDate: string;
-  dictRevisions: string[];
-  tags: { [k: string]: JMDictTags };
-  version: string;
-  words: JMDictWord[];
-};
+export interface JMDictFile {
+  dictDate: string
+  dictRevisions: string[]
+  tags: Record<string, JMDictTags>
+  version: string
+  words: JMDictWord[]
+}
 
 export type DictionaryKanji = JMDictWord['kanji'][number] & {
-  id: string;
-  wordId: string;
-};
+  id: string
+  wordId: string
+}
 
 export type DictionaryKana = Omit<
-  JMDictWord['kana'][number],
-  'appliesToKanji'
+JMDictWord['kana'][number],
+'appliesToKanji'
 > & {
-  id: string;
-  wordId: string;
-  kanjiIds: string[];
-};
+  id: string
+  wordId: string
+  kanjiIds: string[]
+}
 
 export type DictionarySense = Omit<
-  JMDictWord['sense'][number],
-  'appliesToKana' | 'appliesToKanji' | 'gloss'
+JMDictWord['sense'][number],
+'appliesToKana' | 'appliesToKanji' | 'gloss'
 > & {
-  id: string;
-  wordId: string;
-  kanjiIds: string[];
-  kanaIds: string[];
-  senseIds: string[];
-};
+  id: string
+  wordId: string
+  kanjiIds: string[]
+  kanaIds: string[]
+  senseIds: string[]
+}
 
 export type DictionaryGloss = JMDictWord['sense'][number]['gloss'][number] & {
-  id: string;
-  wordId: string;
-  senseId: string;
-};
-export type DictionaryWord = {
-  id: string;
-  kanjiIds: string[];
-  kanaIds: string[];
-  senseIds: string[];
-};
+  id: string
+  wordId: string
+  senseId: string
+}
+export interface DictionaryWord {
+  id: string
+  kanjiIds: string[]
+  kanaIds: string[]
+  senseIds: string[]
+}

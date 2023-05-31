@@ -1,4 +1,4 @@
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
@@ -9,21 +9,21 @@ import {
   Spinner,
   Stack,
   Text,
-  useDisclosure,
-} from "@chakra-ui/react";
-import sortBy from "lodash/sortBy";
-import type { NextPage } from "next";
-import { useEffect } from "react";
-import { AddTopicModal } from "../../components/topic/AddTopicModal";
-import { useGetTopicsList } from "../../hooks/topic/useGetTopicsList";
+  useDisclosure
+} from '@chakra-ui/react'
+import sortBy from 'lodash/sortBy'
+import type { NextPage } from 'next'
+import { useEffect } from 'react'
+import { AddTopicModal } from '../../components/topic/AddTopicModal'
+import { useGetTopicsList } from '../../hooks/topic/useGetTopicsList'
 
 const TopicsPage: NextPage = () => {
-  const { data, refetch, isLoading } = useGetTopicsList();
-  const { isOpen, onOpen, onClose } = useDisclosure();
+  const { data, refetch, isLoading } = useGetTopicsList()
+  const { isOpen, onOpen, onClose } = useDisclosure()
 
   useEffect(() => {
-    refetch();
-  }, []);
+    refetch()
+  }, [])
 
   return (
     <>
@@ -35,9 +35,11 @@ const TopicsPage: NextPage = () => {
               Add Topic
             </Button>
           </HStack>
-          {isLoading ? (
+          {isLoading
+            ? (
             <Spinner />
-          ) : (
+              )
+            : (
             <Stack>
               {sortBy(data, (d) => d.lastUpdatedAt)
                 .reverse()
@@ -48,7 +50,7 @@ const TopicsPage: NextPage = () => {
                       rounded="md"
                       px="2"
                       py="4"
-                      _hover={{ textDecoration: "none" }}
+                      _hover={{ textDecoration: 'none' }}
                     >
                       <Text fontSize="2xl" fontWeight="bold">
                         {topic.name}
@@ -58,12 +60,12 @@ const TopicsPage: NextPage = () => {
                   </Link>
                 ))}
             </Stack>
-          )}
+              )}
         </Stack>
       </Container>
       <AddTopicModal isOpen={isOpen} onClose={onClose} />
     </>
-  );
-};
+  )
+}
 
-export default TopicsPage;
+export default TopicsPage

@@ -1,4 +1,4 @@
-import { EditIcon } from "@chakra-ui/icons";
+import { EditIcon } from '@chakra-ui/icons'
 import {
   Button,
   HStack,
@@ -10,27 +10,27 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useToast,
-} from "@chakra-ui/react";
-import { useUpdateTopic } from "../../hooks/topic/useUpdateTopic";
-import { Topic } from "../../types/topic";
+  useToast
+} from '@chakra-ui/react'
+import { useUpdateTopic } from '../../hooks/topic/useUpdateTopic'
+import { type Topic } from '../../types/topic'
 
 // TODO: Refactor modals
-export function DeleteTopicModal(props: {
-  topic: Topic;
-  onClose: () => void;
-  onDeleteSuccess: () => void;
+export function DeleteTopicModal (props: {
+  topic: Topic
+  onClose: () => void
+  onDeleteSuccess: () => void
 }) {
-  const { topic, onClose, onDeleteSuccess } = props;
-  const { mutate, isLoading } = useUpdateTopic(topic.id ?? "");
-  const toast = useToast();
+  const { topic, onClose, onDeleteSuccess } = props
+  const { mutate, isLoading } = useUpdateTopic(topic.id ?? '')
+  const toast = useToast()
 
   const handleDeleteTopic = async () => {
-    if (isLoading) return;
-    await mutate({ isDeleted: true });
-    toast({ status: "success", title: "Topic Deleted successfully" });
-    onDeleteSuccess();
-  };
+    if (isLoading) return
+    await mutate({ isDeleted: true })
+    toast({ status: 'success', title: 'Topic Deleted successfully' })
+    onDeleteSuccess()
+  }
 
   return (
     <Modal
@@ -46,8 +46,8 @@ export function DeleteTopicModal(props: {
       <ModalContent>
         <form
           onSubmit={(e) => {
-            e.preventDefault();
-            handleDeleteTopic();
+            e.preventDefault()
+            handleDeleteTopic()
           }}
         >
           <ModalHeader>
@@ -63,15 +63,15 @@ export function DeleteTopicModal(props: {
               <Button
                 leftIcon={<EditIcon />}
                 colorScheme="red"
-                onClick={() => handleDeleteTopic()}
+                onClick={async () => { await handleDeleteTopic() }}
               >
                 Delete
               </Button>
-              <Button onClick={() => onClose()}>Close</Button>
+              <Button onClick={() => { onClose() }}>Close</Button>
             </HStack>
           </ModalFooter>
         </form>
       </ModalContent>
     </Modal>
-  );
+  )
 }

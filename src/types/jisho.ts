@@ -1,37 +1,37 @@
-import { OfflineDictPartOfSpeech } from "./offlineDictPartsOfSpeech";
+import { type OfflineDictPartOfSpeech } from './offlineDictPartsOfSpeech'
 
-export type PartOfSpeech = JishoPartOfSpeech | OfflineDictPartOfSpeech;
+export type PartOfSpeech = JishoPartOfSpeech | OfflineDictPartOfSpeech
 
-export type JishoWord = {
-  slug?: string;
-  is_common: string;
-  tags: string[];
-  jlpt?: 'jlpt-n5' | 'jlpt-n4' | 'jlpt-n3' | 'jlpt-n2' | 'jlpt-n1';
-  japanese: KanjiReading[];
-  senses: {
-    english_definitions: string[];
-    parts_of_speech: PartOfSpeech[];
-    links?: string[];
-    tags: string[];
-    restrictions?: string[];
-    see_also?: string[];
-    antonyms?: string[];
-    source?: string[];
-    info?: string[];
-  }[];
+export interface JishoWord {
+  slug?: string
+  is_common: string
+  tags: string[]
+  jlpt?: 'jlpt-n5' | 'jlpt-n4' | 'jlpt-n3' | 'jlpt-n2' | 'jlpt-n1'
+  japanese: KanjiReading[]
+  senses: Array<{
+    english_definitions: string[]
+    parts_of_speech: PartOfSpeech[]
+    links?: string[]
+    tags: string[]
+    restrictions?: string[]
+    see_also?: string[]
+    antonyms?: string[]
+    source?: string[]
+    info?: string[]
+  }>
   attribution: {
-    offlineDict?: boolean;
-    jmdict?: boolean;
-    jmnedict?: boolean;
-    dbpedia?: boolean;
-    jisho?: boolean;
-  };
-};
+    offlineDict?: boolean
+    jmdict?: boolean
+    jmnedict?: boolean
+    dbpedia?: boolean
+    jisho?: boolean
+  }
+}
 
-export type KanjiReading = {
-  word: string;
-  reading: string;
-};
+export interface KanjiReading {
+  word: string
+  reading: string
+}
 
 export enum JishoPartOfSpeech {
   Noun = 'Noun',

@@ -1,4 +1,4 @@
-import { AddIcon } from "@chakra-ui/icons";
+import { AddIcon } from '@chakra-ui/icons'
 import {
   Button,
   FormControl,
@@ -15,33 +15,33 @@ import {
   ModalOverlay,
   Text,
   Textarea,
-  useToast,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useAddTopic } from "../../hooks/topic/useAddTopic";
+  useToast
+} from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import { useAddTopic } from '../../hooks/topic/useAddTopic'
 
-export function AddTopicModal(props: { isOpen: boolean; onClose: () => void }) {
-  const [title, setTitle] = useState("");
-  const [description, setDescription] = useState("");
+export function AddTopicModal (props: { isOpen: boolean, onClose: () => void }) {
+  const [title, setTitle] = useState('')
+  const [description, setDescription] = useState('')
   const [formError, setFormError] = useState<{
-    title?: boolean;
-  }>({});
-  const { isOpen, onClose } = props;
-  const { mutate, isLoading } = useAddTopic();
-  const toast = useToast();
+    title?: boolean
+  }>({})
+  const { isOpen, onClose } = props
+  const { mutate, isLoading } = useAddTopic()
+  const toast = useToast()
 
   const handleAddTopic = async () => {
-    if (title.length === 0 || isLoading) return;
-    await mutate({ name: title, description });
-    toast({ status: "success", title: "Topic added successfully" });
-    onClose();
-  };
+    if (title.length === 0 || isLoading) return
+    await mutate({ name: title, description })
+    toast({ status: 'success', title: 'Topic added successfully' })
+    onClose()
+  }
 
   useEffect(() => {
     setFormError({
-      title: title.length === 0,
-    });
-  }, [title, description]);
+      title: title.length === 0
+    })
+  }, [title, description])
 
   return (
     <Modal isOpen={isOpen} onClose={onClose} size="lg">
@@ -52,15 +52,15 @@ export function AddTopicModal(props: { isOpen: boolean; onClose: () => void }) {
       <ModalContent>
         <form
           onSubmit={(e) => {
-            e.preventDefault();
-            handleAddTopic();
+            e.preventDefault()
+            handleAddTopic()
           }}
         >
           <ModalHeader>
             <Heading>Add new topic</Heading>
           </ModalHeader>
           <ModalBody>
-            <Grid templateColumns={["1fr", "1fr 3fr"]} gap="2">
+            <Grid templateColumns={['1fr', '1fr 3fr']} gap="2">
               <GridItem>
                 <Text>Title</Text>
               </GridItem>
@@ -69,7 +69,7 @@ export function AddTopicModal(props: { isOpen: boolean; onClose: () => void }) {
                   <Input
                     type="text"
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    onChange={(e) => { setTitle(e.target.value) }}
                   />
                 </FormControl>
               </GridItem>
@@ -79,7 +79,7 @@ export function AddTopicModal(props: { isOpen: boolean; onClose: () => void }) {
               <GridItem>
                 <Textarea
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e) => { setDescription(e.target.value) }}
                 />
               </GridItem>
             </Grid>
@@ -89,15 +89,15 @@ export function AddTopicModal(props: { isOpen: boolean; onClose: () => void }) {
               <Button
                 leftIcon={<AddIcon />}
                 colorScheme="green"
-                onClick={() => handleAddTopic()}
+                onClick={async () => { await handleAddTopic() }}
               >
                 Add
               </Button>
-              <Button onClick={() => onClose()}>Close</Button>
+              <Button onClick={() => { onClose() }}>Close</Button>
             </HStack>
           </ModalFooter>
         </form>
       </ModalContent>
     </Modal>
-  );
+  )
 }

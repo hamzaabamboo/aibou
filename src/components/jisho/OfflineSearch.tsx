@@ -5,74 +5,77 @@ import {
   Input,
   Spinner,
   Stack,
-  Text,
-} from "@chakra-ui/react";
-import debounce from "lodash/debounce";
-import orderBy from "lodash/orderBy";
-import React, { useCallback, useEffect, useState } from "react";
-import { useOfflineDictionary } from "../../hooks/offline/useOfflineDictionary";
-import { similarity } from "../../utils/stringSimilarity";
-import { SearchProps } from "./Search";
-import { SearchResultItem } from "./SearchResultItem";
+  Text
+} from '@chakra-ui/react'
+import debounce from 'lodash/debounce'
+import orderBy from 'lodash/orderBy'
+import React, { useCallback, useEffect, useState } from 'react'
+import { useOfflineDictionary } from '../../hooks/offline/useOfflineDictionary'
+import { similarity } from '../../utils/stringSimilarity'
+import { type SearchProps } from './Search'
+import { SearchResultItem } from './SearchResultItem'
 
-export function OfflineSearch(props: SearchProps) {
+export function OfflineSearch (props: SearchProps) {
   const {
-    inputSize = "large",
+    inputSize = 'large',
     onSelectItem,
     isPopup = false,
     isShowPopup = true,
     setShowPopup,
     ...boxProps
-  } = props;
-  const [input, setInput] = useState("");
-  const [keyword, _setKeyword] = useState("");
-  const setKeyword = useCallback(debounce(_setKeyword, 1000), [_setKeyword]);
-  const { data, isLoading } = useOfflineDictionary(keyword);
+  } = props
+  const [input, setInput] = useState('')
+  const [keyword, _setKeyword] = useState('')
+  const setKeyword = useCallback(debounce(_setKeyword, 1000), [_setKeyword])
+  const { data, isLoading } = useOfflineDictionary(keyword)
   useEffect(() => {
     if (input !== keyword) {
-      setKeyword(input);
-      setShowPopup?.(true);
+      setKeyword(input)
+      setShowPopup?.(true)
     }
-  }, [input, keyword, setKeyword, setShowPopup]);
+  }, [input, keyword, setKeyword, setShowPopup])
 
-  const searchResults = isLoading ? (
+  const searchResults = isLoading
+    ? (
     <Spinner />
-  ) : !data || data.length === 0 ? (
+      )
+    : (data == null) || data.length === 0
+        ? (
     <Text>Keyword not found</Text>
-  ) : (
+          )
+        : (
     <Stack>
       {data?.map((item) => {
         const sortedReadings = input
           ? orderBy(
-              item.japanese,
-              (w) =>
-                Math.max(
-                  w.word ? similarity(w.word, input) : -Infinity,
-                  w.reading ? similarity(w.reading, input) : -Infinity
-                ),
-              "desc"
-            )
-          : item.japanese;
+            item.japanese,
+            (w) =>
+              Math.max(
+                w.word ? similarity(w.word, input) : -Infinity,
+                w.reading ? similarity(w.reading, input) : -Infinity
+              ),
+            'desc'
+          )
+          : item.japanese
 
         return (
           <React.Fragment key={item.slug}>
             <SearchResultItem
               item={{ ...item, japanese: sortedReadings }}
-              onClick={() =>
-                onSelectItem({ ...item, japanese: sortedReadings })
+              onClick={() => { onSelectItem({ ...item, japanese: sortedReadings }) }
               }
               isCard={!isPopup}
             />
             {isPopup && <Divider />}
           </React.Fragment>
-        );
+        )
       })}
     </Stack>
-  );
+          )
 
   const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (e.key === "Escape") setShowPopup?.(false);
-  };
+    if (e.key === 'Escape') setShowPopup?.(false)
+  }
 
   return (
     <Box {...boxProps} position="relative">
@@ -80,21 +83,21 @@ export function OfflineSearch(props: SearchProps) {
         p={2}
         width="full"
         value={input}
-        fontSize={inputSize === "large" ? "4xl" : "lg"}
-        fontWeight={inputSize === "large" ? "bold" : "semibold"}
+        fontSize={inputSize === 'large' ? '4xl' : 'lg'}
+        fontWeight={inputSize === 'large' ? 'bold' : 'semibold'}
         onFocus={() => setShowPopup?.(true)}
-        onChange={(e) => setInput(e.currentTarget.value)}
-        onKeyUp={(e) => handleKeyPress(e)}
+        onChange={(e) => { setInput(e.currentTarget.value) }}
+        onKeyUp={(e) => { handleKeyPress(e) }}
         mb={2}
       />
       {keyword.length > 0 && !isLoading && isShowPopup && (
         <Box
           background="white"
-          position={isPopup ? "absolute" : "initial"}
-          p={isPopup ? "2" : "0"}
+          position={isPopup ? 'absolute' : 'initial'}
+          p={isPopup ? '2' : '0'}
           w="full"
           borderRadius="md"
-          shadow={isPopup ? "md" : "none"}
+          shadow={isPopup ? 'md' : 'none'}
           zIndex={2}
         >
           <Box overflowY="auto" w="100%" maxH="50vh">
@@ -108,5 +111,5 @@ export function OfflineSearch(props: SearchProps) {
         </Box>
       )}
     </Box>
-  );
+  )
 }

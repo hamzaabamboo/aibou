@@ -5,26 +5,26 @@ import {
   Heading,
   Link,
   Stack,
-  Text,
-} from "@chakra-ui/react";
-import format from "date-fns/format";
-import formatDistanceToNow from "date-fns/formatDistanceToNow";
-import type { NextPage } from "next";
-import { useEffect, useState } from "react";
-import { Search } from "../components/jisho/Search";
-import { WordInfoModal } from "../components/jisho/WordInfoModal";
-import { useLastUpdatedTopics } from "../hooks/useLastUpdatedTopics";
-import { useSyncData } from "../hooks/utils/useSyncData";
-import { JishoWord } from "../types/jisho";
+  Text
+} from '@chakra-ui/react'
+import format from 'date-fns/format'
+import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import type { NextPage } from 'next'
+import { useEffect, useState } from 'react'
+import { Search } from '../components/jisho/Search'
+import { WordInfoModal } from '../components/jisho/WordInfoModal'
+import { useLastUpdatedTopics } from '../hooks/useLastUpdatedTopics'
+import { useSyncData } from '../hooks/utils/useSyncData'
+import { type JishoWord } from '../types/jisho'
 
 const Home: NextPage = () => {
-  const [selectedWord, setSelectedWord] = useState<JishoWord | undefined>();
-  const { data: lastUpdatedTopics, refetch } = useLastUpdatedTopics();
-  const { syncEnabled, sync, lastSyncedTime } = useSyncData();
+  const [selectedWord, setSelectedWord] = useState<JishoWord | undefined>()
+  const { data: lastUpdatedTopics, refetch } = useLastUpdatedTopics()
+  const { syncEnabled, sync, lastSyncedTime } = useSyncData()
 
   useEffect(() => {
-    refetch();
-  }, []);
+    refetch()
+  }, [])
 
   return (
     <>
@@ -36,11 +36,11 @@ const Home: NextPage = () => {
           {syncEnabled && (
             <HStack>
               <Text>
-                Last Synced At:{" "}
-                {format(new Date(lastSyncedTime), "dd/MM/yyyy HH:mm")} (
+                Last Synced At:{' '}
+                {format(new Date(lastSyncedTime), 'dd/MM/yyyy HH:mm')} (
                 {formatDistanceToNow(new Date(lastSyncedTime))} ago)
               </Text>
-              <Link onClick={() => sync()}>
+              <Link onClick={async () => { await sync() }}>
                 <Text color="blue.400">Sync Now</Text>
               </Link>
             </HStack>
@@ -52,7 +52,7 @@ const Home: NextPage = () => {
                   shadow="md"
                   rounded="md"
                   p={2}
-                  _hover={{ textDecoration: "none" }}
+                  _hover={{ textDecoration: 'none' }}
                 >
                   <Text fontSize="2xl" fontWeight="bold">
                     {topic.name}
@@ -64,23 +64,23 @@ const Home: NextPage = () => {
           </Stack>
         </Stack>
       </Container>
-      {selectedWord && (
+      {(selectedWord != null) && (
         <WordInfoModal
           isOpen={!!selectedWord}
           item={{
-            topicId: "",
+            topicId: '',
             word:
               selectedWord.japanese[0].word ?? selectedWord.japanese[0].reading,
             jishoData: selectedWord,
             createdAt: new Date(),
-            lastUpdatedAt: new Date(),
+            lastUpdatedAt: new Date()
           }}
-          onClose={() => setSelectedWord(undefined)}
+          onClose={() => { setSelectedWord(undefined) }}
           isAddable
         />
       )}
     </>
-  );
-};
+  )
+}
 
-export default Home;
+export default Home

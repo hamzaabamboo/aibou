@@ -1,5 +1,5 @@
-import { JishoWord } from './jisho';
+import { type JishoWord } from './jisho'
 
-export type SearchAPIResults = {
-  results: JishoWord[];
-};
+export interface SearchAPIResults {
+  results: JishoWord[]
+}

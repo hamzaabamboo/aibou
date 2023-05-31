@@ -1,4 +1,4 @@
-import { Box, HStack, Text } from "@chakra-ui/react";
+import { Box, HStack, Text } from '@chakra-ui/react'
 
 export const Footer = () => {
   return (
@@ -7,5 +7,5 @@ export const Footer = () => {
         <Text>© 2022-2023 ハムP | Source Code</Text>
       </HStack>
     </Box>
-  );
-};
+  )
+}

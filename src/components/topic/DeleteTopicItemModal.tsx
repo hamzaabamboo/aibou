@@ -1,4 +1,4 @@
-import { EditIcon } from "@chakra-ui/icons";
+import { EditIcon } from '@chakra-ui/icons'
 import {
   Button,
   HStack,
@@ -10,31 +10,31 @@ import {
   ModalHeader,
   ModalOverlay,
   Text,
-  useToast,
-} from "@chakra-ui/react";
-import { useUpdateTopicItem } from "../../hooks/topic-item/useUpdateTopicItem";
-import { TopicItem } from "../../types/topic";
+  useToast
+} from '@chakra-ui/react'
+import { useUpdateTopicItem } from '../../hooks/topic-item/useUpdateTopicItem'
+import { type TopicItem } from '../../types/topic'
 
 // TODO: Refactor modals
-export function DeleteTopicItemModal(props: {
-  topicItem: TopicItem;
-  onClose: () => void;
-  onDeleteSuccess: () => void;
+export function DeleteTopicItemModal (props: {
+  topicItem: TopicItem
+  onClose: () => void
+  onDeleteSuccess: () => void
 }) {
-  const { topicItem, onClose, onDeleteSuccess } = props;
-  const { mutate, isLoading } = useUpdateTopicItem();
-  const toast = useToast();
+  const { topicItem, onClose, onDeleteSuccess } = props
+  const { mutate, isLoading } = useUpdateTopicItem()
+  const toast = useToast()
 
   const handleDeleteItem = async () => {
-    if (isLoading) return;
+    if (isLoading) return
     await mutate({
       id: topicItem.id,
       topicId: topicItem.topicId,
-      isDeleted: true,
-    });
-    toast({ status: "success", title: "Item Deleted successfully" });
-    onDeleteSuccess();
-  };
+      isDeleted: true
+    })
+    toast({ status: 'success', title: 'Item Deleted successfully' })
+    onDeleteSuccess()
+  }
 
   return (
     <Modal
@@ -50,8 +50,8 @@ export function DeleteTopicItemModal(props: {
       <ModalContent>
         <form
           onSubmit={(e) => {
-            e.preventDefault();
-            handleDeleteItem();
+            e.preventDefault()
+            handleDeleteItem()
           }}
         >
           <ModalHeader>
@@ -67,15 +67,15 @@ export function DeleteTopicItemModal(props: {
               <Button
                 leftIcon={<EditIcon />}
                 colorScheme="red"
-                onClick={() => handleDeleteItem()}
+                onClick={async () => { await handleDeleteItem() }}
               >
                 Delete
               </Button>
-              <Button onClick={() => onClose()}>Close</Button>
+              <Button onClick={() => { onClose() }}>Close</Button>
             </HStack>
           </ModalFooter>
         </form>
       </ModalContent>
     </Modal>
-  );
+  )
 }

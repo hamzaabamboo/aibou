@@ -1,1 +1,1 @@
-export const getPartOfSpeech = () => {};
+export const getPartOfSpeech = () => {}

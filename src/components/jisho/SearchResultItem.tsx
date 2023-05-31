@@ -1,50 +1,50 @@
-import { CopyIcon } from "@chakra-ui/icons";
+import { CopyIcon } from '@chakra-ui/icons'
 import {
   Box,
   HStack,
   IconButton,
   ListItem,
   Stack,
-  StackProps,
+  type StackProps,
   Text,
   UnorderedList,
-  useToast,
-} from "@chakra-ui/react";
-import { JishoWord } from "../../types/jisho";
-import { KanjiDisplay } from "./KanjiDisplay";
-import { PartOfSpeechLabel } from "./PartOfSpeechLabel";
+  useToast
+} from '@chakra-ui/react'
+import { type JishoWord } from '../../types/jisho'
+import { KanjiDisplay } from './KanjiDisplay'
+import { PartOfSpeechLabel } from './PartOfSpeechLabel'
 
 export type SearchResultItemProps = {
-  item: JishoWord;
-  showMeaning?: boolean;
-  isCard?: boolean;
-  showCopy?: boolean;
-} & StackProps;
+  item: JishoWord
+  showMeaning?: boolean
+  isCard?: boolean
+  showCopy?: boolean
+} & StackProps
 
-export function SearchResultItem(props: SearchResultItemProps) {
+export function SearchResultItem (props: SearchResultItemProps) {
   const {
     item,
     showMeaning = true,
     isCard = true,
     showCopy = false,
     ...stackProps
-  } = props;
-  const toast = useToast();
-  const word = item.japanese;
+  } = props
+  const toast = useToast()
+  const word = item.japanese
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(word[0].word);
+    navigator.clipboard.writeText(word[0].word)
     toast({
-      status: "success",
-      title: "Word Copied to Clipboard",
-    });
-  };
+      status: 'success',
+      title: 'Word Copied to Clipboard'
+    })
+  }
 
   return (
     <Stack
       alignItems="flex-start"
-      shadow={isCard ? "md" : "none"}
-      borderRadius={isCard ? "md" : "none"}
+      shadow={isCard ? 'md' : 'none'}
+      borderRadius={isCard ? 'md' : 'none'}
       h="full"
       p={2}
       {...stackProps}
@@ -64,8 +64,8 @@ export function SearchResultItem(props: SearchResultItemProps) {
             aria-label="copy-text"
             size="sm"
             onClick={(e) => {
-              handleCopy();
-              e.stopPropagation();
+              handleCopy()
+              e.stopPropagation()
             }}
             icon={<CopyIcon />}
           />
@@ -82,7 +82,7 @@ export function SearchResultItem(props: SearchResultItemProps) {
                       <PartOfSpeechLabel key={idx} partOfSpeech={i} />
                     ))}
                   </HStack>
-                  {i.english_definitions.join(", ")}
+                  {i.english_definitions.join(', ')}
                 </Text>
               </ListItem>
             ))}
@@ -90,5 +90,5 @@ export function SearchResultItem(props: SearchResultItemProps) {
         </Box>
       )}
     </Stack>
-  );
+  )
 }

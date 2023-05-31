@@ -1,23 +1,23 @@
-import { Text, chakra } from "@chakra-ui/react";
-import { KanjiReading } from "../../types/jisho";
+import { Text, chakra } from '@chakra-ui/react'
+import { type KanjiReading } from '../../types/jisho'
 
-export function KanjiDisplay(props: {
-  data: Partial<KanjiReading>;
-  hideRuby?: boolean;
-  isSmall?: boolean;
+export function KanjiDisplay (props: {
+  data: Partial<KanjiReading>
+  hideRuby?: boolean
+  isSmall?: boolean
 }) {
-  const { data, isSmall = false, hideRuby = false } = props;
-  const { word, reading } = data;
+  const { data, isSmall = false, hideRuby = false } = props
+  const { word, reading } = data
 
-  const fontSize = isSmall ? "lg" : "3xl";
-  const fontWeight = isSmall ? "normal" : "bold";
+  const fontSize = isSmall ? 'lg' : '3xl'
+  const fontWeight = isSmall ? 'normal' : 'bold'
 
   if (!word) {
     return (
       <Text fontSize={fontSize} fontWeight={fontWeight}>
         {reading}
       </Text>
-    );
+    )
   }
 
   if (hideRuby) {
@@ -25,7 +25,7 @@ export function KanjiDisplay(props: {
       <Text as="span" fontWeight={fontWeight}>
         {word} ({reading})
       </Text>
-    );
+    )
   }
 
   return (
@@ -36,5 +36,5 @@ export function KanjiDisplay(props: {
       {!hideRuby && <chakra.rt>{reading}</chakra.rt>}
       <chakra.rp>({reading})</chakra.rp>
     </chakra.ruby>
-  );
+  )
 }

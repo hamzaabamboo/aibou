@@ -1,4 +1,4 @@
-import { EditIcon } from "@chakra-ui/icons";
+import { EditIcon } from '@chakra-ui/icons'
 import {
   Button,
   FormControl,
@@ -15,35 +15,35 @@ import {
   ModalOverlay,
   Text,
   Textarea,
-  useToast,
-} from "@chakra-ui/react";
-import { useEffect, useState } from "react";
-import { useUpdateTopic } from "../../hooks/topic/useUpdateTopic";
-import { Topic } from "../../types/topic";
+  useToast
+} from '@chakra-ui/react'
+import { useEffect, useState } from 'react'
+import { useUpdateTopic } from '../../hooks/topic/useUpdateTopic'
+import { type Topic } from '../../types/topic'
 
 // TODO: Refactor modals
-export function EditTopicModal(props: { topic: Topic; onClose: () => void }) {
-  const { topic, onClose } = props;
-  const [title, setTitle] = useState(topic.name);
-  const [description, setDescription] = useState(topic.description);
+export function EditTopicModal (props: { topic: Topic, onClose: () => void }) {
+  const { topic, onClose } = props
+  const [title, setTitle] = useState(topic.name)
+  const [description, setDescription] = useState(topic.description)
   const [formError, setFormError] = useState<{
-    title?: boolean;
-  }>({});
-  const { mutate, isLoading } = useUpdateTopic(topic.id ?? "");
-  const toast = useToast();
+    title?: boolean
+  }>({})
+  const { mutate, isLoading } = useUpdateTopic(topic.id ?? '')
+  const toast = useToast()
 
   const handleEditTopic = async () => {
-    if (title.length === 0 || isLoading) return;
-    await mutate({ name: title, description });
-    toast({ status: "success", title: "Topic edited successfully" });
-    onClose();
-  };
+    if (title.length === 0 || isLoading) return
+    await mutate({ name: title, description })
+    toast({ status: 'success', title: 'Topic edited successfully' })
+    onClose()
+  }
 
   useEffect(() => {
     setFormError({
-      title: title.length === 0,
-    });
-  }, [title]);
+      title: title.length === 0
+    })
+  }, [title])
 
   return (
     <Modal
@@ -59,15 +59,15 @@ export function EditTopicModal(props: { topic: Topic; onClose: () => void }) {
       <ModalContent>
         <form
           onSubmit={(e) => {
-            e.preventDefault();
-            handleEditTopic();
+            e.preventDefault()
+            handleEditTopic()
           }}
         >
           <ModalHeader>
             <Heading>Add new topic</Heading>
           </ModalHeader>
           <ModalBody>
-            <Grid templateColumns={["1fr", "1fr 3fr"]} gap="2">
+            <Grid templateColumns={['1fr', '1fr 3fr']} gap="2">
               <GridItem>
                 <Text>Title</Text>
               </GridItem>
@@ -76,7 +76,7 @@ export function EditTopicModal(props: { topic: Topic; onClose: () => void }) {
                   <Input
                     type="text"
                     value={title}
-                    onChange={(e) => setTitle(e.target.value)}
+                    onChange={(e) => { setTitle(e.target.value) }}
                   />
                 </FormControl>
               </GridItem>
@@ -86,7 +86,7 @@ export function EditTopicModal(props: { topic: Topic; onClose: () => void }) {
               <GridItem>
                 <Textarea
                   value={description}
-                  onChange={(e) => setDescription(e.target.value)}
+                  onChange={(e) => { setDescription(e.target.value) }}
                 />
               </GridItem>
             </Grid>
@@ -96,15 +96,15 @@ export function EditTopicModal(props: { topic: Topic; onClose: () => void }) {
               <Button
                 leftIcon={<EditIcon />}
                 colorScheme="green"
-                onClick={() => handleEditTopic()}
+                onClick={async () => { await handleEditTopic() }}
               >
                 Edit
               </Button>
-              <Button onClick={() => onClose()}>Close</Button>
+              <Button onClick={() => { onClose() }}>Close</Button>
             </HStack>
           </ModalFooter>
         </form>
       </ModalContent>
     </Modal>
-  );
+  )
 }

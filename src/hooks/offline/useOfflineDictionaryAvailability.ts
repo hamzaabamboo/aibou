@@ -1,12 +1,12 @@
-import { useKeyValueData } from "../utils/useKeyValueData";
-import { useDownloadOfflineDictionary } from "./useDownloadOfflineDictionary";
+import { useKeyValueData } from '../utils/useKeyValueData'
+import { useDownloadOfflineDictionary } from './useDownloadOfflineDictionary'
 
 export const useOfflineDictionaryAvailability = () => {
-    const { isDBDownloaded } = useDownloadOfflineDictionary();
-    const [
-      { data: offlineDictionaryEnabled },
-    ] = useKeyValueData("offlineDictionaryEnabled", true);
-    const isAvailable = isDBDownloaded && (offlineDictionaryEnabled ?? false);
+  const { isDBDownloaded } = useDownloadOfflineDictionary()
+  const [
+    { data: offlineDictionaryEnabled }
+  ] = useKeyValueData('offlineDictionaryEnabled', true)
+  const isAvailable = isDBDownloaded && (offlineDictionaryEnabled ?? false)
 
-    return isAvailable
+  return isAvailable
 }

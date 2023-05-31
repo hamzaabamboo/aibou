@@ -1,35 +1,37 @@
-import { CopyIcon } from "@chakra-ui/icons";
-import { HStack, IconButton, Stack, Text, useToast } from "@chakra-ui/react";
-import { JishoWord } from "../../types/jisho";
-import { KanjiDisplay } from "./KanjiDisplay";
-import { SearchResultItem, SearchResultItemProps } from "./SearchResultItem";
+import { CopyIcon } from '@chakra-ui/icons'
+import { HStack, IconButton, Stack, Text, useToast } from '@chakra-ui/react'
+import { type JishoWord } from '../../types/jisho'
+import { KanjiDisplay } from './KanjiDisplay'
+import { SearchResultItem, type SearchResultItemProps } from './SearchResultItem'
 
-export function WordItem(
-  props: { item?: JishoWord; word: string } & Omit<
-    SearchResultItemProps,
-    "item"
+export function WordItem (
+  props: { item?: JishoWord, word: string } & Omit<
+  SearchResultItemProps,
+  'item'
   >
 ) {
-  const { item, showMeaning, word, ...rest } = props;
+  const { item, showMeaning, word, ...rest } = props
 
-  const toast = useToast();
+  const toast = useToast()
 
   const handleCopy = () => {
-    navigator.clipboard.writeText(word);
+    navigator.clipboard.writeText(word)
     toast({
-      status: "success",
-      title: "Word Copied to Clipboard",
-    });
-  };
+      status: 'success',
+      title: 'Word Copied to Clipboard'
+    })
+  }
 
-  return item ? (
+  return (item != null)
+    ? (
     <SearchResultItem
       item={item}
       showMeaning={showMeaning}
       isCard={false}
       {...rest}
     />
-  ) : (
+      )
+    : (
     <Stack justifyContent="flex-start" h="full">
       <HStack justifyContent="space-between" w="full">
         <KanjiDisplay data={{ word }} />
@@ -38,8 +40,8 @@ export function WordItem(
             aria-label="copy-text"
             size="sm"
             onClick={(e) => {
-              handleCopy();
-              e.stopPropagation();
+              handleCopy()
+              e.stopPropagation()
             }}
             icon={<CopyIcon />}
           />
@@ -47,5 +49,5 @@ export function WordItem(
       </HStack>
       <Text textAlign="center">Click to retreive meaning</Text>
     </Stack>
-  );
+      )
 }

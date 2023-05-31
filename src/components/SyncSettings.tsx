@@ -7,17 +7,17 @@ import {
   HStack,
   Input,
   Stack,
-  Text,
-} from "@chakra-ui/react";
-import { useKeyValueData } from "../hooks/utils/useKeyValueData";
+  Text
+} from '@chakra-ui/react'
+import { useKeyValueData } from '../hooks/utils/useKeyValueData'
 
-export function SyncSettings() {
+export function SyncSettings () {
   const [{ data: syncUrl, isLoading }, { mutate: setSyncUrl }] =
-    useKeyValueData("syncUrl", "");
+    useKeyValueData('syncUrl', '')
   const [{ data: syncSecret }, { mutate: setSyncSecret }] = useKeyValueData(
-    "syncSecret",
-    ""
-  );
+    'syncSecret',
+    ''
+  )
 
   return (
     <Accordion allowToggle>
@@ -34,21 +34,21 @@ export function SyncSettings() {
               <Text>Sync URL:</Text>
               <Input
                 type="text"
-                value={syncUrl ?? ""}
-                onChange={(e) => setSyncUrl(e.target.value)}
+                value={syncUrl ?? ''}
+                onChange={(e) => { setSyncUrl(e.target.value) }}
               />
             </HStack>
             <HStack>
               <Text>Secret Key:</Text>
               <Input
                 type="text"
-                value={syncSecret ?? ""}
-                onChange={(e) => setSyncSecret(e.target.value)}
+                value={syncSecret ?? ''}
+                onChange={(e) => { setSyncSecret(e.target.value) }}
               />
             </HStack>
           </Stack>
         </AccordionPanel>
       </AccordionItem>
     </Accordion>
-  );
+  )
 }

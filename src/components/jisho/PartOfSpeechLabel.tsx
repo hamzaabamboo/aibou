@@ -1,6 +1,6 @@
-import { Tag } from "@chakra-ui/react";
-import { toKana } from "wanakana";
-import { JishoPartOfSpeech, PartOfSpeech } from "../../types/jisho";
+import { Tag } from '@chakra-ui/react'
+import { toKana } from 'wanakana'
+import { JishoPartOfSpeech, type PartOfSpeech } from '../../types/jisho'
 
 export const parsePartOfSpeech = (
   partOfSpeech: PartOfSpeech | string
@@ -8,89 +8,88 @@ export const parsePartOfSpeech = (
   switch (partOfSpeech) {
     case JishoPartOfSpeech.SuruVerb:
     case JishoPartOfSpeech.SuruVerbIncluded:
-      return "v-する";
+      return 'v-する'
     case JishoPartOfSpeech.IchidanVerb:
-      return "v-る";
+      return 'v-る'
     case JishoPartOfSpeech.GodanVerU:
     case JishoPartOfSpeech.GodanVerbMu:
     case JishoPartOfSpeech.GodanVerbSu:
     case JishoPartOfSpeech.GodanVerbRu:
-      return "v-いる";
+      return 'v-いる'
     case JishoPartOfSpeech.WikipediaDefinition:
-      return "wiki";
+      return 'wiki'
     default: {
-      if (partOfSpeech.includes("adjective")) {
-        if (partOfSpeech.includes("keiyoushi")) return "い-adj";
+      if (partOfSpeech.includes('adjective')) {
+        if (partOfSpeech.includes('keiyoushi')) return 'い-adj'
         if (
-          partOfSpeech.includes("keiyodoshi") ||
-          partOfSpeech.includes("a-adjective")
-        )
-          return "な-adj";
-        return partOfSpeech;
+          partOfSpeech.includes('keiyodoshi') ||
+          partOfSpeech.includes('a-adjective')
+        ) { return 'な-adj' }
+        return partOfSpeech
       }
-      if (partOfSpeech.includes("xpressions")) return "Expressions";
-      if (partOfSpeech.includes("noun") || partOfSpeech.includes("Noun")) {
-        if (partOfSpeech.includes("futsuumeishi") || partOfSpeech === "Noun")
-          return "n";
-        return partOfSpeech;
+      if (partOfSpeech.includes('xpressions')) return 'Expressions'
+      if (partOfSpeech.includes('noun') || partOfSpeech.includes('Noun')) {
+        if (partOfSpeech.includes('futsuumeishi') || partOfSpeech === 'Noun') { return 'n' }
+        return partOfSpeech
       }
-      if (partOfSpeech.includes("dverb")) {
-        if (partOfSpeech.includes("to")) return "と-adv";
-        return "adv";
+      if (partOfSpeech.includes('dverb')) {
+        if (partOfSpeech.includes('to')) return 'と-adv'
+        return 'adv'
       }
-      if (partOfSpeech.includes("verb")) {
-        if (partOfSpeech.includes("ntransitive")) return "自";
-        if (partOfSpeech.includes("ransitive")) return "他";
-        if (/(.*?) verb.*?with '?(.+?)'? ending/.test(partOfSpeech))
+      if (partOfSpeech.includes('verb')) {
+        if (partOfSpeech.includes('ntransitive')) return '自'
+        if (partOfSpeech.includes('ransitive')) return '他'
+        if (/(.*?) verb.*?with '?(.+?)'? ending/.test(partOfSpeech)) {
           return partOfSpeech.replace(
             /(.*?) verb(?:.*?with '?(.+?)'? ending)?/,
             (_, type, ending) => {
               const dan =
-                type === "Godan"
-                  ? "五"
-                  : type === "Nidan"
-                  ? "二"
-                  : type === "Yodan"
-                  ? "四"
-                  : type === "Ichidan"
-                  ? "一"
-                  : "v";
+                type === 'Godan'
+                  ? '五'
+                  : type === 'Nidan'
+                    ? '二'
+                    : type === 'Yodan'
+                      ? '四'
+                      : type === 'Ichidan'
+                        ? '一'
+                        : 'v'
               return `${dan}-${
-                type === "Ichidan"
-                  ? "る"
-                  : type === "Suru"
-                  ? "する"
+                type === 'Ichidan'
+                  ? 'る'
+                  : type === 'Suru'
+                  ? 'する'
                   : toKana(ending)
-              }`;
+              }`
             }
-          );
-        return partOfSpeech;
+          )
+        }
+        return partOfSpeech
       }
-      return partOfSpeech;
+      return partOfSpeech
     }
   }
-};
-export function PartOfSpeechLabel(props: { partOfSpeech: PartOfSpeech }) {
-  const { partOfSpeech } = props;
+}
+export function PartOfSpeechLabel (props: { partOfSpeech: PartOfSpeech }) {
+  const { partOfSpeech } = props
 
-  const text = parsePartOfSpeech(partOfSpeech);
+  const text = parsePartOfSpeech(partOfSpeech)
 
   const color = (() => {
-    if (partOfSpeech.includes("djective")) return "yellow";
-    if (partOfSpeech.includes("dverb")) return "cyan";
-    if (partOfSpeech.includes("oun")) return "green";
-    if (partOfSpeech.includes("verb")) return "purple";
+    if (partOfSpeech.includes('djective')) return 'yellow'
+    if (partOfSpeech.includes('dverb')) return 'cyan'
+    if (partOfSpeech.includes('oun')) return 'green'
+    if (partOfSpeech.includes('verb')) return 'purple'
     switch (partOfSpeech) {
       case JishoPartOfSpeech.Expressions:
-        return "red";
+        return 'red'
       case JishoPartOfSpeech.WikipediaDefinition:
-        return "wiki.";
+        return 'wiki.'
       default:
-        return "gray";
+        return 'gray'
     }
-  })();
+  })()
 
-  if (!text) return null;
+  if (!text) return null
 
-  return <Tag colorScheme={color}>{text}</Tag>;
+  return <Tag colorScheme={color}>{text}</Tag>
 }

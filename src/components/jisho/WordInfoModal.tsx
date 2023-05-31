@@ -1,4 +1,4 @@
-import { DeleteIcon, DownloadIcon, ExternalLinkIcon } from "@chakra-ui/icons";
+import { DeleteIcon, DownloadIcon, ExternalLinkIcon } from '@chakra-ui/icons'
 import {
   Button,
   HStack,
@@ -15,45 +15,45 @@ import {
   Select,
   Stack,
   Text,
-  useToast,
-} from "@chakra-ui/react";
-import { useRouter } from "next/router";
-import { useState } from "react";
-import { useAddTopicItem } from "../../hooks/topic-item/useAddTopicItem";
-import { useUpdateTopicItem } from "../../hooks/topic-item/useUpdateTopicItem";
-import { useGetTopicsList } from "../../hooks/topic/useGetTopicsList";
-import { useFetchJishoResults } from "../../hooks/useFetchJishoResults";
-import { JishoWord } from "../../types/jisho";
-import { TopicItem } from "../../types/topic";
-import { DeleteTopicItemModal } from "../topic/DeleteTopicItemModal";
-import { KanjiDisplay } from "./KanjiDisplay";
-import { SearchResultItem } from "./SearchResultItem";
+  useToast
+} from '@chakra-ui/react'
+import { useRouter } from 'next/router'
+import { useState } from 'react'
+import { useAddTopicItem } from '../../hooks/topic-item/useAddTopicItem'
+import { useUpdateTopicItem } from '../../hooks/topic-item/useUpdateTopicItem'
+import { useGetTopicsList } from '../../hooks/topic/useGetTopicsList'
+import { useFetchJishoResults } from '../../hooks/useFetchJishoResults'
+import { type JishoWord } from '../../types/jisho'
+import { type TopicItem } from '../../types/topic'
+import { DeleteTopicItemModal } from '../topic/DeleteTopicItemModal'
+import { KanjiDisplay } from './KanjiDisplay'
+import { SearchResultItem } from './SearchResultItem'
 
-export function WordInfoModal(props: {
-  item: TopicItem;
-  isOpen: boolean;
-  onClose: () => void;
-  isEditable?: boolean;
-  isAddable?: boolean;
+export function WordInfoModal (props: {
+  item: TopicItem
+  isOpen: boolean
+  onClose: () => void
+  isEditable?: boolean
+  isAddable?: boolean
 }) {
   const {
     isOpen,
     onClose,
     item,
     isEditable = false,
-    isAddable = false,
-  } = props;
-  const [isDeleting, setDeleting] = useState(false);
-  const [topicIDToAdd, setTopicIDToAdd] = useState<string | undefined>();
+    isAddable = false
+  } = props
+  const [isDeleting, setDeleting] = useState(false)
+  const [topicIDToAdd, setTopicIDToAdd] = useState<string | undefined>()
 
   const { mutate: updateTopicItem, isLoading: isLoadingTopics } =
-    useUpdateTopicItem();
-  const { data: topics } = useGetTopicsList();
-  const { mutate: addTopicItem, isLoading } = useAddTopicItem();
+    useUpdateTopicItem()
+  const { data: topics } = useGetTopicsList()
+  const { mutate: addTopicItem, isLoading } = useAddTopicItem()
   const { mutate: fetchJishoResults, isLoading: isFetchingJishoResults } =
-    useFetchJishoResults(item?.topicId);
-  const { push } = useRouter();
-  const toast = useToast();
+    useFetchJishoResults(item?.topicId)
+  const { push } = useRouter()
+  const toast = useToast()
 
   const handleChangeReading = (index: number) => {
     updateTopicItem({
@@ -62,42 +62,42 @@ export function WordInfoModal(props: {
       jishoData: {
         ...(item.jishoData as JishoWord),
         japanese:
-          item.jishoData && index !== 0
+          (item.jishoData != null) && index !== 0
             ? [
                 item.jishoData.japanese[index],
                 ...(item.jishoData?.japanese.filter(
                   (_, idx) => idx !== index
-                ) ?? []),
+                ) ?? [])
               ]
-            : item.jishoData?.japanese ?? [],
-      },
-    });
-  };
+            : item.jishoData?.japanese ?? []
+      }
+    })
+  }
 
   const handleAddToTopic = async () => {
     const word =
-      item.jishoData?.japanese[0].word ?? item.jishoData?.japanese[0].reading;
-    const topicId = topicIDToAdd ?? topics?.[0].id;
-    if (!topicId || isLoading || !item?.jishoData || !word) return;
+      item.jishoData?.japanese[0].word ?? item.jishoData?.japanese[0].reading
+    const topicId = topicIDToAdd ?? topics?.[0].id
+    if (!topicId || isLoading || ((item?.jishoData) == null) || !word) return
     await addTopicItem(
       {
         topicId,
         word,
-        jishoData: item.jishoData,
+        jishoData: item.jishoData
       },
       {
         onSuccess: () => {
-          push(`/topics/${topicId}`);
+          push(`/topics/${topicId}`)
         },
         onError: (error) => {
           toast({
-            status: "warning",
-            title: (error as Error).message,
-          });
-        },
+            status: 'warning',
+            title: (error as Error).message
+          })
+        }
       }
-    );
-  };
+    )
+  }
 
   return (
     <>
@@ -113,7 +113,7 @@ export function WordInfoModal(props: {
           <ModalCloseButton />
           <ModalBody>
             <Stack>
-              {item.jishoData && (
+              {(item.jishoData != null) && (
                 <SearchResultItem isCard={false} item={item.jishoData} />
               )}
               <Stack>
@@ -147,10 +147,10 @@ export function WordInfoModal(props: {
                 </Link>
                 <Link
                   href={`https://kanji.jitenon.jp/cat/search.php?getdata=${item.word
-                    .split("")
+                    .split('')
                     .map((s) => s.charCodeAt(0).toString(16))
-                    .join("_")}&search=contain&how=${encodeURIComponent(
-                    "すべて"
+                    .join('_')}&search=contain&how=${encodeURIComponent(
+                    'すべて'
                   )}`}
                   isExternal
                 >
@@ -165,8 +165,7 @@ export function WordInfoModal(props: {
                     <Text>Change Reading</Text>
                     <Select
                       value={0}
-                      onChange={(e) =>
-                        handleChangeReading(Number(e.target.value))
+                      onChange={(e) => { handleChangeReading(Number(e.target.value)) }
                       }
                     >
                       {item.jishoData?.japanese.map((o, idx) => (
@@ -181,7 +180,7 @@ export function WordInfoModal(props: {
                     <IconButton
                       aria-label="download"
                       icon={<DownloadIcon />}
-                      onClick={(e) => fetchJishoResults([item])}
+                      onClick={(e) => { fetchJishoResults([item]) }}
                     />
                   </HStack>
                 </Stack>
@@ -194,7 +193,7 @@ export function WordInfoModal(props: {
                     <Select
                       isDisabled={isLoadingTopics}
                       value={topicIDToAdd}
-                      onChange={(e) => setTopicIDToAdd(e.target.value)}
+                      onChange={(e) => { setTopicIDToAdd(e.target.value) }}
                     >
                       {topics?.map((o) => (
                         <option key={o.id} value={o.id}>
@@ -204,7 +203,7 @@ export function WordInfoModal(props: {
                     </Select>
                     <Button
                       isDisabled={isLoadingTopics}
-                      onClick={(e) => handleAddToTopic()}
+                      onClick={async (e) => { await handleAddToTopic() }}
                     >
                       Add
                     </Button>
@@ -220,7 +219,7 @@ export function WordInfoModal(props: {
                   colorScheme="red"
                   aria-label="Delete Item"
                   icon={<DeleteIcon />}
-                  onClick={() => setDeleting(true)}
+                  onClick={() => { setDeleting(true) }}
                 />
               )}
               <Button onClick={onClose}>Close</Button>
@@ -231,13 +230,13 @@ export function WordInfoModal(props: {
       {isEditable && isDeleting && (
         <DeleteTopicItemModal
           topicItem={item}
-          onClose={() => setDeleting(false)}
+          onClose={() => { setDeleting(false) }}
           onDeleteSuccess={() => {
-            setDeleting(false);
-            onClose();
+            setDeleting(false)
+            onClose()
           }}
         />
       )}
     </>
-  );
+  )
 }

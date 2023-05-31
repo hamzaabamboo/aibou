@@ -1,6 +1,6 @@
-import { useQuery } from '@tanstack/react-query';
-import { max } from 'lodash';
-import { db } from '../../utils/db/db';
+import { useQuery } from '@tanstack/react-query'
+import { max } from 'lodash'
+import { db } from '../../utils/db/db'
 
 export const useLastUpdatedTime = () => useQuery(['lastUpdatedData'], async () => max([
   (
@@ -8,5 +8,5 @@ export const useLastUpdatedTime = () => useQuery(['lastUpdatedData'], async () =
   )?.lastUpdatedAt.valueOf(),
   (
     await db?.topicEntries.orderBy('lastUpdatedAt').last()
-  )?.lastUpdatedAt.valueOf(),
-]));
+  )?.lastUpdatedAt.valueOf()
+]))

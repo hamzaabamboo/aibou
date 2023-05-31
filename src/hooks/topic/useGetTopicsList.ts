@@ -1,7 +1,10 @@
-import { useQuery } from '@tanstack/react-query';
-import { db } from '../../utils/db/db';
+import { useQuery } from '@tanstack/react-query'
+import { useDBContext } from '../contexts/useDBContext'
 
-export const useGetTopicsList = () => useQuery(['fetchTopicsList'], async () => {
-  const data = await db?.topics.orderBy("lastUpdatedAt").reverse().toArray();
-  return (data ?? []).filter((f) => !f.isDeleted);
-});
+export const useGetTopicsList = () => {
+  const { db } = useDBContext()
+  return useQuery(['fetchTopicsList'], async () => {
+    const data = await db?.topics.orderBy('lastUpdatedAt').reverse().toArray()
+    return (data ?? []).filter((f) => !f.isDeleted)
+  })
+}

@@ -3,8 +3,8 @@ import {
   DeleteIcon,
   DownloadIcon,
   EditIcon,
-  HamburgerIcon,
-} from "@chakra-ui/icons";
+  HamburgerIcon
+} from '@chakra-ui/icons'
 import {
   Box,
   Button,
@@ -22,66 +22,66 @@ import {
   Stack,
   Switch,
   Text,
-  useToast,
-} from "@chakra-ui/react";
-import { uniq } from "lodash";
-import type { NextPage } from "next";
-import { useRouter } from "next/router";
-import { useEffect, useMemo, useState } from "react";
-import { parsePartOfSpeech } from "../../components/jisho/PartOfSpeechLabel";
-import { Search } from "../../components/jisho/Search";
-import { WordInfoModal } from "../../components/jisho/WordInfoModal";
-import { WordItem } from "../../components/jisho/WordItem";
-import { DeleteTopicModal } from "../../components/topic/DeleteTopicModal";
-import { EditTopicModal } from "../../components/topic/EditTopicModal";
+  useToast
+} from '@chakra-ui/react'
+import { uniq } from 'lodash'
+import type { NextPage } from 'next'
+import { useRouter } from 'next/router'
+import { useEffect, useMemo, useState } from 'react'
+import { parsePartOfSpeech } from '../../components/jisho/PartOfSpeechLabel'
+import { Search } from '../../components/jisho/Search'
+import { WordInfoModal } from '../../components/jisho/WordInfoModal'
+import { WordItem } from '../../components/jisho/WordItem'
+import { DeleteTopicModal } from '../../components/topic/DeleteTopicModal'
+import { EditTopicModal } from '../../components/topic/EditTopicModal'
 import {
-  ItemViewOptions,
-  ItemViewSettings,
-} from "../../components/topic/ItemViewSettings";
-import { useAddTopicItem } from "../../hooks/topic-item/useAddTopicItem";
-import { useGetTopic } from "../../hooks/topic/useGetTopic";
-import { useFetchJishoResults } from "../../hooks/useFetchJishoResults";
-import { useGetTopicItems } from "../../hooks/useGetTopicItems";
-import { useLocalStorage } from "../../hooks/useLocalStorage";
-import { useKeyValueData } from "../../hooks/utils/useKeyValueData";
-import { JishoWord } from "../../types/jisho";
-import { Topic } from "../../types/topic";
-import { download } from "../../utils/downloadFile";
-import { filterTopicItemsByKeywords } from "../../utils/filterTopicItemsByKeywords";
-import { sortTopicItems } from "../../utils/sortTopicItems";
+  type ItemViewOptions,
+  ItemViewSettings
+} from '../../components/topic/ItemViewSettings'
+import { useAddTopicItem } from '../../hooks/topic-item/useAddTopicItem'
+import { useGetTopic } from '../../hooks/topic/useGetTopic'
+import { useFetchJishoResults } from '../../hooks/useFetchJishoResults'
+import { useGetTopicItems } from '../../hooks/useGetTopicItems'
+import { useLocalStorage } from '../../hooks/useLocalStorage'
+import { useKeyValueData } from '../../hooks/utils/useKeyValueData'
+import { type JishoWord } from '../../types/jisho'
+import { type Topic } from '../../types/topic'
+import { download } from '../../utils/downloadFile'
+import { filterTopicItemsByKeywords } from '../../utils/filterTopicItemsByKeywords'
+import { sortTopicItems } from '../../utils/sortTopicItems'
 
 const TopicDetailPage: NextPage = () => {
-  const { query } = useRouter();
-  const topicId = query.id as string;
+  const { query } = useRouter()
+  const topicId = query.id as string
 
-  const [showPopup, setShowPopup] = useState(true);
-  const [editingTopic, setEditingTopic] = useState<Topic>();
-  const [deleteTopic, setDeleteTopic] = useState<Topic>();
-  const [viewingItem, setViewingItem] = useState<string>();
+  const [showPopup, setShowPopup] = useState(true)
+  const [editingTopic, setEditingTopic] = useState<Topic>()
+  const [deleteTopic, setDeleteTopic] = useState<Topic>()
+  const [viewingItem, setViewingItem] = useState<string>()
 
   const [settingsData, setSettingsData] = useLocalStorage<ItemViewOptions>(
-    "search-view-settings",
-    { showMeaning: true, reverseSortOrder: true, orderBy: "createdAt" }
-  );
+    'search-view-settings',
+    { showMeaning: true, reverseSortOrder: true, orderBy: 'createdAt' }
+  )
 
   const {
     data: topic,
     refetch,
-    isLoading: isLoadingTopic,
-  } = useGetTopic(topicId);
-  const { data: words, isLoading: isLoadingItems } = useGetTopicItems(topicId);
-  const { mutate, isLoading: isAdding } = useAddTopicItem();
+    isLoading: isLoadingTopic
+  } = useGetTopic(topicId)
+  const { data: words, isLoading: isLoadingItems } = useGetTopicItems(topicId)
+  const { mutate, isLoading: isAdding } = useAddTopicItem()
   const { mutate: fetchJishoResults, isLoading: isFetchingJishoResults } =
-    useFetchJishoResults(topicId);
+    useFetchJishoResults(topicId)
   const [
     { data: offlineDictionaryEnabled },
-    { mutate: updateDictionaryEnabledStatus },
-  ] = useKeyValueData("offlineDictionaryEnabled", true);
-  const router = useRouter();
-  const toast = useToast();
+    { mutate: updateDictionaryEnabledStatus }
+  ] = useKeyValueData('offlineDictionaryEnabled', true)
+  const router = useRouter()
+  const toast = useToast()
 
   const { showMeaning, filter, numberOfColumns, orderBy, reverseSortOrder } =
-    settingsData ?? {};
+    settingsData ?? {}
 
   const filteredList = useMemo(
     () =>
@@ -90,67 +90,67 @@ const TopicDetailPage: NextPage = () => {
         reverseSortOrder
       )(filterTopicItemsByKeywords(filter)(words ?? [])),
     [filter, words, orderBy, reverseSortOrder]
-  );
+  )
 
-  const isLoading = !topicId || isLoadingTopic || isLoadingItems;
+  const isLoading = !topicId || isLoadingTopic || isLoadingItems
 
   const handleDownloadCSV = () => {
-    const header = "Question,Answers,Comment,Instructions,Render as\n";
+    const header = 'Question,Answers,Comment,Instructions,Render as\n'
     const data = words
-      ?.filter((w) => !!w.jishoData)
+      ?.filter((w) => !(w.jishoData == null))
       ?.reverse()
       ?.map(
         (w) =>
           `${w.word},"${uniq(w.jishoData?.japanese.map((w) => w.reading)).join(
-            ","
+            ','
           )}","${w.jishoData?.senses
             .map((s) =>
               `(${s.parts_of_speech
                 .map(parsePartOfSpeech)
-                .join(",")}) ${s.english_definitions.join(",")}`.replace(
+                .join(',')}) ${s.english_definitions.join(',')}`.replace(
                 '"',
                 '""'
               )
             )
-            .join("/")}",Type the reading!,Image`
+            .join('/')}",Type the reading!,Image`
       )
-      .join("\n");
-    const csv = header + data;
-    download(`${topic?.name}.csv`, csv);
-  };
+      .join('\n')
+    const csv = header + data
+    download(`${topic?.name}.csv`, csv)
+  }
   const needsSync = useMemo(
     () =>
-      words?.filter((w) => !w.jishoData || w?.jishoData?.attribution.jisho) ??
+      words?.filter((w) => (w.jishoData == null) || w?.jishoData?.attribution.jisho) ??
       [],
     [words]
-  );
+  )
 
   useEffect(() => {
-    refetch();
-  }, []);
+    refetch()
+  }, [])
 
   const handleAddTopicItem = async (data: JishoWord) => {
-    if (!data || isAdding) return;
-    const word = data.japanese[0].word ?? data.japanese[0].reading;
+    if (!data || isAdding) return
+    const word = data.japanese[0].word ?? data.japanese[0].reading
     await mutate(
       { topicId, word, jishoData: data },
       {
         onSuccess: () => {
-          setShowPopup(false);
+          setShowPopup(false)
           toast({
-            status: "success",
-            title: "Word successfully added",
-          });
+            status: 'success',
+            title: 'Word successfully added'
+          })
         },
         onError: (error) => {
           toast({
-            status: "warning",
-            title: (error as Error).message,
-          });
-        },
+            status: 'warning',
+            title: (error as Error).message
+          })
+        }
       }
-    );
-  };
+    )
+  }
 
   return (
     <>
@@ -160,21 +160,23 @@ const TopicDetailPage: NextPage = () => {
             <Button
               leftIcon={<ArrowBackIcon />}
               variant="ghost"
-              onClick={() => router.push("/topics")}
+              onClick={async () => await router.push('/topics')}
             >
               Back to Topics
             </Button>
           </Box>
-          {isLoading ? (
+          {isLoading
+            ? (
             <HStack justifyContent="center">
               <Spinner size="xl" my={8} />
             </HStack>
-          ) : (
+              )
+            : (
             <>
               <HStack
                 justifyContent="space-between"
                 alignItems="flex-start"
-                flexDir={["column", "row"]}
+                flexDir={['column', 'row']}
               >
                 <Heading>{topic?.name}</Heading>
                 <HStack alignSelf="flex-end">
@@ -183,8 +185,7 @@ const TopicDetailPage: NextPage = () => {
                       <Text>Offline Dict.</Text>
                       <Switch
                         isChecked={offlineDictionaryEnabled}
-                        onChange={(e) =>
-                          updateDictionaryEnabledStatus(e.target.checked)
+                        onChange={(e) => { updateDictionaryEnabledStatus(e.target.checked) }
                         }
                       />
                     </HStack>
@@ -197,26 +198,26 @@ const TopicDetailPage: NextPage = () => {
                           <MenuItem
                             icon={<DownloadIcon />}
                             isDisabled={isFetchingJishoResults}
-                            onClick={() => fetchJishoResults(needsSync)}
+                            onClick={() => { fetchJishoResults(needsSync) }}
                           >
                             Load Definition from Jisho
                           </MenuItem>
                         )}
                         <MenuItem
                           icon={<EditIcon />}
-                          onClick={() => setEditingTopic(topic)}
+                          onClick={() => { setEditingTopic(topic) }}
                         >
                           Edit Topic
                         </MenuItem>
                         <MenuItem
                           icon={<DownloadIcon />}
-                          onClick={() => handleDownloadCSV()}
+                          onClick={() => { handleDownloadCSV() }}
                         >
                           Download Data (Kotobot CSV)
                         </MenuItem>
                         <MenuItem
                           icon={<DeleteIcon />}
-                          onClick={() => setDeleteTopic(topic)}
+                          onClick={() => { setDeleteTopic(topic) }}
                         >
                           Delete Topic
                         </MenuItem>
@@ -226,9 +227,9 @@ const TopicDetailPage: NextPage = () => {
                 </HStack>
               </HStack>
               {topic?.description && <Text>{topic?.description}</Text>}
-              <Stack direction={["column"]}>
+              <Stack direction={['column']}>
                 <Search
-                  onSelectItem={(word) => handleAddTopicItem(word)}
+                  onSelectItem={async (word) => { await handleAddTopicItem(word) }}
                   inputSize="small"
                   w="full"
                   isShowPopup={showPopup}
@@ -236,13 +237,15 @@ const TopicDetailPage: NextPage = () => {
                   isPopup
                 />
                 <Box w="full">
-                  {!words || words.length === 0 ? (
+                  {(words == null) || words.length === 0
+                    ? (
                     <Heading fontSize="xl" textAlign="center">
                       No saved words
                     </Heading>
-                  ) : (
+                      )
+                    : (
                     <Stack>
-                      {settingsData && (
+                      {(settingsData != null) && (
                         <ItemViewSettings
                           data={settingsData}
                           setData={setSettingsData}
@@ -250,23 +253,23 @@ const TopicDetailPage: NextPage = () => {
                       )}
                       <Grid
                         gridTemplateColumns={[
-                          "1fr",
+                          '1fr',
                           `repeat(min(${numberOfColumns}, 2), 1fr)`,
                           `repeat(min(${numberOfColumns}, 3), 1fr)`,
-                          `repeat(min(${numberOfColumns}, 4), 1fr)`,
+                          `repeat(min(${numberOfColumns}, 4), 1fr)`
                         ]}
                         alignItems="stretch"
                       >
                         {filteredList.map((item, idx) => {
-                          const { id, jishoData, word, ...rest } = item;
+                          const { id, jishoData, word, ...rest } = item
                           return (
                             <GridItem
                               key={id}
                               onClick={() => {
-                                if (!jishoData) {
-                                  fetchJishoResults([item]);
+                                if (jishoData == null) {
+                                  fetchJishoResults([item])
                                 } else {
-                                  setViewingItem(item.id);
+                                  setViewingItem(item.id)
                                 }
                               }}
                             >
@@ -278,30 +281,30 @@ const TopicDetailPage: NextPage = () => {
                               />
                               <Divider />
                             </GridItem>
-                          );
+                          )
                         })}
                       </Grid>
                     </Stack>
-                  )}
+                      )}
                 </Box>
               </Stack>
             </>
-          )}
+              )}
         </Stack>
       </Container>
-      {editingTopic && (
+      {(editingTopic != null) && (
         <EditTopicModal
           topic={editingTopic}
-          onClose={() => setEditingTopic(undefined)}
+          onClose={() => { setEditingTopic(undefined) }}
         />
       )}
-      {deleteTopic && (
+      {(deleteTopic != null) && (
         <DeleteTopicModal
           topic={deleteTopic}
-          onClose={() => setDeleteTopic(undefined)}
+          onClose={() => { setDeleteTopic(undefined) }}
           onDeleteSuccess={() => {
-            setDeleteTopic(undefined);
-            router.push("/topics/");
+            setDeleteTopic(undefined)
+            router.push('/topics/')
           }}
         />
       )}
@@ -309,12 +312,12 @@ const TopicDetailPage: NextPage = () => {
         <WordInfoModal
           item={words?.find((v) => v.id === viewingItem)!}
           isOpen={!!viewingItem}
-          onClose={() => setViewingItem(undefined)}
+          onClose={() => { setViewingItem(undefined) }}
           isEditable
         />
       )}
     </>
-  );
-};
+  )
+}
 
-export default TopicDetailPage;
+export default TopicDetailPage
