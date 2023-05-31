@@ -22,7 +22,7 @@ export const useKeyValueData = <T extends object | string | number | boolean>(
       await db?.keyValues.add({ key, value: defaultValue })
       return defaultValue
     }
-  }, {enabled: !!db})
+  }, { enabled: !!db })
 
   const setData = useMutation(
     async (data: T) => {

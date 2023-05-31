@@ -35,7 +35,7 @@ export const useDownloadOfflineDictionary = () => {
     worker.current.postMessage({
       type: 'check'
     })
-    worker.current.onerror = function(error) { console.log(error,error.message)}
+    worker.current.onerror = function (error) { console.log(error, error.message) }
     return () => {
       worker.current?.terminate()
     }

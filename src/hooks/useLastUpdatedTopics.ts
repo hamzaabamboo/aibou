@@ -8,5 +8,5 @@ export const useLastUpdatedTopics = () => {
       await db?.topics.orderBy('lastUpdatedAt').reverse().limit(3).toArray()
     )?.values()
     return Array.from(data ?? []).filter(d => !d.isDeleted)
-  }, {enabled: !!db})
+  }, { enabled: !!db })
 }
