@@ -9,14 +9,14 @@ export const useGetTopic = (topicId: string) => {
     async (): Promise<Topic | undefined> => {
       const idNumber = Number(topicId)
       try {
-        const data = ((await db?.topics.get(topicId)) != null) ||
-          (!isNaN(idNumber) && ((await db?.topics.get(idNumber)) != null)) ||
-          undefined
+        const data = (await db?.topics.get(topicId)) ??
+     (!isNaN(idNumber) ? (await db?.topics.get(idNumber)) : undefined) ??
+        undefined
         return data
       } catch (error) {
         return undefined
       }
     },
-    { enabled: !!topicId && !(db == null) }
+    { enabled: !!topicId && (db !== null) }
   )
 }
