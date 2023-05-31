@@ -1,7 +1,7 @@
 import {
   Dispatch, SetStateAction, useEffect, useRef, useState,
 } from 'react';
-import { LocalStorage } from './localStorage';
+import { LocalStorage } from '../utils/localStorage';
 
 export const useLocalStorage = function <T> (
   key: string,

@@ -1,6 +1,6 @@
 import omit from 'lodash/omit';
 import { Topic, TopicItem } from '../types/topic';
-import { db } from './db';
+import { db } from './db/db';
 
 export type ExportDataType = {
   topics: Topic[];

@@ -1,6 +1,6 @@
 import initSqlJs, { Database } from 'sql.js';
 import { isRomaji, toKana } from 'wanakana';
-import { DictionaryDB, initDictionaryDB } from '../utils/dictionary-db';
+import { DictionaryDB, initDictionaryDB } from '../utils/db/dictionary-db';
 import { parseOfflineDBResult } from '../utils/parseOfflineDBResult';
 import { getOfflineSearchSQL } from '../utils/sql/getOfflineSearchSQL';
 

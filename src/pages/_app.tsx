@@ -3,9 +3,9 @@ import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import type { AppProps } from "next/app";
 import Head from "next/head";
 import { useEffect } from "react";
-import { Footer } from "../components/Footer";
-import { Navigation } from "../components/Navigation";
-import { initDexie } from "../utils/db";
+import { Footer } from "../components/common/Footer";
+import { Navigation } from "../components/common/Navigation";
+import { initDexie } from "../utils/db/db";
 import { requestPersistentStoragePermission } from "../utils/requestPersistentStoragePermission";
 
 const queryClient = new QueryClient();

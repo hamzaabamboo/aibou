@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import { Topic } from '../types/topic';
-import { db } from '../utils/db';
+import { db } from '../utils/db/db';
 
 export const useLastUpdatedTopics = () => useQuery(['fetchLastUpdatedTopics'], async () => {
   const data = await (

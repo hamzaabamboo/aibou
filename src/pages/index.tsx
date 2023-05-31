@@ -11,10 +11,10 @@ import format from "date-fns/format";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import type { NextPage } from "next";
 import { useEffect, useState } from "react";
-import { Search } from "../components/Search";
-import { WordInfoModal } from "../components/WordInfoModal";
+import { Search } from "../components/jisho/Search";
+import { WordInfoModal } from "../components/jisho/WordInfoModal";
 import { useLastUpdatedTopics } from "../hooks/useLastUpdatedTopics";
-import { useSyncData } from "../hooks/useSyncData";
+import { useSyncData } from "../hooks/utils/useSyncData";
 import { JishoWord } from "../types/jisho";
 
 const Home: NextPage = () => {

@@ -14,9 +14,9 @@ import { format } from "date-fns";
 import formatDistanceToNow from "date-fns/formatDistanceToNow";
 import type { NextPage } from "next";
 import { SyncSettings } from "../components/SyncSettings";
-import { useDownloadOfflineDictionary } from "../hooks/useDownloadOfflineDictionary";
-import { useKeyValueData } from "../hooks/useKeyValueData";
-import { useSyncData } from "../hooks/useSyncData";
+import { useDownloadOfflineDictionary } from "../hooks/offline/useDownloadOfflineDictionary";
+import { useKeyValueData } from "../hooks/utils/useKeyValueData";
+import { useSyncData } from "../hooks/utils/useSyncData";
 
 const Home: NextPage = () => {
   const { download, isDBDownloaded, progressText, deleteDictionary } =

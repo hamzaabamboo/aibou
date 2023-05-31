@@ -9,7 +9,7 @@ import {
   Stack,
   Text,
 } from "@chakra-ui/react";
-import { useKeyValueData } from "../hooks/useKeyValueData";
+import { useKeyValueData } from "../hooks/utils/useKeyValueData";
 
 export function SyncSettings() {
   const [{ data: syncUrl, isLoading }, { mutate: setSyncUrl }] =

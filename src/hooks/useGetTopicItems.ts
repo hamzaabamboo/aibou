@@ -1,5 +1,5 @@
 import { useQuery } from '@tanstack/react-query';
-import { db } from '../utils/db';
+import { db } from '../utils/db/db';
 
 export const useGetTopicItems = (topicId: string) => useQuery(['fetchTopicItems', topicId], async () => {
   const idNumber = parseInt(topicId);

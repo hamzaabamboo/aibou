@@ -28,22 +28,22 @@ import { uniq } from "lodash";
 import type { NextPage } from "next";
 import { useRouter } from "next/router";
 import { useEffect, useMemo, useState } from "react";
-import { DeleteTopicModal } from "../../components/DeleteTopicModal";
-import { EditTopicModal } from "../../components/EditTopicModal";
+import { parsePartOfSpeech } from "../../components/jisho/PartOfSpeechLabel";
+import { Search } from "../../components/jisho/Search";
+import { WordInfoModal } from "../../components/jisho/WordInfoModal";
+import { WordItem } from "../../components/jisho/WordItem";
+import { DeleteTopicModal } from "../../components/topic/DeleteTopicModal";
+import { EditTopicModal } from "../../components/topic/EditTopicModal";
 import {
   ItemViewOptions,
   ItemViewSettings,
-} from "../../components/ItemViewSettings";
-import { parsePartOfSpeech } from "../../components/PartOfSpeechLabel";
-import { Search } from "../../components/Search";
-import { WordInfoModal } from "../../components/WordInfoModal";
-import { WordItem } from "../../components/WordItem";
-import { useAddTopicItem } from "../../hooks/useAddTopicItem";
+} from "../../components/topic/ItemViewSettings";
+import { useAddTopicItem } from "../../hooks/topic-item/useAddTopicItem";
+import { useGetTopic } from "../../hooks/topic/useGetTopic";
 import { useFetchJishoResults } from "../../hooks/useFetchJishoResults";
-import { useGetTopic } from "../../hooks/useGetTopic";
 import { useGetTopicItems } from "../../hooks/useGetTopicItems";
-import { useKeyValueData } from "../../hooks/useKeyValueData";
 import { useLocalStorage } from "../../hooks/useLocalStorage";
+import { useKeyValueData } from "../../hooks/utils/useKeyValueData";
 import { JishoWord } from "../../types/jisho";
 import { Topic } from "../../types/topic";
 import { download } from "../../utils/downloadFile";

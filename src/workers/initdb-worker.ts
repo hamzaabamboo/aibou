@@ -1,6 +1,6 @@
 import axios from 'axios';
 import pako from 'pako';
-import { DictionaryDB, initDictionaryDB } from '../utils/dictionary-db';
+import { DictionaryDB, initDictionaryDB } from '../utils/db/dictionary-db';
 
 const JMDICT_FILE = `/${encodeURIComponent(
     'offline-dict.sqlite.gz',

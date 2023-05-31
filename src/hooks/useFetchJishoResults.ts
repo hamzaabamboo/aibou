@@ -3,7 +3,7 @@ import axios from 'axios';
 import { orderBy } from 'lodash';
 import { SearchAPIResults } from '../types/api';
 import { TopicItem } from '../types/topic';
-import { db } from '../utils/db';
+import { db } from '../utils/db/db';
 import { similarity } from '../utils/stringSimilarity';
 
 export const useFetchJishoResults = (topicId: string) => {
