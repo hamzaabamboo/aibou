@@ -1,5 +1,7 @@
 import { Text } from '@chakra-ui/react'
 
-export const OfflinePage = () => {
+const OfflinePage = () => {
   return <Text>You&lsquo;re offline</Text>
 }
+
+export default OfflinePage
