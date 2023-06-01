@@ -2,6 +2,7 @@ import initSqlJs, { type Database } from 'sql.js'
 import { isRomaji, toKana } from 'wanakana'
 import { initDictionaryDB, type DictionaryDB } from '../utils/db/dictionary-db'
 import { parseOfflineDBResult } from '../utils/parseOfflineDBResult'
+import { getKanjiCrossPrompt } from '../utils/sql/getKanjiCrossPrompt'
 import { getOfflineSearchSQL } from '../utils/sql/getOfflineSearchSQL'
 
 let isInitialized = false
@@ -9,13 +10,13 @@ let indexedDB: DictionaryDB | undefined
 let db: Database | undefined
 let tagsData: Record<string, string> | undefined
 
-export type WorkerActions = 'searchWord' | 'searchWords' | 'init'
+export type WorkerActions = 'searchWord' | 'searchWords' | 'init' | 'generateCrossPrompt'
 export interface WorkerMessage {
   type: WorkerActions
   data: any
 }
 
-export type WorkerResponseType = 'searchWordResult' | 'searchWordsResult'
+export type WorkerResponseType = 'searchWordResult' | 'searchWordsResult' | 'generateCrossPromptResult'
 export interface WorkerResponse {
   type: WorkerResponseType
   value: any
@@ -88,6 +89,13 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
       }
       console.timeEnd('Offline Search (multiple)')
       postMessage({ type: 'searchWordsResult', data: results })
+      break
+    }
+    case 'generateCrossPrompt': {
+      if (db == null) db = await init()
+      const res = await db.exec(getKanjiCrossPrompt())
+      postMessage({ type: 'generateCrossPromptResult', data: res })
+      break
     }
   }
 })
