@@ -1,6 +1,6 @@
 import axios from 'axios'
 import pako from 'pako'
-import { type DictionaryDB, initDictionaryDB } from '../utils/db/dictionary-db'
+import { initDictionaryDB, type DictionaryDB } from '../utils/db/dictionary-db'
 
 const JMDICT_FILE = `/${encodeURIComponent(
     'offline-dict.sqlite.gz'
@@ -48,7 +48,7 @@ const loadDictionaryFile = async () => {
     return data.data
   }
   const file = await downloadDatabase()
-  await db.database.put({ id: 'latest', data: file.buffer })
+  await db.database.add({ id: 'latest', data: file.buffer })
   return file
 }
 
