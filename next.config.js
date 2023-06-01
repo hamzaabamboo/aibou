@@ -9,7 +9,7 @@ module.exports = withPWA({
   dest: 'public', // comment out this line
   register: true,
   sw: "/sw.js",
-  publicExcludes: ['!offline-dict.sqlite.gz'],
+  // publicExcludes: ['!offline-dict.sqlite.gz'],
   runtimeCaching: [{
     urlPattern: ({ url }) => {
       const isSameOrigin = self.origin === url.origin
