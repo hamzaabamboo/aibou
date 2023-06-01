@@ -22,7 +22,7 @@ module.exports = withPWA({
     options: {
       cacheName: 'topic',
       networkTimeoutSeconds: 10,
-      plugins: [{ cacheKeyWillBeUsed: async () => '/topic' }],
+      plugins: [{ cacheKeyWillBeUsed: async () => '/topic/' }, {cachedResponseWillBeUsed: async () => '/topic/'}],
     },
   }, ...defaultRuntimeCaching]
 })({
