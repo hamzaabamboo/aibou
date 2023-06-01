@@ -2,11 +2,29 @@
 
 const withPWA = require("next-pwa");
 
+const defaultRuntimeCaching = require("next-pwa/cache");
+
 module.exports = withPWA({
   disable: process.env.NODE_ENV === "development",
-  // dest: 'public', // comment out this line
+  dest: 'public', // comment out this line
   register: true,
   sw: "/sw.js",
+  publicExcludes: ['!offline-dict.sqlite.gz'],
+  runtimeCaching: [{
+    urlPattern: ({ url }) => {
+      const isSameOrigin = self.origin === url.origin
+      if (!isSameOrigin) return false
+      const pathname = url.pathname
+      if (pathname.startsWith('/topic/')) return true
+      return false
+    },
+    handler: 'NetworkFirst',
+    options: {
+      cacheName: 'topic',
+      networkTimeoutSeconds: 10,
+      plugins: [{ cacheKeyWillBeUsed: async () => '/topic' }],
+    },
+  }, ...defaultRuntimeCaching]
 })({
   reactStrictMode: true,
   swcMinify: true,

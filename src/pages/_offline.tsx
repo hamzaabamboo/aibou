@@ -1,7 +1,9 @@
-import { Text } from '@chakra-ui/react'
+import { Stack, Text } from '@chakra-ui/react'
 
 const OfflinePage = () => {
-  return <Text>You&lsquo;re offline</Text>
+  return <Stack alignItems="center" justifyContent="center" px={12}>
+    <Text textAlign="center">You&lsquo;re offline</Text>
+  </Stack>
 }
 
 export default OfflinePage
