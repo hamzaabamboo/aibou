@@ -4,7 +4,7 @@ import {
   ArrowForwardIcon,
   ArrowUpIcon
 } from '@chakra-ui/icons'
-import { Button, HStack, Heading, Input, Spinner, Stack, Text } from '@chakra-ui/react'
+import { Button, Container, HStack, Heading, Input, Spinner, Stack, Text } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
 import { SearchResultItem } from '../../components/jisho/SearchResultItem'
 import { WordInfoModal } from '../../components/jisho/WordInfoModal'
@@ -97,7 +97,7 @@ export const KanjiCross = () => {
   }
 
   return (
-    <>
+    <Container>
       <Stack mt={10} alignItems="center" w="full" px={4}>
         <Heading>Kanji Cross Game !</Heading>
         <Stack justifyContent="center" alignItems="center">
@@ -198,7 +198,7 @@ export const KanjiCross = () => {
           isAddable
         />
       )}
-    </>
+    </Container>
   )
 }
 
