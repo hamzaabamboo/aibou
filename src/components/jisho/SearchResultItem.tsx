@@ -5,10 +5,10 @@ import {
   IconButton,
   ListItem,
   Stack,
-  type StackProps,
   Text,
   UnorderedList,
-  useToast
+  useToast,
+  type StackProps
 } from '@chakra-ui/react'
 import { type JishoWord } from '../../types/jisho'
 import { KanjiDisplay } from './KanjiDisplay'
@@ -19,6 +19,8 @@ export type SearchResultItemProps = {
   showMeaning?: boolean
   isCard?: boolean
   showCopy?: boolean
+  hideFurigana?: boolean
+  hideAlternatives?: boolean
 } & StackProps
 
 export function SearchResultItem (props: SearchResultItemProps) {
@@ -27,6 +29,8 @@ export function SearchResultItem (props: SearchResultItemProps) {
     showMeaning = true,
     isCard = true,
     showCopy = false,
+    hideFurigana,
+    hideAlternatives = false,
     ...stackProps
   } = props
   const toast = useToast()
@@ -51,8 +55,8 @@ export function SearchResultItem (props: SearchResultItemProps) {
     >
       <HStack justifyContent="space-between" w="full">
         <HStack flexWrap="wrap" alignItems="flex-end" spacing="1">
-          <KanjiDisplay data={word[0]} />
-          {word.length > 0 &&
+          <KanjiDisplay data={word[0]} hideFurigana ={hideFurigana} />
+          {word.length > 0 && !hideAlternatives &&
             word
               .slice(1)
               .map((item, idx) => (

@@ -1,9 +1,8 @@
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios from 'axios'
-import { orderBy } from 'lodash'
 import { type SearchAPIResults } from '../types/api'
 import { type TopicItem } from '../types/topic'
-import { similarity } from '../utils/stringSimilarity'
+import { sortJishoReadings } from '../utils/sortJishoReadings'
 import { useDBContext } from './contexts/useDBContext'
 
 export const useFetchJishoResults = (topicId: string) => {
@@ -22,21 +21,10 @@ export const useFetchJishoResults = (topicId: string) => {
           (w) => w.word === word.word || w.reading === word.word
         ))
 
-        const sortedReadings = word
-          ? orderBy(
-            jishoData?.japanese,
-            (w) => Math.max(
-              w.word ? similarity(w.word, word.word) : -Infinity,
-              w.reading ? similarity(w.reading, word.word) : -Infinity
-            ),
-            'desc'
-          )
-          : jishoData?.japanese
-
         if (jishoData != null) {
           await db?.topicEntries.put({
             ...word,
-            jishoData: { ...jishoData, japanese: sortedReadings ?? [] }
+            jishoData: sortJishoReadings(jishoData, word.word)
           })
         }
       }

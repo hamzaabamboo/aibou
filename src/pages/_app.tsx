@@ -6,7 +6,7 @@ import { useEffect } from 'react'
 import { Footer } from '../components/common/Footer'
 import { Navigation } from '../components/common/Navigation'
 import { DBContextProvider } from '../hooks/contexts/DBContext'
-import { OfflienDictionaryProvider } from '../hooks/contexts/OfflineDictionaryProvider'
+import { OfflineDictionaryProvider } from '../hooks/contexts/OfflineDictionaryProvider'
 import { requestPersistentStoragePermission } from '../utils/requestPersistentStoragePermission'
 
 const queryClient = new QueryClient()
@@ -63,7 +63,7 @@ function MyApp ({ Component, pageProps }: AppProps) {
       <ChakraProvider>
         <QueryClientProvider client={queryClient}>
           <DBContextProvider>
-            <OfflienDictionaryProvider>
+            <OfflineDictionaryProvider>
               <Stack minH="100vh">
                 <Navigation />
                 <Box
@@ -78,7 +78,7 @@ function MyApp ({ Component, pageProps }: AppProps) {
                 </Box>
                 <Footer />
               </Stack>
-            </OfflienDictionaryProvider>
+            </OfflineDictionaryProvider>
           </DBContextProvider>
         </QueryClientProvider>
       </ChakraProvider>
