@@ -21,6 +21,7 @@ export function Navigation () {
       </Text>
       <HStack cursor="pointer">
         <Text onClick={async () => await router.push('/topics')}>Topics</Text>
+        <Text onClick={async () => await router.push('/games')}>Games</Text>
         <Text onClick={async () => await router.push('/settings')}>Settings</Text>
         {syncEnabled && (
           <IconButton

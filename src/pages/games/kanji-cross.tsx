@@ -1,7 +1,7 @@
 import { ArrowBackIcon, ArrowDownIcon, ArrowForwardIcon, ArrowUpIcon } from '@chakra-ui/icons'
 import { Button, HStack, Heading, Input, Stack, Text } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
-import { useOfflineDictionaryContext } from '../hooks/contexts/useOfflineDictionaryContext'
+import { useOfflineDictionaryContext } from '../../hooks/contexts/useOfflineDictionaryContext'
 
 export const KanjiCross = () => {
   const { worker } = useOfflineDictionaryContext()
