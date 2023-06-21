@@ -17,7 +17,7 @@ export const useKeyValueData = <T extends object | string | number | boolean>(
         await db?.keyValues.add({ key, value: defaultValue })
         return defaultValue
       }
-      return data.value
+      return data.value ?? defaultValue
     } catch (error) {
       await db?.keyValues.add({ key, value: defaultValue })
       return defaultValue

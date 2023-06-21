@@ -9,15 +9,27 @@ import {
   Stack,
   Text
 } from '@chakra-ui/react'
+import { useRouter } from 'next/router'
+import { useEffect } from 'react'
 import { useKeyValueData } from '../hooks/utils/useKeyValueData'
 
 export function SyncSettings () {
-  const [{ data: syncUrl, isLoading }, { mutate: setSyncUrl }] =
+  const [{ data: syncUrl, isLoading: isLoadingURL }, { mutate: setSyncUrl }] =
     useKeyValueData('syncUrl', '')
-  const [{ data: syncSecret }, { mutate: setSyncSecret }] = useKeyValueData(
+  const [{ data: syncSecret, isLoading: isLoadingSecret }, { mutate: setSyncSecret }] = useKeyValueData(
     'syncSecret',
     ''
   )
+  const { query } = useRouter()
+
+  useEffect(() => {
+    const { sync_url: url, sync_secret: secret } = query
+    if (isLoadingURL || isLoadingSecret) return
+    if (!url || !secret) return
+    if (!!syncUrl || !!syncSecret) return
+    setSyncUrl(url)
+    setSyncSecret(secret)
+  }, [query, isLoadingURL, isLoadingSecret])
 
   return (
     <Accordion allowToggle>

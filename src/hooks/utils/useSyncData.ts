@@ -8,7 +8,7 @@ import { useKeyValueData } from './useKeyValueData'
 
 export const useSyncData = () => {
   const [isSyncing, setSyncing] = useState(false)
-  const [{ data: syncUrl, isLoading }] = useKeyValueData('syncUrl', '')
+  const [{ data: syncUrl }] = useKeyValueData('syncUrl', '')
   const [{ data: syncSecret }] = useKeyValueData('syncSecret', '')
   const [{ data: lastSyncedTime }, { mutate: updateLastUpdatedTime }] = useKeyValueData('lastSyncedTime', '')
   const toast = useToast()
