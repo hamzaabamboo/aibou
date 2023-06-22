@@ -7,7 +7,7 @@ interface RunSQLParams {
 
 export interface OfflineDictionary {
   worker?: Worker
-  runSQL?: (params: RunSQLParams) => Promise<any[][]>
+  runSQL?: (params: RunSQLParams) => Promise<Array<{ columns: any[], values: any[] }>>
   isBusy?: boolean
 }
 export const OfflineDictionaryContext = createContext<OfflineDictionary>({})

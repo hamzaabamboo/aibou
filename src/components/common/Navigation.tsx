@@ -1,5 +1,6 @@
-import { RepeatIcon } from '@chakra-ui/icons'
+import { RepeatIcon, SettingsIcon } from '@chakra-ui/icons'
 import { HStack, IconButton, Text } from '@chakra-ui/react'
+import Link from 'next/link'
 import { useRouter } from 'next/router'
 import { useSyncData } from '../../hooks/utils/useSyncData'
 
@@ -20,9 +21,10 @@ export function Navigation () {
         相棒
       </Text>
       <HStack cursor="pointer">
-        <Text onClick={async () => await router.push('/topics')}>Topics</Text>
-        <Text onClick={async () => await router.push('/games')}>Games</Text>
-        <Text onClick={async () => await router.push('/settings')}>Settings</Text>
+      <Link href="/kanken">Kanken</Link>
+        <Link href="/topics">Topics</Link>
+        <Link href="/games">Games</Link>
+        <Link href="/settings"><SettingsIcon aria-label="settings"/></Link>
         {syncEnabled && (
           <IconButton
             aria-label="sync"
