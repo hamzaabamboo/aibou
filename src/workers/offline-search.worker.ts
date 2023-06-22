@@ -83,7 +83,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
       const results = []
       for (const word of words) {
         const searchTerm = isRomaji(word) && /^[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f]+$/.test(toKana(word)) ? toKana(word) : word
-        const res = await db.exec(getOfflineSearchSQL(searchTerm, 8), { $searchTerm: `${searchTerm}` })
+        const res = await db.exec(getOfflineSearchSQL(searchTerm, 1, true), { $searchTerm: `${searchTerm}` })
         results.push({ word, results: parseOfflineDBResult(res, tagsData!) })
       }
       console.timeEnd('Offline Search (multiple)')
