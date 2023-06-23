@@ -37,8 +37,8 @@ import { parseKanjiSQLResult } from '../../utils/kanken/parseKanjiSQLresult'
 import { getKanjiInfoSQL } from '../../utils/sql/getKanjiInfoSQL'
 
 const KankenPractice = () => {
-  const answerInputRef = useRef<HTMLInputElement>()
-  const questionBoxRef = useRef<HTMLDivElement>()
+  const answerInputRef = useRef<HTMLInputElement>(null)
+  const questionBoxRef = useRef<HTMLDivElement>(null)
   const data = kankenData as KankenData
   const grades = Object.keys(kankenData) as KankenGrade[]
   const [{ data: type, isLoading: typeLoading }, { mutate: setType }] =
@@ -237,15 +237,6 @@ const KankenPractice = () => {
               <Text>Total: {allWords?.length ?? 0} Items</Text>
             </HStack>
           </CheckboxGroup>
-          <KankenQuestion
-            ref={questionBoxRef}
-            type={type}
-            mode={mode}
-            currentQuestion={currentQuestion}
-            questionData={questionData}
-            answerExplanations={answerExplanations}
-            showAnswer={ended || showAnswer}
-          />
           <Input
           ref={answerInputRef}
             value={(ended ? answerKey.join(', ') : answer) ?? ''}
@@ -276,6 +267,15 @@ const KankenPractice = () => {
               Show Answer
             </Button>
           </HStack>
+          <KankenQuestion
+            ref={questionBoxRef}
+            type={type}
+            mode={mode}
+            currentQuestion={currentQuestion}
+            questionData={questionData}
+            answerExplanations={answerExplanations}
+            showAnswer={ended || showAnswer}
+          />
           {ended && type !== 'kanji' && answerExplanations && (
             <Grid
               templateColumns={['repeat(2, 1fr)', null, 'repeat(4, 1fr)']}
