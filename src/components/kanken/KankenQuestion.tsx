@@ -1,4 +1,5 @@
 import { Stack } from '@chakra-ui/react'
+import { forwardRef } from 'react'
 import { type JishoWord } from '../../types/jisho'
 import { type KanjiData } from '../../types/kanji'
 import {
@@ -25,12 +26,13 @@ export interface KankenQuestionProps {
   showAnswer?: boolean
   answerExplanations?: KanjiData[]
 }
-export const KankenQuestion = (props: KankenQuestionProps) => {
+
+export const KankenQuestion = forwardRef<HTMLDivElement, KankenQuestionProps>((props, ref) => {
   const { questionData, currentQuestion, showAnswer = false, answerExplanations, type, mode } = props
   if (type === 'word' || type === 'yojijukugo') {
     const question = currentQuestion?.data as KankenWordData
     return (
-    <Stack alignItems="center">
+    <Stack ref={ref} alignItems="center">
       {currentQuestion && (
         <KanjiDisplay
           data={{
@@ -52,7 +54,7 @@ export const KankenQuestion = (props: KankenQuestionProps) => {
   }
   const question = currentQuestion?.data as KankenWordData
   return (
-      <Stack alignItems="center">
+      <Stack ref={ref} alignItems="center">
         {currentQuestion && (
           <KanjiDisplay
             data={{
@@ -68,4 +70,6 @@ export const KankenQuestion = (props: KankenQuestionProps) => {
         )}
       </Stack>
   )
-}
+})
+
+KankenQuestion.displayName = 'KankenQuestion'

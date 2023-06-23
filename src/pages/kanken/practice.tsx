@@ -12,8 +12,8 @@ import {
   Stack,
   Text
 } from '@chakra-ui/react'
-import { useEffect, useMemo, useState } from 'react'
-import { toHiragana } from 'wanakana'
+import { useEffect, useMemo, useRef, useState } from 'react'
+import { toHiragana, toKatakana } from 'wanakana'
 import { LoadingSpinner } from '../../components/common/LoadingSpinner'
 import { KanjiInfo } from '../../components/kanken/KanjiInfo'
 import {
@@ -37,6 +37,8 @@ import { parseKanjiSQLResult } from '../../utils/kanken/parseKanjiSQLresult'
 import { getKanjiInfoSQL } from '../../utils/sql/getKanjiInfoSQL'
 
 const KankenPractice = () => {
+  const answerInputRef = useRef<HTMLInputElement>()
+  const questionBoxRef = useRef<HTMLDivElement>()
   const data = kankenData as KankenData
   const grades = Object.keys(kankenData) as KankenGrade[]
   const [{ data: type, isLoading: typeLoading }, { mutate: setType }] =
@@ -90,20 +92,19 @@ const KankenPractice = () => {
   const answerKey =
     mode === 'reading'
       ? type === 'kanji'
-        ? (currentQuestion?.data as KankenKanjiData)?.onyomi?.split(', ').concat((currentQuestion?.data as KankenKanjiData)?.kunyomi?.split(', ').map(i => i.split('.')[0]) ?? []) ?? []
+        ? (currentQuestion?.data as KankenKanjiData)?.onyomi?.split(', ').map(l => toKatakana(l)).concat((currentQuestion?.data as KankenKanjiData)?.kunyomi?.split(', ') ?? []) ?? []
         : [(currentQuestion?.data as KankenWordData)?.reading]
       : type === 'kanji'
         ? [currentQuestion?.kanji]
         : [(currentQuestion?.data as KankenWordData)?.word]
-  const win = !!currentQuestion && answerKey.map(t => toHiragana(t ?? '').replace(/\(.*?\)/, '')).includes(toHiragana(answer))
-  const giveUp = !!currentQuestion && !answerKey.map(t => toHiragana(t ?? '')).includes(answer) && showAnswer
+  const isCorrectAnswer = answerKey.map(t => toHiragana(t ?? '').replace(/（.*?）/, '').split('.')[0]).includes(toHiragana(answer))
+  const win = !!currentQuestion && isCorrectAnswer
+  const giveUp = !!currentQuestion && !isCorrectAnswer && showAnswer
   const ended = win || giveUp
 
-  console.log(currentQuestion, answerKey, answer)
-
-  const fetchKanjiMeanings = async () => {
+  const fetchKanjiMeanings = async (word?: string) => {
     if (type === 'word' || type === 'yojijukugo') {
-      const data = currentQuestion?.data as
+      const data = word || currentQuestion?.data as
         | KankenWordData
         | KankenYojijukugoData
       const letters = data.word?.split('') ?? []
@@ -119,7 +120,7 @@ const KankenPractice = () => {
     } else {
       const res = await runSQL?.({
         query: getKanjiInfoSQL(),
-        variables: { $searchTerm: currentQuestion?.kanji }
+        variables: { $searchTerm: word ?? currentQuestion?.kanji }
       })
       setAnswerExplanations(res?.map(parseKanjiSQLResult))
     }
@@ -146,8 +147,12 @@ const KankenPractice = () => {
         }
       })
       setQuestionData(searchResults[0].results[0])
+    } else {
+      await fetchKanjiMeanings(prompt?.kanji)
     }
     setCurrentQuestion(prompt)
+    answerInputRef.current?.focus()
+    questionBoxRef.current?.scrollIntoView()
   }
 
   useEffect(() => {
@@ -155,7 +160,6 @@ const KankenPractice = () => {
   }, [allWords, mode])
 
   useEffect(() => {
-    fetchKanjiMeanings()
   }, [currentQuestion])
 
   if (typeLoading || modeLoading || gradeLoading) {
@@ -234,6 +238,7 @@ const KankenPractice = () => {
             </HStack>
           </CheckboxGroup>
           <KankenQuestion
+            ref={questionBoxRef}
             type={type}
             mode={mode}
             currentQuestion={currentQuestion}
@@ -242,6 +247,7 @@ const KankenPractice = () => {
             showAnswer={ended || showAnswer}
           />
           <Input
+          ref={answerInputRef}
             value={(ended ? answerKey.join(', ') : answer) ?? ''}
             onChange={(e) => {
               setAnswer(e.target.value)
@@ -262,6 +268,7 @@ const KankenPractice = () => {
             </Button>
             <Button
               colorScheme="red"
+              disabled={ended}
               onClick={() => {
                 setShowAnswer(true)
               }}
