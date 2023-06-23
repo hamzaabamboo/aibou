@@ -156,9 +156,30 @@ const KankenPractice = () => {
   }
 
   useEffect(() => {
-    getQuestion()
+    void getQuestion()
   }, [allWords, mode])
 
+  useEffect(() => {
+    const handleKeystroke = (event: KeyboardEvent) => {
+      // Next question
+      if (event.key === 'Enter' && ended) {
+        void getQuestion()
+        event.stopPropagation()
+      } else if (event.key === 'h' && document.activeElement !== answerInputRef.current) {
+        // Giveup
+        setShowAnswer(true)
+        event.stopPropagation()
+      } else if (event.key === 's' && document.activeElement !== answerInputRef.current) {
+        // Skip
+        void getQuestion()
+        event.stopPropagation()
+      }
+    }
+    window.addEventListener('keypress', handleKeystroke)
+    return () => {
+      window.removeEventListener('keypress', handleKeystroke)
+    }
+  }, [ended])
   useEffect(() => {
   }, [currentQuestion])
 
