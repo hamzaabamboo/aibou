@@ -104,7 +104,7 @@ const KankenPractice = () => {
 
   const fetchKanjiMeanings = async (word?: string) => {
     if (type === 'word' || type === 'yojijukugo') {
-      const data = word || currentQuestion?.data as
+      const data = currentQuestion?.data as
         | KankenWordData
         | KankenYojijukugoData
       const letters = data.word?.split('') ?? []
