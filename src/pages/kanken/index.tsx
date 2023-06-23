@@ -33,7 +33,7 @@ const KankenGrind = () => {
         }
       </Stack>
     </Container>
-    <KanjiInfoModal data={selectedKanji} isOpen={!!selectedKanji} onClose={() => { setSelectedKanji(undefined) }} />
+    {selectedKanji && <KanjiInfoModal data={selectedKanji} isOpen={!!selectedKanji} onClose={() => { setSelectedKanji(undefined) }} />}
   </>
 }
 

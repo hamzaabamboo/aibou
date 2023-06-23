@@ -55,8 +55,8 @@ export function SearchResultItem (props: SearchResultItemProps) {
     >
       <HStack justifyContent="space-between" w="full">
         <HStack flexWrap="wrap" alignItems="flex-end" spacing="1">
-          <KanjiDisplay data={word[0]} hideFurigana ={hideFurigana} />
-          {word.length > 0 && !hideAlternatives &&
+          {word[0] && <KanjiDisplay data={word[0]} hideFurigana={hideFurigana} />}
+          {word.length > 1 && !hideAlternatives &&
             word
               .slice(1)
               .map((item, idx) => (

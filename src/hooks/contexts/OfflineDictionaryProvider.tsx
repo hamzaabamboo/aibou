@@ -34,7 +34,7 @@ export const OfflineDictionaryProvider = ({
     async (params: RunSQLParams) => {
       if (isBusy) throw new Error('Worker is busy')
       try {
-        const res = await new Promise<any[][]>((resolve, reject) => {
+        const res = await new Promise<Array<{ columns: any[], values: any[] }>>((resolve, reject) => {
           if (!worker) return
           setBusy(true)
           worker.postMessage({

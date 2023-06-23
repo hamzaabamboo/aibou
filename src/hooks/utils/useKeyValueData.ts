@@ -10,14 +10,14 @@ export const useKeyValueData = <T extends object | string | number | boolean>(
 ) => {
   const { db } = useDBContext()
   const queryClient = useQueryClient()
-  const data = useQuery(['fetchKeyData', key], async () => {
+  const data = useQuery<T>(['fetchKeyData', key], async () => {
     try {
       const data = await db?.keyValues.get(key)
       if (data == null) {
         await db?.keyValues.add({ key, value: defaultValue })
         return defaultValue
       }
-      return data.value ?? defaultValue
+      return data.value as T ?? defaultValue
     } catch (error) {
       await db?.keyValues.add({ key, value: defaultValue })
       return defaultValue

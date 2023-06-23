@@ -4,8 +4,9 @@ import {
   ArrowForwardIcon,
   ArrowUpIcon
 } from '@chakra-ui/icons'
-import { Button, Container, HStack, Heading, Input, Spinner, Stack, Text } from '@chakra-ui/react'
+import { Button, Container, HStack, Heading, Input, Stack, Text } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+import { LoadingSpinner } from '../../components/common/LoadingSpinner'
 import { SearchResultItem } from '../../components/jisho/SearchResultItem'
 import { WordInfoModal } from '../../components/jisho/WordInfoModal'
 import { useOfflineDictionaryContext } from '../../hooks/contexts/useOfflineDictionaryContext'
@@ -88,12 +89,7 @@ export const KanjiCross = () => {
   }
 
   if (!prompt) {
-    return (
-      <Stack mt={10} alignItems="center" w="full" h="full">
-        <Spinner size="xl"/>
-        <Text>Loading...</Text>
-      </Stack>
-    )
+    return (<LoadingSpinner/>)
   }
 
   return (
