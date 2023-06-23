@@ -1,16 +1,12 @@
 import {
   Button,
-  ButtonGroup,
-  Checkbox,
-  CheckboxGroup,
   Container,
   Grid,
   GridItem,
   HStack,
   Heading,
   Input,
-  Stack,
-  Text
+  Stack
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toHiragana, toKatakana } from 'wanakana'
@@ -20,6 +16,7 @@ import {
   KankenQuestion,
   type PracticeQuestion
 } from '../../components/kanken/KankenQuestion'
+import { QuizSettings } from '../../components/kanken/QuizSettings'
 import kankenData from '../../constant/kanken-data.json'
 import { useOfflineDictionaryContext } from '../../hooks/contexts/useOfflineDictionaryContext'
 import { useKeyValueData } from '../../hooks/utils/useKeyValueData'
@@ -32,7 +29,6 @@ import {
   type KankenWordData,
   type KankenYojijukugoData
 } from '../../types/kanken'
-import { getGradeLabel } from '../../utils/kanken/getGradeLabel'
 import { parseKanjiSQLResult } from '../../utils/kanken/parseKanjiSQLresult'
 import { getKanjiInfoSQL } from '../../utils/sql/getKanjiInfoSQL'
 
@@ -40,17 +36,15 @@ const KankenPractice = () => {
   const answerInputRef = useRef<HTMLInputElement>(null)
   const questionBoxRef = useRef<HTMLDivElement>(null)
   const data = kankenData as KankenData
-  const grades = Object.keys(kankenData) as KankenGrade[]
-  const [{ data: type, isLoading: typeLoading }, { mutate: setType }] =
+  const [{ data: type, isLoading: typeLoading }] =
     useKeyValueData<'word' | 'kanji' | 'yojijukugo'>(
       'kanken-practice-type',
       'word'
     )
-  const [{ data: mode, isLoading: modeLoading }, { mutate: setMode }] =
+  const [{ data: mode, isLoading: modeLoading }] =
     useKeyValueData<'reading' | 'writing'>('kanken-practice-mode', 'writing')
   const [
-    { data: selectedGrade, isLoading: gradeLoading },
-    { mutate: setSelectGrade }
+    { data: selectedGrade, isLoading: gradeLoading }
   ] = useKeyValueData<KankenGrade[]>('kanken-practice-selected-grade', [
     '3',
     '4',
@@ -160,6 +154,12 @@ const KankenPractice = () => {
   }, [allWords, mode])
 
   useEffect(() => {
+    if (ended && !answerExplanations) {
+      void fetchKanjiMeanings()
+    }
+  }, [ended])
+
+  useEffect(() => {
     const handleKeystroke = (event: KeyboardEvent) => {
       // Next question
       if (event.key === 'Enter' && ended) {
@@ -194,70 +194,7 @@ const KankenPractice = () => {
           <HStack mt="8">
             <Heading>漢検 Try Hard Practice</Heading>
           </HStack>
-          <ButtonGroup variant="outline" isAttached>
-            <Button
-              variant={type === 'word' ? 'solid' : 'outline'}
-              colorScheme={type === 'word' ? 'green' : undefined}
-              onClick={() => {
-                setType('word')
-              }}
-            >
-              Word
-            </Button>
-            <Button
-              variant={type === 'kanji' ? 'solid' : 'outline'}
-              colorScheme={type === 'kanji' ? 'green' : undefined}
-              onClick={() => {
-                setType('kanji')
-              }}
-            >
-              Kanji
-            </Button>
-            <Button
-              variant={type === 'yojijukugo' ? 'solid' : 'outline'}
-              colorScheme={type === 'yojijukugo' ? 'green' : undefined}
-              onClick={() => {
-                setType('yojijukugo')
-              }}
-            >
-              Yojijukugo
-            </Button>
-          </ButtonGroup>
-          <ButtonGroup variant="outline" isAttached>
-            <Button
-              variant={mode === 'writing' ? 'solid' : 'outline'}
-              colorScheme={mode === 'writing' ? 'green' : undefined}
-              onClick={() => {
-                setMode('writing')
-              }}
-            >
-              Writing
-            </Button>
-            <Button
-              variant={mode === 'reading' ? 'solid' : 'outline'}
-              colorScheme={mode === 'reading' ? 'green' : undefined}
-              onClick={() => {
-                setMode('reading')
-              }}
-            >
-              Reading
-            </Button>
-          </ButtonGroup>
-          <CheckboxGroup
-            value={selectedGrade}
-            onChange={(grades) => {
-              setSelectGrade(grades as KankenGrade[])
-            }}
-          >
-            <HStack w="full" spacing={4} justifyContent="center" my="4">
-              {grades.sort().map((grade) => (
-                <Checkbox key={grade} value={grade}>
-                  {getGradeLabel(grade)}
-                </Checkbox>
-              ))}
-              <Text>Total: {allWords?.length ?? 0} Items</Text>
-            </HStack>
-          </CheckboxGroup>
+          <QuizSettings/>
           <Input
           ref={answerInputRef}
             value={(ended ? answerKey.join(', ') : answer) ?? ''}
@@ -314,5 +251,4 @@ const KankenPractice = () => {
     </>
   )
 }
-
 export default KankenPractice
