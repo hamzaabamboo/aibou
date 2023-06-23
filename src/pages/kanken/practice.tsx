@@ -121,6 +121,7 @@ const KankenPractice = () => {
   }
 
   const getQuestion = async () => {
+    setCurrentQuestion(undefined)
     setAnswerExplanations(undefined)
     setShowAnswer(false)
     setAnswer('')
