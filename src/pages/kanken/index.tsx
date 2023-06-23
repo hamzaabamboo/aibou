@@ -1,4 +1,4 @@
-import { Box, Container, Divider, Grid, GridItem, HStack, Heading, Stack, Text } from '@chakra-ui/react'
+import { Box, Container, Divider, Grid, GridItem, HStack, Heading, Link, Stack, Text } from '@chakra-ui/react'
 import { useState } from 'react'
 import { toKatakana } from 'wanakana'
 import { GradePicker } from '../../components/kanken/GradePicker'
@@ -19,6 +19,7 @@ const KankenGrind = () => {
         <HStack mt="8">
             <Heading>漢検 Try Hard</Heading>
         </HStack>
+        <Link href="/kanken/practice">Practice</Link>
         <GradePicker grades={grades} selectedGrade={selectedGrade} onSelectGrade={setSelectGrade} />
         <Divider/>
         <Text my={4}>計{length}字</Text>

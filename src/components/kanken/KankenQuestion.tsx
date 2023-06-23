@@ -23,16 +23,16 @@ export interface KankenQuestionProps {
   showAnswer?: boolean
 }
 export const KankenQuestion = (props: KankenQuestionProps) => {
-  const { questionData, currentQuestion, showAnswer, type, mode } = props
-  if (type === 'word') {
+  const { questionData, currentQuestion, showAnswer = false, type, mode } = props
+  if (type === 'word' || type === 'yojijukugo') {
     const question = currentQuestion?.data as KankenWordData
     return (
     <Stack alignItems="center">
       {currentQuestion && (
         <KanjiDisplay
           data={{
-            ...question,
-            word: showAnswer
+            reading: !showAnswer && mode === 'reading' ? '' : question.reading,
+            word: showAnswer || mode === 'reading'
               ? question.word
               : question.word?.replaceAll(/./g, '＿')
           }}

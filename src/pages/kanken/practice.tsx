@@ -73,7 +73,7 @@ const KankenPractice = () => {
 
   const getQuestion = async () => {
     setShowAnswer(false)
-    const prompt = allWords[Math.round(Math.random() * allWords?.length)]
+    const prompt = allWords?.[Math.round(Math.random() * allWords?.length)]
 
     if (type === 'word' || type === 'yojijukugo') {
       const p = prompt as PracticeQuestion<KankenWordData | KankenYojijukugoData>
