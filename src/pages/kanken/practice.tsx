@@ -190,12 +190,12 @@ const KankenPractice = () => {
 
   return (
     <>
-      <Container maxWidth="80vw">
+      <Container maxWidth={['full', null, '80vw']}>
         <Stack w="full" alignItems="center">
           <HStack mt="8">
             <Heading>漢検 Try Hard Practice</Heading>
           </HStack>
-          <QuizSettings/>
+          <QuizSettings total={allWords.length}/>
           <Input
           ref={answerInputRef}
             value={(ended ? answerKey.join(', ') : answer) ?? ''}

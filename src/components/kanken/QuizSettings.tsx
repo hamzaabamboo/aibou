@@ -15,17 +15,18 @@ import { useKeyValueData } from '../../hooks/utils/useKeyValueData'
 import { type KankenGrade } from '../../types/kanken'
 import { getGradeLabel } from '../../utils/kanken/getGradeLabel'
 
-export const QuizSettings = () => {
+export const QuizSettings = (props: { total?: number }) => {
+  const { total = 0 } = props
   const grades = Object.keys(kankenData) as KankenGrade[]
-  const [{ data: type, isLoading: typeLoading }, { mutate: setType }] =
+  const [{ data: type }, { mutate: setType }] =
     useKeyValueData<'word' | 'kanji' | 'yojijukugo'>(
       'kanken-practice-type',
       'word'
     )
-  const [{ data: mode, isLoading: modeLoading }, { mutate: setMode }] =
+  const [{ data: mode }, { mutate: setMode }] =
     useKeyValueData<'reading' | 'writing'>('kanken-practice-mode', 'writing')
   const [
-    { data: selectedGrade, isLoading: gradeLoading },
+    { data: selectedGrade },
     { mutate: setSelectGrade }
   ] = useKeyValueData<KankenGrade[]>('kanken-practice-selected-grade', [
     '3',
@@ -38,12 +39,11 @@ export const QuizSettings = () => {
   return (
     <Accordion w="full" allowMultiple>
       <AccordionItem>
-        <AccordionButton>
-          Quiz Settings: {mode} / {type} / {grades.map(getGradeLabel).join(',')}
+        <AccordionButton textAlign="center">
+          Quiz Settings: {mode} / {type} / {grades.map(getGradeLabel).join(',')} / Total: {total} Items
         </AccordionButton>
         <AccordionPanel>
           <Stack alignItems="center">
-            {' '}
             <ButtonGroup variant="outline" isAttached>
               <Button
                 variant={type === 'word' ? 'solid' : 'outline'}
@@ -99,7 +99,7 @@ export const QuizSettings = () => {
                 setSelectGrade(grades as KankenGrade[])
               }}
             >
-              <HStack w="full" spacing={4} justifyContent="center" my="4">
+              <HStack w="full" spacing={4} justifyContent="center" my="4" flexWrap="wrap">
                 {grades.sort().map((grade) => (
                   <Checkbox key={grade} value={grade}>
                     {getGradeLabel(grade)}

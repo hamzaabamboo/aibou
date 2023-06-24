@@ -14,7 +14,7 @@ const KankenGrind = () => {
   const kanjis = (kankenData as unknown as KankenData)[selectedGrade].kanji ?? []
   const length = kanjis.length
   return <>
-    <Container maxWidth="80vw">
+    <Container maxWidth={['full', null, '80vw']}>
       <Stack w="full" alignItems="center">
         <HStack mt="8">
             <Heading>漢検 Try Hard</Heading>
