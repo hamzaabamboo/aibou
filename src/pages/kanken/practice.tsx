@@ -101,9 +101,7 @@ const KankenPractice = () => {
     quizId: `kanken-practice-${type}-${mode}`,
     getNewQuestion: async () => {
       setAnswerExplanations(undefined)
-
       const prompt = allWords?.[Math.round(Math.random() * allWords?.length)]
-
       if (type === 'word' || type === 'yojijukugo') {
         const p = prompt as PracticeQuestion<
         KankenWordData | KankenYojijukugoData
