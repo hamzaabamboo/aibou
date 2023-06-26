@@ -167,6 +167,7 @@ const KankenPractice = () => {
   }
 
   useEffect(() => {
+    if (!allWords) return;
     resetQuestion()
     void nextQuestion(false)
   }, [allWords, mode])
