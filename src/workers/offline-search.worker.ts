@@ -81,7 +81,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
       const words = data.data
       const results = []
       for (const word of words) {
-        const searchTerm = data.data
+        const searchTerm = word
         const res = await db.exec(getOfflineSearchSQL(searchTerm, 1, true), { $searchTerm: `${searchTerm}` })
         results.push({ word, results: parseOfflineDBResult(res, tagsData!) })
       }

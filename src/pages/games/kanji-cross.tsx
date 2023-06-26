@@ -10,6 +10,7 @@ import { LoadingSpinner } from '../../components/common/LoadingSpinner'
 import { SearchResultItem } from '../../components/jisho/SearchResultItem'
 import { useOfflineDictionaryContext } from '../../hooks/contexts/useOfflineDictionaryContext'
 import { usePopupSearchContext } from '../../hooks/contexts/usePopupSearchContext'
+import { useQuizState } from '../../hooks/useQuizState'
 import { type JishoWord } from '../../types/jisho'
 import { type TopicItem } from '../../types/topic'
 import { getKanjiCrossPrompt } from '../../utils/sql/getKanjiCrossPrompt'
@@ -17,17 +18,15 @@ import { getKanjiCrossPrompt } from '../../utils/sql/getKanjiCrossPrompt'
 export const KanjiCross = () => {
   const { runSQL, worker } = useOfflineDictionaryContext()
   const { showWordInfo } = usePopupSearchContext()
-  const [prompt, setPrompt] = useState<string[][] | undefined>()
-  const [answer, setAnswer] = useState('')
   const [wordData, setWordData] = useState<Array<Partial<TopicItem>>>()
   const [isShowHint, setShowHint] = useState(false)
-  const [isShowAnswer, setShowAnswer] = useState(false)
-  const [selectedWord, setSelectedWord] = useState<JishoWord | undefined>()
 
-  const win = !!prompt && answer === prompt[0][0]
-  const giveUp = !!prompt && answer !== prompt[0][0] && isShowAnswer
-  const showAnswer = !!prompt && (answer === prompt[0][0] || isShowAnswer)
-  const ended = win || giveUp
+  const { currentQuestion, setCurrentQuestion, answer, setAnswer, win, giveUp, showAnswer, ended, setShowAnswer, resetQuestion } = useQuizState<string[][], string>({
+    getAnswers: (question) => {
+      return [question[0][0]]
+    },
+    defaultAnswer: ''
+  })
 
   const getPrompt = async () => {
     if (!runSQL) return
@@ -35,11 +34,11 @@ export const KanjiCross = () => {
       query: getKanjiCrossPrompt(),
       variables: {}
     })
-    setPrompt((p as any[])[0].values)
+    setCurrentQuestion((p as any[])[0].values)
   }
 
   const getHintData = async () => {
-    const words = prompt?.map((p) => p[1]) ?? []
+    const words = currentQuestion?.map((p) => p[1]) ?? []
     const searchResults: any[] = await new Promise((resolve) => {
       if (!worker) return
       worker.postMessage({
@@ -67,13 +66,12 @@ export const KanjiCross = () => {
   }, [runSQL])
 
   useEffect(() => {
-    if (prompt === undefined) {
-      setAnswer('')
-      setWordData(undefined)
+    if (currentQuestion === undefined) {
       setShowHint(false)
-      setShowAnswer(false)
+      resetQuestion()
+      setWordData(undefined)
     }
-  }, [prompt])
+  }, [currentQuestion])
 
   useEffect(() => {
     if (ended && !wordData) {
@@ -85,11 +83,11 @@ export const KanjiCross = () => {
   const isInOrder = (s: string[]) => s[0] !== s[1][0]
 
   const getNewWord = () => {
-    setPrompt(undefined)
+    setCurrentQuestion(undefined)
     getPrompt()
   }
 
-  if (!prompt) {
+  if (!currentQuestion) {
     return (<LoadingSpinner/>)
   }
 
@@ -98,11 +96,11 @@ export const KanjiCross = () => {
       <Stack mt={10} alignItems="center" w="full" px={4}>
         <Heading>Kanji Cross Game !</Heading>
         <Stack justifyContent="center" alignItems="center">
-          <Kanji character={getNotPrompt(prompt[0])} />
-          <Arrow reverse={isInOrder(prompt[0])} />
+          <Kanji character={getNotPrompt(currentQuestion[0])} />
+          <Arrow reverse={isInOrder(currentQuestion[0])} />
           <HStack>
-            <Kanji character={getNotPrompt(prompt[1])} />
-            <Arrow reverse={!isInOrder(prompt[1])} direction="row" />
+            <Kanji character={getNotPrompt(currentQuestion[1])} />
+            <Arrow reverse={!isInOrder(currentQuestion[1])} direction="row" />
             <Input
               value={answer}
               onChange={(e) => {
@@ -114,11 +112,11 @@ export const KanjiCross = () => {
               maxLength={1}
               fontSize="3em"
             />
-            <Arrow reverse={isInOrder(prompt[2])} direction="row" />
-            <Kanji character={getNotPrompt(prompt[2])} />
+            <Arrow reverse={isInOrder(currentQuestion[2])} direction="row" />
+            <Kanji character={getNotPrompt(currentQuestion[2])} />
           </HStack>
-          <Arrow reverse={!isInOrder(prompt[3])} />
-          <Kanji character={getNotPrompt(prompt[3])} />
+          <Arrow reverse={!isInOrder(currentQuestion[3])} />
+          <Kanji character={getNotPrompt(currentQuestion[3])} />
         </Stack>
         <HStack>
           <Button
@@ -138,6 +136,7 @@ export const KanjiCross = () => {
           </Button>
           <Button
           colorScheme="yellow"
+          disabled={isShowHint}
             onClick={() => {
               getHintData()
             }}
@@ -146,11 +145,11 @@ export const KanjiCross = () => {
           </Button>
         </HStack>
         {win && <Text>You Win!</Text>}
-        {giveUp && <Text verticalAlign="middle"> The Answer is <Text as="span" fontSize="3em">{prompt[0][0]}</Text></Text>}
+        {giveUp && <Text verticalAlign="middle"> The Answer is <Text as="span" fontSize="3em">{currentQuestion[0][0]}</Text></Text>}
         {(isShowHint || giveUp) && wordData && (
           <Stack alignItems="stretch">
             {wordData.map(data => {
-              if (showAnswer) {
+              if (ended) {
                 return data
               }
               if (!data.jishoData) return data
@@ -158,7 +157,7 @@ export const KanjiCross = () => {
                 ...data,
                 jishoData: {
                   ...data.jishoData,
-                  japanese: [{ ...data.jishoData.japanese[0], word: data.jishoData.japanese[0].word.replace(prompt[0][0], '＿') }]
+                  japanese: [{ ...data.jishoData.japanese[0], word: data.jishoData.japanese[0].word.replace(currentQuestion[0][0], '＿') }]
                 }
               }
             }).map(
@@ -170,8 +169,8 @@ export const KanjiCross = () => {
                     }}
                     item={w.jishoData}
                     key={w.word}
-                    hideFurigana={!showAnswer}
-                    hideAlternatives={!showAnswer}
+                    hideFurigana={!ended}
+                    hideAlternatives={!ended}
                   />
                 )
             )}

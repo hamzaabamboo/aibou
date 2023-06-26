@@ -19,6 +19,7 @@ import {
 import { QuizSettings } from '../../components/kanken/QuizSettings'
 import kankenData from '../../constant/kanken-data.json'
 import { useOfflineDictionaryContext } from '../../hooks/contexts/useOfflineDictionaryContext'
+import { useQuizState } from '../../hooks/useQuizState'
 import { useKeyValueData } from '../../hooks/utils/useKeyValueData'
 import { type JishoWord } from '../../types/jisho'
 import { type KanjiData } from '../../types/kanji'
@@ -52,10 +53,35 @@ const KankenPractice = () => {
     '6',
     '7'
   ])
-  const [currentQuestion, setCurrentQuestion] = useState<PracticeQuestion>()
+  const {
+    resetQuestion,
+    currentQuestion,
+    setCurrentQuestion,
+    answerKey,
+    answer,
+    setAnswer,
+    ended,
+    showAnswer,
+    setShowAnswer,
+    win,
+    giveUp
+  } = useQuizState<PracticeQuestion, string>({
+    getAnswers: (question) => {
+      const answers = mode === 'reading'
+        ? type === 'kanji'
+          ? (question.data as KankenKanjiData)?.onyomi?.split(', ').map(l => toKatakana(l)).concat((question.data as KankenKanjiData)?.kunyomi?.split(', ') ?? []) ?? []
+          : [(question.data as KankenWordData)?.reading]
+        : type === 'kanji'
+          ? [question.kanji]
+          : [(question.data as KankenWordData)?.word]
+      return answers.filter(a => !!a) as string[]
+    },
+    checkAnswer: (answers, answer) => {
+      return answers.map(t => toHiragana(t ?? '').replace(/（.*?）/, '').split('.')[0]).includes(toHiragana(answer))
+    },
+    defaultAnswer: ''
+  })
   const [questionData, setQuestionData] = useState<JishoWord>()
-  const [showAnswer, setShowAnswer] = useState(false)
-  const [answer, setAnswer] = useState('')
   const [answerExplanations, setAnswerExplanations] = useState<KanjiData[]>()
   const { worker, runSQL } = useOfflineDictionaryContext()
 
@@ -83,19 +109,6 @@ const KankenPractice = () => {
     ) as Array<PracticeQuestion<KankenKanjiData>>
   }, [selectedGrade, type])
 
-  const answerKey =
-    mode === 'reading'
-      ? type === 'kanji'
-        ? (currentQuestion?.data as KankenKanjiData)?.onyomi?.split(', ').map(l => toKatakana(l)).concat((currentQuestion?.data as KankenKanjiData)?.kunyomi?.split(', ') ?? []) ?? []
-        : [(currentQuestion?.data as KankenWordData)?.reading]
-      : type === 'kanji'
-        ? [currentQuestion?.kanji]
-        : [(currentQuestion?.data as KankenWordData)?.word]
-  const isCorrectAnswer = answerKey.map(t => toHiragana(t ?? '').replace(/（.*?）/, '').split('.')[0]).includes(toHiragana(answer))
-  const win = !!currentQuestion && isCorrectAnswer
-  const giveUp = !!currentQuestion && !isCorrectAnswer && showAnswer
-  const ended = win || giveUp
-
   const fetchKanjiMeanings = async (word?: string) => {
     if (type === 'word' || type === 'yojijukugo') {
       const data = currentQuestion?.data as
@@ -121,10 +134,9 @@ const KankenPractice = () => {
   }
 
   const getQuestion = async () => {
-    setCurrentQuestion(undefined)
+    resetQuestion()
     setAnswerExplanations(undefined)
-    setShowAnswer(false)
-    setAnswer('')
+
     const prompt = allWords?.[Math.round(Math.random() * allWords?.length)]
 
     if (type === 'word' || type === 'yojijukugo') {
@@ -181,8 +193,6 @@ const KankenPractice = () => {
       window.removeEventListener('keypress', handleKeystroke)
     }
   }, [ended])
-  useEffect(() => {
-  }, [currentQuestion])
 
   if (typeLoading || modeLoading || gradeLoading) {
     return <LoadingSpinner />
