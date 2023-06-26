@@ -9,16 +9,16 @@ import {
 } from '@chakra-ui/react'
 import format from 'date-fns/format'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import noop from 'lodash/noop'
 import type { NextPage } from 'next'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { Search } from '../components/jisho/Search'
-import { WordInfoModal } from '../components/jisho/WordInfoModal'
+import { usePopupSearchContext } from '../hooks/contexts/usePopupSearchContext'
 import { useLastUpdatedTopics } from '../hooks/useLastUpdatedTopics'
 import { useSyncData } from '../hooks/utils/useSyncData'
-import { type JishoWord } from '../types/jisho'
 
 const Home: NextPage = () => {
-  const [selectedWord, setSelectedWord] = useState<JishoWord | undefined>()
+  const { showWordInfo } = usePopupSearchContext()
   const { data: lastUpdatedTopics, refetch } = useLastUpdatedTopics()
   const { syncEnabled, sync, lastSyncedTime } = useSyncData()
 
@@ -32,7 +32,7 @@ const Home: NextPage = () => {
         <Stack justifyContent="center" alignItems="center" h="full" pt="8">
           <Heading>相棒/ Aibou</Heading>
           <Text>Japanese-language learning companion</Text>
-          <Search onSelectItem={setSelectedWord} />
+          <Search onSelectItem={showWordInfo ?? noop} />
           {syncEnabled && (
             <HStack>
               <Text>
@@ -64,21 +64,6 @@ const Home: NextPage = () => {
           </Stack>
         </Stack>
       </Container>
-      {(selectedWord != null) && (
-        <WordInfoModal
-          isOpen={!!selectedWord}
-          item={{
-            topicId: '',
-            word:
-              selectedWord.japanese[0].word ?? selectedWord.japanese[0].reading,
-            jishoData: selectedWord,
-            createdAt: new Date(),
-            lastUpdatedAt: new Date()
-          }}
-          onClose={() => { setSelectedWord(undefined) }}
-          isAddable
-        />
-      )}
     </>
   )
 }

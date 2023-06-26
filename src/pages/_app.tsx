@@ -7,6 +7,7 @@ import { Footer } from '../components/common/Footer'
 import { Navigation } from '../components/common/Navigation'
 import { DBContextProvider } from '../hooks/contexts/DBContext'
 import { OfflineDictionaryProvider } from '../hooks/contexts/OfflineDictionaryProvider'
+import { PopupSearchProvider } from '../hooks/contexts/PopupSearchContext'
 import { requestPersistentStoragePermission } from '../utils/requestPersistentStoragePermission'
 
 const queryClient = new QueryClient()
@@ -64,7 +65,8 @@ function MyApp ({ Component, pageProps }: AppProps) {
         <QueryClientProvider client={queryClient}>
           <DBContextProvider>
             <OfflineDictionaryProvider>
-              <Stack minH="100vh">
+             <PopupSearchProvider>
+             <Stack minH="100vh">
                 <Navigation />
                 <Box
                   display="flex"
@@ -78,6 +80,7 @@ function MyApp ({ Component, pageProps }: AppProps) {
                 </Box>
                 <Footer />
               </Stack>
+             </PopupSearchProvider>
             </OfflineDictionaryProvider>
           </DBContextProvider>
         </QueryClientProvider>
