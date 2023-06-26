@@ -14,7 +14,7 @@ export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
   const [answer, setAnswer] = useState<A>(defaultAnswer as A)
   const [showAnswer, setShowAnswer] = useState(false)
   const [currentQuestion, setCurrentQuestion] = useState<Q>()
-  const [{ data: quizData }, { mutate: updateQuizData }] = useQuizData(quizId)
+  const [{ data: quizData }, { mutate: updateQuizData }] = useQuizData<Q>(quizId)
 
   const answerKey = currentQuestion ? getAnswers(currentQuestion) : []
   const isCorrectAnswer = !!currentQuestion && !!answerKey && (checkAnswer?.(answerKey, answer) ?? answerKey.includes(answer))
@@ -28,9 +28,9 @@ export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
     setAnswer(defaultAnswer as A)
   }
 
-  const nextQuestion = async () => {
-    if (currentQuestion && quizData) {
-      const newData: QuizData = {
+  const nextQuestion = async (submitAnswer = true) => {
+    if (submitAnswer && currentQuestion && quizData) {
+      const newData: QuizData<Q> = {
         ...quizData,
         recentQuestions: [{ question: currentQuestion, isCorrect: isCorrectAnswer }, ...quizData.recentQuestions].slice(0, 30),
         recentIncorrect: isCorrectAnswer ? quizData.recentIncorrect : [{ question: currentQuestion, isCorrect: isCorrectAnswer }, ...quizData.recentIncorrect].slice(0, 30),
@@ -50,6 +50,11 @@ export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
     await nextQuestion()
   }
 
+  const resetStats = async () => {
+    if (!quizData) return
+    await updateQuizData({ ...quizData, stats: { correct: 0, skipped: 0 } })
+  }
+
   return {
     answer,
     setAnswer,
@@ -65,6 +70,7 @@ export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
     nextQuestion,
     skipQuestion,
     resetQuestion,
-    quizData
+    quizData,
+    resetStats
   }
 }

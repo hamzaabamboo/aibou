@@ -95,7 +95,8 @@ const KankenPractice = () => {
     giveUp,
     nextQuestion,
     resetQuestion,
-    quizData
+    quizData,
+    resetStats
   } = useQuizState<PracticeQuestion, string>({
     quizId: `kanken-practice-${type}-${mode}`,
     getNewQuestion: async () => {
@@ -168,7 +169,8 @@ const KankenPractice = () => {
   }
 
   useEffect(() => {
-    void nextQuestion()
+    resetQuestion()
+    void nextQuestion(false)
   }, [allWords, mode])
 
   useEffect(() => {
@@ -212,7 +214,7 @@ const KankenPractice = () => {
           </HStack>
           <Stack w="full" spacing="0">
             <QuizSettings total={allWords.length}/>
-            {quizData && <PracticeStats quizData={quizData} />}
+            {quizData && <PracticeStats quizData={quizData} onResetCounter={resetStats}/>}
           </Stack>
           <Input
           ref={answerInputRef}

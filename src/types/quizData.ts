@@ -1,14 +1,14 @@
-export interface QuizData {
+export interface QuizData<T = Record<string, unknown> > {
   id: string
-  recentQuestions: QuizAnswer[]
-  recentIncorrect: QuizAnswer[]
+  recentQuestions: Array<QuizAnswer<T>>
+  recentIncorrect: Array<QuizAnswer<T>>
   stats: {
     correct: number
     skipped: number
   }
 }
 
-export interface QuizAnswer {
-  question: Record<string, unknown>
+export interface QuizAnswer<T = Record<string, unknown>> {
+  question: T
   isCorrect: boolean
 }
