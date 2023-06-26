@@ -16,6 +16,7 @@ import {
   KankenQuestion,
   type PracticeQuestion
 } from '../../components/kanken/KankenQuestion'
+import { PracticeStats } from '../../components/kanken/PracticeStats'
 import { QuizSettings } from '../../components/kanken/QuizSettings'
 import kankenData from '../../constant/kanken-data.json'
 import { useOfflineDictionaryContext } from '../../hooks/contexts/useOfflineDictionaryContext'
@@ -53,34 +54,7 @@ const KankenPractice = () => {
     '6',
     '7'
   ])
-  const {
-    resetQuestion,
-    currentQuestion,
-    setCurrentQuestion,
-    answerKey,
-    answer,
-    setAnswer,
-    ended,
-    showAnswer,
-    setShowAnswer,
-    win,
-    giveUp
-  } = useQuizState<PracticeQuestion, string>({
-    getAnswers: (question) => {
-      const answers = mode === 'reading'
-        ? type === 'kanji'
-          ? (question.data as KankenKanjiData)?.onyomi?.split(', ').map(l => toKatakana(l)).concat((question.data as KankenKanjiData)?.kunyomi?.split(', ') ?? []) ?? []
-          : [(question.data as KankenWordData)?.reading]
-        : type === 'kanji'
-          ? [question.kanji]
-          : [(question.data as KankenWordData)?.word]
-      return answers.filter(a => !!a) as string[]
-    },
-    checkAnswer: (answers, answer) => {
-      return answers.map(t => toHiragana(t ?? '').replace(/（.*?）/, '').split('.')[0]).includes(toHiragana(answer))
-    },
-    defaultAnswer: ''
-  })
+
   const [questionData, setQuestionData] = useState<JishoWord>()
   const [answerExplanations, setAnswerExplanations] = useState<KanjiData[]>()
   const { worker, runSQL } = useOfflineDictionaryContext()
@@ -109,6 +83,66 @@ const KankenPractice = () => {
     ) as Array<PracticeQuestion<KankenKanjiData>>
   }, [selectedGrade, type])
 
+  const {
+    currentQuestion,
+    answerKey,
+    answer,
+    setAnswer,
+    ended,
+    showAnswer,
+    setShowAnswer,
+    win,
+    giveUp,
+    nextQuestion,
+    resetQuestion,
+    quizData
+  } = useQuizState<PracticeQuestion, string>({
+    quizId: `kanken-practice-${type}-${mode}`,
+    getNewQuestion: async () => {
+      setAnswerExplanations(undefined)
+
+      const prompt = allWords?.[Math.round(Math.random() * allWords?.length)]
+
+      if (type === 'word' || type === 'yojijukugo') {
+        const p = prompt as PracticeQuestion<
+        KankenWordData | KankenYojijukugoData
+        >
+        const searchResults: any[] = await new Promise((resolve) => {
+          if (!worker) return
+          worker.postMessage({
+            type: 'searchWords',
+            data: [p?.data.word]
+          })
+          worker.onmessage = ({ data }) => {
+            data.type === 'searchWordsResult' && resolve(data.data)
+          }
+        })
+        setQuestionData(searchResults[0].results[0])
+      } else {
+        await fetchKanjiMeanings(prompt?.kanji)
+      }
+      setTimeout(() => {
+        answerInputRef.current?.focus()
+        questionBoxRef.current?.scrollIntoView()
+      }, 0)
+      return prompt
+    },
+    getAnswers: (question) => {
+      const answers = mode === 'reading'
+        ? type === 'kanji'
+          ? (question.data as KankenKanjiData)?.onyomi?.split(', ').map(l => toKatakana(l)).concat((question.data as KankenKanjiData)?.kunyomi?.split(', ') ?? []) ?? []
+          : [(question.data as KankenWordData)?.reading]
+        : type === 'kanji'
+          ? [question.kanji]
+          : [(question.data as KankenWordData)?.word]
+      return answers.filter(a => !!a) as string[]
+    },
+    checkAnswer: (answers, answer) => {
+      return answers.map(t => toHiragana(t ?? '').replace(/（.*?）/, '').split('.')[0]).includes(toHiragana(answer))
+    },
+    defaultAnswer: ''
+  })
+
   const fetchKanjiMeanings = async (word?: string) => {
     if (type === 'word' || type === 'yojijukugo') {
       const data = currentQuestion?.data as
@@ -133,37 +167,8 @@ const KankenPractice = () => {
     }
   }
 
-  const getQuestion = async () => {
-    resetQuestion()
-    setAnswerExplanations(undefined)
-
-    const prompt = allWords?.[Math.round(Math.random() * allWords?.length)]
-
-    if (type === 'word' || type === 'yojijukugo') {
-      const p = prompt as PracticeQuestion<
-      KankenWordData | KankenYojijukugoData
-      >
-      const searchResults: any[] = await new Promise((resolve) => {
-        if (!worker) return
-        worker.postMessage({
-          type: 'searchWords',
-          data: [p?.data.word]
-        })
-        worker.onmessage = ({ data }) => {
-          data.type === 'searchWordsResult' && resolve(data.data)
-        }
-      })
-      setQuestionData(searchResults[0].results[0])
-    } else {
-      await fetchKanjiMeanings(prompt?.kanji)
-    }
-    setCurrentQuestion(prompt)
-    answerInputRef.current?.focus()
-    questionBoxRef.current?.scrollIntoView()
-  }
-
   useEffect(() => {
-    void getQuestion()
+    void nextQuestion()
   }, [allWords, mode])
 
   useEffect(() => {
@@ -176,7 +181,7 @@ const KankenPractice = () => {
     const handleKeystroke = (event: KeyboardEvent) => {
       // Next question
       if (event.key === 'Enter' && ended) {
-        void getQuestion()
+        void nextQuestion()
         event.stopPropagation()
       } else if (event.key === 'h' && document.activeElement !== answerInputRef.current) {
         // Giveup
@@ -184,7 +189,7 @@ const KankenPractice = () => {
         event.stopPropagation()
       } else if (event.key === 's' && document.activeElement !== answerInputRef.current) {
         // Skip
-        void getQuestion()
+        void nextQuestion()
         event.stopPropagation()
       }
     }
@@ -205,7 +210,10 @@ const KankenPractice = () => {
           <HStack mt="8">
             <Heading>漢検 Try Hard Practice</Heading>
           </HStack>
-          <QuizSettings total={allWords.length}/>
+          <Stack w="full" spacing="0">
+            <QuizSettings total={allWords.length}/>
+            {quizData && <PracticeStats quizData={quizData} />}
+          </Stack>
           <Input
           ref={answerInputRef}
             value={(ended ? answerKey.join(', ') : answer) ?? ''}
@@ -221,7 +229,7 @@ const KankenPractice = () => {
           <HStack>
             <Button
               onClick={() => {
-                getQuestion()
+                void nextQuestion()
               }}
             >
               New Question
@@ -262,4 +270,5 @@ const KankenPractice = () => {
     </>
   )
 }
+
 export default KankenPractice

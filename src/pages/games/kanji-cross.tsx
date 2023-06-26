@@ -21,21 +21,22 @@ export const KanjiCross = () => {
   const [wordData, setWordData] = useState<Array<Partial<TopicItem>>>()
   const [isShowHint, setShowHint] = useState(false)
 
-  const { currentQuestion, setCurrentQuestion, answer, setAnswer, win, giveUp, showAnswer, ended, setShowAnswer, resetQuestion } = useQuizState<string[][], string>({
+  const { currentQuestion, answer, setAnswer, win, giveUp, showAnswer, ended, setShowAnswer, nextQuestion } = useQuizState<string[][], string>({
+    quizId: 'kanji-cross',
+    getNewQuestion: async () => {
+      const p = await runSQL?.({
+        query: getKanjiCrossPrompt(),
+        variables: {}
+      })
+      setShowHint(false)
+      setWordData(undefined)
+      return (p as any[])[0].values
+    },
     getAnswers: (question) => {
       return [question[0][0]]
     },
     defaultAnswer: ''
   })
-
-  const getPrompt = async () => {
-    if (!runSQL) return
-    const p = await runSQL({
-      query: getKanjiCrossPrompt(),
-      variables: {}
-    })
-    setCurrentQuestion((p as any[])[0].values)
-  }
 
   const getHintData = async () => {
     const words = currentQuestion?.map((p) => p[1]) ?? []
@@ -62,16 +63,8 @@ export const KanjiCross = () => {
   }
 
   useEffect(() => {
-    getPrompt()
+    nextQuestion()
   }, [runSQL])
-
-  useEffect(() => {
-    if (currentQuestion === undefined) {
-      setShowHint(false)
-      resetQuestion()
-      setWordData(undefined)
-    }
-  }, [currentQuestion])
 
   useEffect(() => {
     if (ended && !wordData) {
@@ -81,11 +74,6 @@ export const KanjiCross = () => {
 
   const getNotPrompt = (s: string[]) => (s[1][0] === s[0] ? s[1][1] : s[1][0])
   const isInOrder = (s: string[]) => s[0] !== s[1][0]
-
-  const getNewWord = () => {
-    setCurrentQuestion(undefined)
-    getPrompt()
-  }
 
   if (!currentQuestion) {
     return (<LoadingSpinner/>)
@@ -121,7 +109,7 @@ export const KanjiCross = () => {
         <HStack>
           <Button
             onClick={() => {
-              getNewWord()
+              nextQuestion()
             }}
           >
             New Question
