@@ -166,7 +166,7 @@ export const KanjiCross = () => {
                 w.jishoData && (
                   <SearchResultItem
                     onClick={() => {
-                      showAnswer && showWordInfo(w.jishoData)
+                      showAnswer && w.jishoData && showWordInfo?.(w.jishoData)
                     }}
                     item={w.jishoData}
                     key={w.word}

@@ -9,13 +9,13 @@ import {
 } from '@chakra-ui/react'
 import debounce from 'lodash/debounce'
 import orderBy from 'lodash/orderBy'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { forwardRef, useCallback, useEffect, useState } from 'react'
 import { useOfflineDictionary } from '../../hooks/offline/useOfflineDictionary'
 import { similarity } from '../../utils/stringSimilarity'
 import { type SearchProps } from './Search'
 import { SearchResultItem } from './SearchResultItem'
 
-export function OfflineSearch (props: SearchProps) {
+export const OfflineSearch = forwardRef<HTMLInputElement, SearchProps>(function OfflineSearch (props, ref) {
   const {
     inputSize = 'large',
     onSelectItem,
@@ -80,6 +80,7 @@ export function OfflineSearch (props: SearchProps) {
   return (
     <Box {...boxProps} position="relative">
       <Input
+        ref={ref}
         p={2}
         width="full"
         value={input}
@@ -113,3 +114,4 @@ export function OfflineSearch (props: SearchProps) {
     </Box>
   )
 }
+)

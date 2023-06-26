@@ -11,16 +11,25 @@ import format from 'date-fns/format'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 import noop from 'lodash/noop'
 import type { NextPage } from 'next'
-import { useEffect } from 'react'
+import { useEffect, useRef } from 'react'
 import { Search } from '../components/jisho/Search'
 import { usePopupSearchContext } from '../hooks/contexts/usePopupSearchContext'
+import { useOfflineDictionaryAvailability } from '../hooks/offline/useOfflineDictionaryAvailability'
 import { useLastUpdatedTopics } from '../hooks/useLastUpdatedTopics'
 import { useSyncData } from '../hooks/utils/useSyncData'
 
 const Home: NextPage = () => {
   const { showWordInfo } = usePopupSearchContext()
+  const searchRef = useRef<HTMLInputElement>(null)
   const { data: lastUpdatedTopics, refetch } = useLastUpdatedTopics()
   const { syncEnabled, sync, lastSyncedTime } = useSyncData()
+  const { isLoading, isDictionaryAvailable } = useOfflineDictionaryAvailability()
+
+  useEffect(() => {
+    if (!isLoading && isDictionaryAvailable) {
+      searchRef?.current?.focus()
+    }
+  }, [isLoading, isDictionaryAvailable])
 
   useEffect(() => {
     refetch()
@@ -32,7 +41,7 @@ const Home: NextPage = () => {
         <Stack justifyContent="center" alignItems="center" h="full" pt="8">
           <Heading>相棒/ Aibou</Heading>
           <Text>Japanese-language learning companion</Text>
-          <Search onSelectItem={showWordInfo ?? noop} />
+          <Search ref={searchRef} onSelectItem={showWordInfo ?? noop} />
           {syncEnabled && (
             <HStack>
               <Text>

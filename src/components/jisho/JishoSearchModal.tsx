@@ -9,6 +9,7 @@ import {
   ModalHeader,
   ModalOverlay
 } from '@chakra-ui/react'
+import { useRef } from 'react'
 import { type JishoWord } from '../../types/jisho'
 import { Search } from './Search'
 
@@ -18,9 +19,10 @@ export function JishoSearchModal (props: {
   onSelectItem: (word: JishoWord) => void
 }) {
   const { isOpen, onClose, onSelectItem } = props
+  const searchRef = useRef<HTMLInputElement>(null)
 
   return (
-    <Modal size="xl" isOpen={isOpen} onClose={onClose}>
+    <Modal size="xl" isOpen={isOpen} onClose={onClose} initialFocusRef={searchRef}>
       <ModalOverlay
         bg="blackAlpha.300"
         backdropFilter="blur(10px) hue-rotate(90deg)"
@@ -31,7 +33,7 @@ export function JishoSearchModal (props: {
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Search onSelectItem={onSelectItem} />
+          <Search ref={searchRef} onSelectItem={onSelectItem} />
         </ModalBody>
         <ModalFooter>
           <Button onClick={onClose}>Close</Button>

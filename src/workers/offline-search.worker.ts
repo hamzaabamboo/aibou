@@ -1,5 +1,4 @@
 import initSqlJs, { type Database } from 'sql.js'
-import { isRomaji, toKana } from 'wanakana'
 import { initDictionaryDB, type DictionaryDB } from '../utils/db/dictionary-db'
 import { parseOfflineDBResult } from '../utils/parseOfflineDBResult'
 import { getOfflineSearchSQL } from '../utils/sql/getOfflineSearchSQL'
@@ -64,7 +63,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
     case 'searchWord': {
       console.time('Offline Search')
       if (db == null) db = await init()
-      const searchTerm = isRomaji(data.data) && /^[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f]+$/.test(toKana(data.data)) ? toKana(data.data) : data.data
+      const searchTerm = data.data
       const res = await db.exec(getOfflineSearchSQL(searchTerm), { $searchTerm: `${searchTerm}` })
       if (tagsData == null) {
         tagsData = Object.fromEntries(await db.exec('SELECT * FROM tags')[0].values)
@@ -82,7 +81,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
       const words = data.data
       const results = []
       for (const word of words) {
-        const searchTerm = isRomaji(word) && /^[\u3000-\u303f\u3040-\u309f\u30a0-\u30ff\uff00-\uff9f]+$/.test(toKana(word)) ? toKana(word) : word
+        const searchTerm = data.data
         const res = await db.exec(getOfflineSearchSQL(searchTerm, 1, true), { $searchTerm: `${searchTerm}` })
         results.push({ word, results: parseOfflineDBResult(res, tagsData!) })
       }

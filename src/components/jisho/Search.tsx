@@ -1,5 +1,6 @@
 import { type BoxProps } from '@chakra-ui/react'
 
+import { forwardRef } from 'react'
 import { useOfflineDictionaryAvailability } from '../../hooks/offline/useOfflineDictionaryAvailability'
 import { type JishoWord } from '../../types/jisho'
 import { JishoSearch } from './JishoSearch'
@@ -13,10 +14,14 @@ export type SearchProps = {
   setShowPopup?: (status: boolean) => void
 } & BoxProps
 
-export const Search = (props: SearchProps) => {
-  const { isAvailable } = useOfflineDictionaryAvailability()
-  if (isAvailable) {
-    return <OfflineSearch {...props} />
+export const Search = forwardRef<HTMLInputElement, SearchProps>((props, ref) => {
+  const { isDictionaryAvailable } = useOfflineDictionaryAvailability()
+
+  if (isDictionaryAvailable) {
+    return <OfflineSearch ref={ref} {...props} />
   }
-  return <JishoSearch {...props} />
+  return <JishoSearch ref={ref} {...props} />
 }
+)
+
+Search.displayName = 'Search'

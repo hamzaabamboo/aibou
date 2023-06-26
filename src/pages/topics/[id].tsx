@@ -27,7 +27,7 @@ import {
 import { uniq } from 'lodash'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { parsePartOfSpeech } from '../../components/jisho/PartOfSpeechLabel'
 import { Search } from '../../components/jisho/Search'
 import { WordInfoModal } from '../../components/jisho/WordInfoModal'
@@ -53,6 +53,7 @@ import { filterTopicItemsByKeywords } from '../../utils/filterTopicItemsByKeywor
 import { sortTopicItems } from '../../utils/sortTopicItems'
 
 const TopicDetailPage: NextPage = () => {
+  const searchRef = useRef<HTMLInputElement>(null)
   const { query } = useRouter()
   const topicId = query.id as string
 
@@ -77,7 +78,7 @@ const TopicDetailPage: NextPage = () => {
     useFetchJishoResults(topicId)
   const { mutate: fetchOfflineResults, isLoading: isFetchingOfflineResults } =
     useFetchOfflineResults(topicId)
-  const { isAvailable, isDBDownloaded } = useOfflineDictionaryAvailability()
+  const { isDictionaryAvailable, isDBDownloaded, isLoading: isLoadingAvailability } = useOfflineDictionaryAvailability()
   const [
     { data: offlineDictionaryEnabled },
     { mutate: updateDictionaryEnabledStatus }
@@ -137,6 +138,12 @@ const TopicDetailPage: NextPage = () => {
       [],
     [words]
   )
+
+  useEffect(() => {
+    if (!isLoadingAvailability && isDictionaryAvailable) {
+      searchRef?.current?.focus()
+    }
+  }, [isLoadingAvailability, isDictionaryAvailable])
 
   useEffect(() => {
     refetch()
@@ -216,7 +223,7 @@ const TopicDetailPage: NextPage = () => {
                             Load Definition from Jisho
                           </MenuItem>
                         )}
-                        {isAvailable && needsSync.length > 0 && (
+                        {isDictionaryAvailable && needsSync.length > 0 && (
                           <MenuItem
                             icon={<DownloadIcon />}
                             isDisabled={isFetchingOfflineResults}
@@ -251,6 +258,7 @@ const TopicDetailPage: NextPage = () => {
               {topic?.description && <Text>{topic?.description}</Text>}
               <Stack direction={['column']}>
                 <Search
+                  ref={searchRef}
                   onSelectItem={async (word) => { await handleAddTopicItem(word) }}
                   inputSize="small"
                   w="full"

@@ -9,13 +9,13 @@ import {
 } from '@chakra-ui/react'
 import debounce from 'lodash/debounce'
 import orderBy from 'lodash/orderBy'
-import React, { useCallback, useEffect, useState } from 'react'
+import React, { forwardRef, useCallback, useEffect, useState } from 'react'
 import { useJishoSearch } from '../../hooks/useJishoSearch'
 import { similarity } from '../../utils/stringSimilarity'
 import { type SearchProps } from './Search'
 import { SearchResultItem } from './SearchResultItem'
 
-export function JishoSearch (props: SearchProps) {
+export const JishoSearch = forwardRef<HTMLInputElement, SearchProps>(function JishoSearch (props: SearchProps, ref) {
   const {
     inputSize = 'large',
     onSelectItem,
@@ -81,6 +81,7 @@ export function JishoSearch (props: SearchProps) {
   return (
     <Box {...boxProps} position="relative">
       <Input
+      ref={ref}
         p={2}
         width="full"
         value={input}
@@ -114,3 +115,4 @@ export function JishoSearch (props: SearchProps) {
     </Box>
   )
 }
+)

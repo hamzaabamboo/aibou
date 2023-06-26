@@ -40,7 +40,7 @@ export const QuizSettings = (props: { total?: number }) => {
     <Accordion w="full" allowMultiple>
       <AccordionItem>
         <AccordionButton textAlign="center">
-          Quiz Settings: {mode} / {type} / {grades.map(getGradeLabel).join(',')} / Total: {total} Items
+          Quiz Settings: {mode} / {type} / {(selectedGrade ?? []).sort().map(getGradeLabel).join(',')} / Total: {total} Items
         </AccordionButton>
         <AccordionPanel>
           <Stack alignItems="center">

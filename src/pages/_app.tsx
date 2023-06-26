@@ -6,6 +6,7 @@ import { useEffect } from 'react'
 import { Footer } from '../components/common/Footer'
 import { Navigation } from '../components/common/Navigation'
 import { DBContextProvider } from '../hooks/contexts/DBContext'
+import { OfflineDBAvailabilityProvider } from '../hooks/contexts/OfflineDBAvailabilityContext'
 import { OfflineDictionaryProvider } from '../hooks/contexts/OfflineDictionaryProvider'
 import { PopupSearchProvider } from '../hooks/contexts/PopupSearchContext'
 import { requestPersistentStoragePermission } from '../utils/requestPersistentStoragePermission'
@@ -64,7 +65,8 @@ function MyApp ({ Component, pageProps }: AppProps) {
       <ChakraProvider>
         <QueryClientProvider client={queryClient}>
           <DBContextProvider>
-            <OfflineDictionaryProvider>
+          <OfflineDBAvailabilityProvider>
+          <OfflineDictionaryProvider>
              <PopupSearchProvider>
              <Stack minH="100vh">
                 <Navigation />
@@ -82,6 +84,7 @@ function MyApp ({ Component, pageProps }: AppProps) {
               </Stack>
              </PopupSearchProvider>
             </OfflineDictionaryProvider>
+          </OfflineDBAvailabilityProvider>
           </DBContextProvider>
         </QueryClientProvider>
       </ChakraProvider>
