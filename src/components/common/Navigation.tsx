@@ -32,6 +32,7 @@ export function Navigation () {
       position="sticky"
       top="0"
       bg="white"
+      zIndex={100}
     >
       <Text fontSize="3xl" fontWeight="bold" onClick={async () => await router.push('/')}>
         相棒
