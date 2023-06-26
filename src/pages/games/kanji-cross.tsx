@@ -8,14 +8,15 @@ import { Button, Container, HStack, Heading, Input, Stack, Text } from '@chakra-
 import { useEffect, useState } from 'react'
 import { LoadingSpinner } from '../../components/common/LoadingSpinner'
 import { SearchResultItem } from '../../components/jisho/SearchResultItem'
-import { WordInfoModal } from '../../components/jisho/WordInfoModal'
 import { useOfflineDictionaryContext } from '../../hooks/contexts/useOfflineDictionaryContext'
+import { usePopupSearchContext } from '../../hooks/contexts/usePopupSearchContext'
 import { type JishoWord } from '../../types/jisho'
 import { type TopicItem } from '../../types/topic'
 import { getKanjiCrossPrompt } from '../../utils/sql/getKanjiCrossPrompt'
 
 export const KanjiCross = () => {
   const { runSQL, worker } = useOfflineDictionaryContext()
+  const { showWordInfo } = usePopupSearchContext()
   const [prompt, setPrompt] = useState<string[][] | undefined>()
   const [answer, setAnswer] = useState('')
   const [wordData, setWordData] = useState<Array<Partial<TopicItem>>>()
@@ -165,7 +166,7 @@ export const KanjiCross = () => {
                 w.jishoData && (
                   <SearchResultItem
                     onClick={() => {
-                      showAnswer && setSelectedWord(w.jishoData)
+                      showAnswer && showWordInfo(w.jishoData)
                     }}
                     item={w.jishoData}
                     key={w.word}
@@ -177,23 +178,6 @@ export const KanjiCross = () => {
           </Stack>
         )}
       </Stack>
-      {selectedWord != null && (
-        <WordInfoModal
-          isOpen={!!selectedWord}
-          item={{
-            topicId: '',
-            word:
-              selectedWord.japanese[0].word ?? selectedWord.japanese[0].reading,
-            jishoData: selectedWord,
-            createdAt: new Date(),
-            lastUpdatedAt: new Date()
-          }}
-          onClose={() => {
-            setSelectedWord(undefined)
-          }}
-          isAddable
-        />
-      )}
     </Container>
   )
 }

@@ -35,13 +35,12 @@ export const PopupSearchProvider = ({ children }: { children: ReactNode }) => {
             {children}
         </PopupSearchContext.Provider>
         <JishoSearchModal isOpen={isOpen} onClose={onClose} onSelectItem={setSelectedWord}/>
-        {(selectedWord != null) && (
         <WordInfoModal
           isOpen={!!selectedWord}
           item={{
             topicId: '',
             word:
-              selectedWord.japanese[0].word ?? selectedWord.japanese[0].reading,
+              selectedWord?.japanese[0].word ?? selectedWord?.japanese[0].reading ?? '',
             jishoData: selectedWord,
             createdAt: new Date(),
             lastUpdatedAt: new Date()
@@ -49,6 +48,5 @@ export const PopupSearchProvider = ({ children }: { children: ReactNode }) => {
           onClose={() => { setSelectedWord(undefined) }}
           isAddable
         />
-        )}
     </>
 }
