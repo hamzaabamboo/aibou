@@ -69,6 +69,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
         tagsData = Object.fromEntries(await db.exec('SELECT * FROM tags')[0].values)
       }
       console.timeEnd('Offline Search')
+      console.debug(data.data)
       postMessage({ type: 'searchWordResult', data: parseOfflineDBResult(res, tagsData!) })
       break
     }
@@ -86,6 +87,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
         results.push({ word, results: parseOfflineDBResult(res, tagsData!) })
       }
       console.timeEnd('Offline Search (multiple)')
+      console.debug(data.data)
       postMessage({ type: 'searchWordsResult', data: results })
       break
     }
@@ -99,6 +101,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
         postMessage({ type: 'runSQLError', data: error })
       } finally {
         console.timeEnd('Run SQL Query')
+        console.debug(data.data.variables)
       }
       break
     }

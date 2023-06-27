@@ -66,12 +66,12 @@ const KankenPractice = () => {
           data[grade]?.kanji?.flatMap((k) =>
             k.examples?.map((data) => ({ grade, kanji: k.kanji, data }))
           ) ?? []
-      ) as Array<PracticeQuestion<KankenWordData>>
+      ).filter(e => !!e) as Array<PracticeQuestion<KankenWordData>>
     } else if (type === 'yojijukugo') {
       return selectedGrade?.flatMap(
         (grade) =>
           data[grade]?.yojijukugo?.flatMap((data) => ({ grade, data })) ?? []
-      ) as Array<PracticeQuestion<KankenYojijukugoData>>
+      ).filter(e => !!e) as Array<PracticeQuestion<KankenYojijukugoData>>
     }
     return selectedGrade?.flatMap(
       (grade) =>
@@ -80,7 +80,7 @@ const KankenPractice = () => {
           kanji: k.kanji,
           data: k
         })) ?? []
-    ) as Array<PracticeQuestion<KankenKanjiData>>
+    ).filter(e => !!e) as Array<PracticeQuestion<KankenKanjiData>>
   }, [selectedGrade, type])
 
   const {
@@ -167,7 +167,7 @@ const KankenPractice = () => {
   }
 
   useEffect(() => {
-    if (!allWords) return;
+    if (!allWords) return
     resetQuestion()
     void nextQuestion(false)
   }, [allWords, mode])
