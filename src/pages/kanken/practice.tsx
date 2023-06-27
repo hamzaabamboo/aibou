@@ -172,14 +172,6 @@ const KankenPractice = () => {
       if (event.key === 'Enter' && ended) {
         void nextQuestion()
         event.stopPropagation()
-      } else if (event.key === 'h' && document.activeElement !== answerInputRef.current) {
-        // Giveup
-        setShowAnswer(true)
-        event.stopPropagation()
-      } else if (event.key === 's' && document.activeElement !== answerInputRef.current) {
-        // Skip
-        void nextQuestion()
-        event.stopPropagation()
       }
     }
     window.addEventListener('keypress', handleKeystroke)
