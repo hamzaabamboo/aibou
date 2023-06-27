@@ -57,7 +57,7 @@ const KankenPractice = () => {
 
   const [questionData, setQuestionData] = useState<JishoWord>()
   const [answerExplanations, setAnswerExplanations] = useState<KanjiData[]>()
-  const { worker, runSQL } = useOfflineDictionaryContext()
+  const { worker, runSQL, searchTerms } = useOfflineDictionaryContext()
 
   const allWords = useMemo(() => {
     if (type === 'word') {
@@ -106,16 +106,7 @@ const KankenPractice = () => {
         const p = prompt as PracticeQuestion<
         KankenWordData | KankenYojijukugoData
         >
-        const searchResults: any[] = await new Promise((resolve) => {
-          if (!worker) return
-          worker.postMessage({
-            type: 'searchWords',
-            data: [p?.data.word]
-          })
-          worker.onmessage = ({ data }) => {
-            data.type === 'searchWordsResult' && resolve(data.data)
-          }
-        })
+        const searchResults = await searchTerms([p.data.word])
         setQuestionData(searchResults[0].results[0])
       } else {
         await fetchKanjiMeanings(prompt?.kanji)

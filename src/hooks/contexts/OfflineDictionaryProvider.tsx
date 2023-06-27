@@ -1,4 +1,5 @@
 import React, { createContext, useCallback, useEffect, useState } from 'react'
+import { type JishoWord } from '../../types/jisho'
 
 interface RunSQLParams {
   query: string
@@ -8,6 +9,7 @@ interface RunSQLParams {
 export interface OfflineDictionary {
   worker?: Worker
   runSQL?: (params: RunSQLParams) => Promise<Array<{ columns: any[], values: any[] }>>
+  searchTerms?: (params: string[]) => Promise<Array<{ word: string, results: JishoWord[] }>>
   isBusy?: boolean
 }
 export const OfflineDictionaryContext = createContext<OfflineDictionary>({})
@@ -29,6 +31,20 @@ export const OfflineDictionaryProvider = ({
       w.terminate()
     }
   }, [])
+
+  const searchTerms = useCallback(async (params: string[]) => {
+    return await new Promise<Array<{ word: string, results: JishoWord[] }>>((resolve) => {
+      if (isBusy) throw new Error('Worker is busy')
+      if (!worker) return
+      worker.postMessage({
+        type: 'searchWords',
+        data: params
+      })
+      worker.onmessage = ({ data }) => {
+        data.type === 'searchWordsResult' && resolve(data.data)
+      }
+    })
+  }, [worker])
 
   const runSQL = useCallback(
     async (params: RunSQLParams) => {
@@ -54,7 +70,7 @@ export const OfflineDictionaryProvider = ({
     }, [worker])
 
   return (
-    <OfflineDictionaryContext.Provider value={{ worker, runSQL }}>
+    <OfflineDictionaryContext.Provider value={{ worker, runSQL, searchTerms }}>
       {children}
     </OfflineDictionaryContext.Provider>
   )

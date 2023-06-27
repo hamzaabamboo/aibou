@@ -15,6 +15,7 @@ export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
   const [showAnswer, setShowAnswer] = useState(false)
   const [currentQuestion, setCurrentQuestion] = useState<Q>()
   const [{ data: quizData }, { mutate: updateQuizData }] = useQuizData<Q>(quizId)
+  const [isLoadingQuestion, setLoadingQuestion] = useState(false)
 
   const answerKey = currentQuestion ? getAnswers(currentQuestion) : []
   const isCorrectAnswer = !!currentQuestion && !!answerKey && (checkAnswer?.(answerKey, answer) ?? answerKey.includes(answer))
@@ -29,21 +30,27 @@ export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
   }
 
   const nextQuestion = async (submitAnswer = true) => {
-    if (submitAnswer && currentQuestion && quizData) {
-      const newData: QuizData<Q> = {
-        ...quizData,
-        recentQuestions: [{ question: currentQuestion, isCorrect: isCorrectAnswer }, ...quizData.recentQuestions].slice(0, 30),
-        recentIncorrect: isCorrectAnswer ? quizData.recentIncorrect : [{ question: currentQuestion, isCorrect: isCorrectAnswer }, ...quizData.recentIncorrect].slice(0, 30),
-        stats: {
-          correct: quizData.stats.correct + (isCorrectAnswer ? 1 : 0),
-          skipped: quizData.stats.skipped + (!isCorrectAnswer ? 1 : 0)
+    if (isLoadingQuestion) return
+    setLoadingQuestion(true)
+    try {
+      if (submitAnswer && currentQuestion && quizData) {
+        const newData: QuizData<Q> = {
+          ...quizData,
+          recentQuestions: [{ question: currentQuestion, isCorrect: isCorrectAnswer }, ...quizData.recentQuestions].slice(0, 30),
+          recentIncorrect: isCorrectAnswer ? quizData.recentIncorrect : [{ question: currentQuestion, isCorrect: isCorrectAnswer }, ...quizData.recentIncorrect].slice(0, 30),
+          stats: {
+            correct: quizData.stats.correct + (isCorrectAnswer ? 1 : 0),
+            skipped: quizData.stats.skipped + (!isCorrectAnswer ? 1 : 0)
+          }
         }
+        await updateQuizData(newData)
       }
-      await updateQuizData(newData)
+      const nextQuestion = await getNewQuestion()
+      resetQuestion()
+      setCurrentQuestion(nextQuestion)
+    } finally {
+      setLoadingQuestion(false)
     }
-    const nextQuestion = await getNewQuestion()
-    resetQuestion()
-    setCurrentQuestion(nextQuestion)
   }
 
   const skipQuestion = async () => {
