@@ -102,11 +102,8 @@ const KankenPractice = () => {
     getNewQuestion: async () => {
       setAnswerExplanations(undefined)
       const prompt = allWords?.[Math.round(Math.random() * allWords?.length)]
-      if (type === 'word' || type === 'yojijukugo') {
-        const p = prompt as PracticeQuestion<
-        KankenWordData | KankenYojijukugoData
-        >
-        const searchResults = await searchTerms([p.data.word])
+      if ('word' in prompt.data) {
+        const searchResults = await searchTerms?.([prompt.data.word ?? '']) ?? []
         setQuestionData(searchResults[0].results[0])
       } else {
         await fetchKanjiMeanings(prompt?.kanji)
