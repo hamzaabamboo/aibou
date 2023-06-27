@@ -5,7 +5,7 @@ import { WordInfoModal } from '../../components/jisho/WordInfoModal'
 import { type JishoWord } from '../../types/jisho'
 
 interface PopupSearchData {
-  openSearchModal?: () => void
+  openSearchModal?: (keyword?: string) => void
   closeSearchModal?: () => void
   showWordInfo?: (word: JishoWord) => void
 }
@@ -13,6 +13,7 @@ export const PopupSearchContext = createContext<PopupSearchData>({})
 
 export const PopupSearchProvider = ({ children }: { children: ReactNode }) => {
   const [selectedWord, setSelectedWord] = useState<JishoWord | undefined>()
+  const [keyword, setKeyword] = useState<string>()
   const { isOpen, onClose, onOpen } = useDisclosure()
 
   useEffect(() => {
@@ -31,10 +32,17 @@ export const PopupSearchProvider = ({ children }: { children: ReactNode }) => {
     }
   }, [])
   return <>
-        <PopupSearchContext.Provider value={{ openSearchModal: onOpen, closeSearchModal: onClose, showWordInfo: setSelectedWord }}>
+        <PopupSearchContext.Provider value={{
+          openSearchModal: (keyword) => {
+            setKeyword(keyword)
+            onOpen()
+          },
+          closeSearchModal: onClose,
+          showWordInfo: setSelectedWord
+        }}>
             {children}
         </PopupSearchContext.Provider>
-        <JishoSearchModal isOpen={isOpen} onClose={onClose} onSelectItem={setSelectedWord}/>
+        <JishoSearchModal isOpen={isOpen} onClose={onClose} keyword={keyword} onSelectItem={setSelectedWord}/>
         <WordInfoModal
           isOpen={!!selectedWord}
           item={{

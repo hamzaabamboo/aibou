@@ -17,8 +17,9 @@ export function JishoSearchModal (props: {
   isOpen: boolean
   onClose: () => void
   onSelectItem: (word: JishoWord) => void
+  keyword?: string
 }) {
-  const { isOpen, onClose, onSelectItem } = props
+  const { isOpen, onClose, onSelectItem, keyword } = props
   const searchRef = useRef<HTMLInputElement>(null)
 
   return (
@@ -33,7 +34,7 @@ export function JishoSearchModal (props: {
         </ModalHeader>
         <ModalCloseButton />
         <ModalBody>
-          <Search ref={searchRef} onSelectItem={onSelectItem} />
+          <Search ref={searchRef} initialWord={keyword} onSelectItem={onSelectItem} />
         </ModalBody>
         <ModalFooter>
           <Button onClick={onClose}>Close</Button>

@@ -22,9 +22,10 @@ export const JishoSearch = forwardRef<HTMLInputElement, SearchProps>(function Ji
     isPopup = false,
     isShowPopup = true,
     setShowPopup,
+    initialWord = '',
     ...boxProps
   } = props
-  const [input, setInput] = useState('')
+  const [input, setInput] = useState(initialWord)
   const [keyword, _setKeyword] = useState('')
   const setKeyword = useCallback(debounce(_setKeyword, 1000), [_setKeyword])
   const { data, isLoading } = useJishoSearch(keyword)

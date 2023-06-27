@@ -1,8 +1,10 @@
 import { Accordion, AccordionButton, AccordionItem, AccordionPanel, Button, HStack, Heading, Stack, Text } from '@chakra-ui/react'
+import { usePopupSearchContext } from '../../hooks/contexts/usePopupSearchContext'
 import { type QuizData } from '../../types/quizData'
 import { type PracticeQuestion } from './KankenQuestion'
 
 export const PracticeStats = ({ quizData, onResetCounter }: { quizData: QuizData<PracticeQuestion>, onResetCounter?: () => void }) => {
+  const { openSearchModal } = usePopupSearchContext()
   const total = quizData.stats.correct + quizData.stats.skipped
   const percentage = Math.round(quizData.stats.correct * 100 / total)
 
@@ -21,11 +23,11 @@ export const PracticeStats = ({ quizData, onResetCounter }: { quizData: QuizData
            <Stack>
            <Heading size="md">Recent Questions</Heading>
               <HStack w="full" flexWrap="wrap">
-                {quizData.recentQuestions.map((q, idx) => <Text key={idx}>{getQuestion(q.question)}</Text>)}
+                {quizData.recentQuestions.map((q, idx) => <Text key={idx} onClick={() => { openSearchModal?.(getQuestion(q.question)) }}>{getQuestion(q.question)}</Text>)}
               </HStack>
               <Heading size="md">Recent Incorrect</Heading>
               <HStack w="full" flexWrap="wrap">
-                {quizData.recentIncorrect.map((q, idx) => <Text key={idx}>{getQuestion(q.question)}</Text>)}
+                {quizData.recentIncorrect.map((q, idx) => <Text key={idx} onClick={() => { openSearchModal?.(getQuestion(q.question)) }}>{getQuestion(q.question)}</Text>)}
               </HStack>
               <Button width="fit-content" onClick={onResetCounter ?? (() => {})} colorScheme='red'>Reset Counter</Button>
            </Stack>

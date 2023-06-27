@@ -8,6 +8,7 @@ import { OfflineSearch } from './OfflineSearch'
 
 export type SearchProps = {
   inputSize?: 'small' | 'large'
+  initialWord?: string
   onSelectItem: (word: JishoWord) => void
   isPopup?: boolean
   isShowPopup?: boolean
