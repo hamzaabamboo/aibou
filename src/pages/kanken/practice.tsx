@@ -5,11 +5,11 @@ import {
   GridItem,
   HStack,
   Heading,
-  Input,
   Stack
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 import { toHiragana, toKatakana } from 'wanakana'
+import { BigTextInput } from '../../components/common/BigTextInput'
 import { LoadingSpinner } from '../../components/common/LoadingSpinner'
 import { KanjiInfo } from '../../components/kanken/KanjiInfo'
 import {
@@ -203,7 +203,7 @@ const KankenPractice = () => {
             <QuizSettings total={allWords.length}/>
             {quizData && <PracticeStats quizData={quizData} onResetCounter={resetStats}/>}
           </Stack>
-          <Input
+          <BigTextInput
           ref={answerInputRef}
             value={(ended ? answerKey.join(', ') : answer) ?? ''}
             onChange={(e) => {
@@ -213,7 +213,6 @@ const KankenPractice = () => {
             color={win ? 'green' : giveUp ? 'red' : undefined}
             w="full"
             textAlign="center"
-            fontSize="2em"
           />
           <HStack>
             <Button

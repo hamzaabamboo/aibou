@@ -2,7 +2,6 @@ import {
   Box,
   Divider,
   Heading,
-  Input,
   Spinner,
   Stack,
   Text
@@ -12,6 +11,7 @@ import orderBy from 'lodash/orderBy'
 import React, { forwardRef, useCallback, useEffect, useState } from 'react'
 import { useOfflineDictionary } from '../../hooks/offline/useOfflineDictionary'
 import { similarity } from '../../utils/stringSimilarity'
+import { BigTextInput } from '../common/BigTextInput'
 import { type SearchProps } from './Search'
 import { SearchResultItem } from './SearchResultItem'
 
@@ -79,9 +79,8 @@ export const OfflineSearch = forwardRef<HTMLInputElement, SearchProps>(function 
 
   return (
     <Box {...boxProps} position="relative">
-      <Input
+      <BigTextInput
         ref={ref}
-        p={2}
         width="full"
         value={input}
         fontSize={inputSize === 'large' ? '4xl' : 'lg'}
