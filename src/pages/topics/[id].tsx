@@ -22,6 +22,7 @@ import {
   Stack,
   Switch,
   Text,
+  useDisclosure,
   useToast
 } from '@chakra-ui/react'
 import { uniq } from 'lodash'
@@ -32,6 +33,7 @@ import { parsePartOfSpeech } from '../../components/jisho/PartOfSpeechLabel'
 import { Search } from '../../components/jisho/Search'
 import { WordInfoModal } from '../../components/jisho/WordInfoModal'
 import { WordItem } from '../../components/jisho/WordItem'
+import { BulkAddModal } from '../../components/topic/BulkAddModal'
 import { DeleteTopicModal } from '../../components/topic/DeleteTopicModal'
 import { EditTopicModal } from '../../components/topic/EditTopicModal'
 import {
@@ -62,6 +64,7 @@ const TopicDetailPage: NextPage = () => {
   const [deleteTopic, setDeleteTopic] = useState<Topic>()
   const [viewingItem, setViewingItem] = useState<string>()
 
+  const { isOpen: showBulkAdd, onClose: closeBulkAdd, onOpen: openBulkAdd } = useDisclosure()
   const [settingsData, setSettingsData] = useLocalStorage<ItemViewOptions>(
     'search-view-settings',
     { showMeaning: true, reverseSortOrder: true, orderBy: 'createdAt' }
@@ -112,7 +115,7 @@ const TopicDetailPage: NextPage = () => {
           )}","${w.jishoData?.senses
             .map((s) =>
               `(${s.parts_of_speech
-                .map(parsePartOfSpeech)
+                .map(parsePartOfSpeech).filter(s => !!s)
                 .join(',')}) ${s.english_definitions.join(',')}`.replace(
                 '"',
                 '""'
@@ -232,6 +235,13 @@ const TopicDetailPage: NextPage = () => {
                             Load Definition Offline
                           </MenuItem>
                         )}
+                         {isDictionaryAvailable && (
+                          <MenuItem
+                            onClick={() => { openBulkAdd() }}
+                          >
+                            Bulk Add Items (Experimental)
+                          </MenuItem>
+                         )}
                         <MenuItem
                           icon={<EditIcon />}
                           onClick={() => { setEditingTopic(topic) }}
@@ -346,6 +356,12 @@ const TopicDetailPage: NextPage = () => {
           isEditable
         />
       )}
+      { topic && (<BulkAddModal
+      topic={topic}
+          isOpen={showBulkAdd}
+          onClose={closeBulkAdd}
+          onAddSuccess={closeBulkAdd}
+        />)}
     </>
   )
 }

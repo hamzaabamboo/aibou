@@ -7,25 +7,18 @@ import { useOfflineDictionaryContext } from '../contexts/useOfflineDictionaryCon
 
 export const useFetchOfflineResults = (topicId: string) => {
   const { db } = useDBContext()
-  const { worker } = useOfflineDictionaryContext()
+  const { searchTerms } = useOfflineDictionaryContext()
   const queryClient = useQueryClient()
 
   return useMutation(
     ['updateOfflineResults'],
     async (words?: TopicItem[]) => {
       if (words == null) return
-      const searchResults: any = await new Promise((resolve) => {
-        if (!worker) return
-        worker.postMessage({
-          type: 'searchWords',
-          data: words.map(w => w.word)
-        })
-        worker.onmessage = ({ data }) => { data.type === 'searchWordsResult' && resolve(data.data) }
-      })
+      const searchResults = await searchTerms?.(words.map(w => w.word)) ?? []
       for (let i = 0; i < words.length; i++) {
         const word = words[i]
         if (!word.id) return
-        const jishoData: JishoWord = searchResults[i].results.find((m: JishoWord) => m.japanese.some(
+        const jishoData = searchResults[i].results.find((m: JishoWord) => m.japanese.some(
           (w) => w.word === word.word || w.reading === word.word
         ))
 

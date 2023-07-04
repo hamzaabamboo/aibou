@@ -30,7 +30,7 @@ export const parsePartOfSpeech = (
       if (partOfSpeech.includes('xpressions')) return 'Expressions'
       if (partOfSpeech.includes('noun') || partOfSpeech.includes('Noun')) {
         if (partOfSpeech.includes('futsuumeishi') || partOfSpeech === 'Noun') { return 'n' }
-        return partOfSpeech
+        return ''
       }
       if (partOfSpeech.includes('dverb')) {
         if (partOfSpeech.includes('to')) return 'と-adv'
