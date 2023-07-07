@@ -101,7 +101,7 @@ const KankenPractice = () => {
     quizId: `kanken-practice-${type}-${mode}`,
     getNewQuestion: async () => {
       setAnswerExplanations(undefined)
-      const prompt = allWords?.[Math.round(Math.random() * allWords?.length)]
+      const prompt = allWords?.[Math.round(Math.random() * (allWords?.length - 1))]
       if ('word' in prompt.data) {
         const searchResults = await searchTerms?.([prompt.data.word ?? '']) ?? []
         setQuestionData(searchResults[0].results[0])
@@ -193,7 +193,13 @@ const KankenPractice = () => {
           </HStack>
           <Stack w="full" spacing="0">
             <QuizSettings total={allWords.length}/>
-            {quizData && <PracticeStats quizData={quizData} onResetCounter={resetStats}/>}
+            {quizData && <PracticeStats getQuestionString={(q) => {
+              if (!q.data) return '-'
+              if ('kanji' in q.data) return q.data.kanji ?? '-'
+              if ('word' in q.data) return q.data.word ?? '-'
+              return '-'
+            }}
+            quizData={quizData} onResetCounter={resetStats}/>}
           </Stack>
           <BigTextInput
           ref={answerInputRef}

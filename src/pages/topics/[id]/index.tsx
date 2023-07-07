@@ -29,34 +29,34 @@ import { uniq } from 'lodash'
 import type { NextPage } from 'next'
 import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { parsePartOfSpeech } from '../../components/jisho/PartOfSpeechLabel'
-import { Search } from '../../components/jisho/Search'
-import { WordInfoModal } from '../../components/jisho/WordInfoModal'
-import { WordItem } from '../../components/jisho/WordItem'
-import { BulkAddModal } from '../../components/topic/BulkAddModal'
-import { DeleteTopicModal } from '../../components/topic/DeleteTopicModal'
-import { EditTopicModal } from '../../components/topic/EditTopicModal'
+import { parsePartOfSpeech } from '../../../components/jisho/PartOfSpeechLabel'
+import { Search } from '../../../components/jisho/Search'
+import { WordInfoModal } from '../../../components/jisho/WordInfoModal'
+import { WordItem } from '../../../components/jisho/WordItem'
+import { BulkAddModal } from '../../../components/topic/BulkAddModal'
+import { DeleteTopicModal } from '../../../components/topic/DeleteTopicModal'
+import { EditTopicModal } from '../../../components/topic/EditTopicModal'
 import {
   ItemViewSettings,
   type ItemViewOptions
-} from '../../components/topic/ItemViewSettings'
-import { useFetchOfflineResults } from '../../hooks/offline/useFetchOfflineResults'
-import { useOfflineDictionaryAvailability } from '../../hooks/offline/useOfflineDictionaryAvailability'
-import { useAddTopicItem } from '../../hooks/topic-item/useAddTopicItem'
-import { useGetTopic } from '../../hooks/topic/useGetTopic'
-import { useFetchJishoResults } from '../../hooks/useFetchJishoResults'
-import { useGetTopicItems } from '../../hooks/useGetTopicItems'
-import { useLocalStorage } from '../../hooks/useLocalStorage'
-import { useKeyValueData } from '../../hooks/utils/useKeyValueData'
-import { type JishoWord } from '../../types/jisho'
-import { type Topic } from '../../types/topic'
-import { download } from '../../utils/downloadFile'
-import { filterTopicItemsByKeywords } from '../../utils/filterTopicItemsByKeywords'
-import { sortTopicItems } from '../../utils/sortTopicItems'
+} from '../../../components/topic/ItemViewSettings'
+import { useFetchOfflineResults } from '../../../hooks/offline/useFetchOfflineResults'
+import { useOfflineDictionaryAvailability } from '../../../hooks/offline/useOfflineDictionaryAvailability'
+import { useAddTopicItem } from '../../../hooks/topic-item/useAddTopicItem'
+import { useGetTopic } from '../../../hooks/topic/useGetTopic'
+import { useFetchJishoResults } from '../../../hooks/useFetchJishoResults'
+import { useGetTopicItems } from '../../../hooks/useGetTopicItems'
+import { useLocalStorage } from '../../../hooks/useLocalStorage'
+import { useKeyValueData } from '../../../hooks/utils/useKeyValueData'
+import { type JishoWord } from '../../../types/jisho'
+import { type Topic } from '../../../types/topic'
+import { download } from '../../../utils/downloadFile'
+import { filterTopicItemsByKeywords } from '../../../utils/filterTopicItemsByKeywords'
+import { sortTopicItems } from '../../../utils/sortTopicItems'
 
 const TopicDetailPage: NextPage = () => {
   const searchRef = useRef<HTMLInputElement>(null)
-  const { query } = useRouter()
+  const { query, push } = useRouter()
   const topicId = query.id as string
 
   const [showPopup, setShowPopup] = useState(true)
@@ -64,7 +64,11 @@ const TopicDetailPage: NextPage = () => {
   const [deleteTopic, setDeleteTopic] = useState<Topic>()
   const [viewingItem, setViewingItem] = useState<string>()
 
-  const { isOpen: showBulkAdd, onClose: closeBulkAdd, onOpen: openBulkAdd } = useDisclosure()
+  const {
+    isOpen: showBulkAdd,
+    onClose: closeBulkAdd,
+    onOpen: openBulkAdd
+  } = useDisclosure()
   const [settingsData, setSettingsData] = useLocalStorage<ItemViewOptions>(
     'search-view-settings',
     { showMeaning: true, reverseSortOrder: true, orderBy: 'createdAt' }
@@ -81,7 +85,11 @@ const TopicDetailPage: NextPage = () => {
     useFetchJishoResults(topicId)
   const { mutate: fetchOfflineResults, isLoading: isFetchingOfflineResults } =
     useFetchOfflineResults(topicId)
-  const { isDictionaryAvailable, isDBDownloaded, isLoading: isLoadingAvailability } = useOfflineDictionaryAvailability()
+  const {
+    isDictionaryAvailable,
+    isDBDownloaded,
+    isLoading: isLoadingAvailability
+  } = useOfflineDictionaryAvailability()
   const [
     { data: offlineDictionaryEnabled },
     { mutate: updateDictionaryEnabledStatus }
@@ -115,7 +123,8 @@ const TopicDetailPage: NextPage = () => {
           )}","${w.jishoData?.senses
             .map((s) =>
               `(${s.parts_of_speech
-                .map(parsePartOfSpeech).filter(s => !!s)
+                .map(parsePartOfSpeech)
+                .filter((s) => !!s)
                 .join(',')}) ${s.english_definitions.join(',')}`.replace(
                 '"',
                 '""'
@@ -129,16 +138,15 @@ const TopicDetailPage: NextPage = () => {
   }
 
   const needsSync = useMemo(
-    () =>
-      words?.filter((w) => (w.jishoData == null)) ??
-      [],
+    () => words?.filter((w) => w.jishoData == null) ?? [],
     [words]
   )
 
   const needsSyncJisho = useMemo(
     () =>
-      words?.filter((w) => (w.jishoData == null) || w?.jishoData?.attribution.jisho) ??
-      [],
+      words?.filter(
+        (w) => w.jishoData == null || w?.jishoData?.attribution.jisho
+      ) ?? [],
     [words]
   )
 
@@ -204,14 +212,17 @@ const TopicDetailPage: NextPage = () => {
                 <Heading>{topic?.name}</Heading>
                 <HStack alignSelf="flex-end">
                   <HStack>
-                    {isDBDownloaded && <HStack justifyContent="space-between">
-                      <Text>Offline Dict.</Text>
-                      <Switch
-                        isChecked={offlineDictionaryEnabled}
-                        onChange={(e) => { updateDictionaryEnabledStatus(e.target.checked) }
-                        }
-                      />
-                    </HStack>}
+                    {isDBDownloaded && (
+                      <HStack justifyContent="space-between">
+                        <Text>Offline Dict.</Text>
+                        <Switch
+                          isChecked={offlineDictionaryEnabled}
+                          onChange={(e) => {
+                            updateDictionaryEnabledStatus(e.target.checked)
+                          }}
+                        />
+                      </HStack>
+                    )}
                     <Menu>
                       <MenuButton as={Button} rightIcon={<HamburgerIcon />}>
                         Menu
@@ -221,7 +232,9 @@ const TopicDetailPage: NextPage = () => {
                           <MenuItem
                             icon={<DownloadIcon />}
                             isDisabled={isFetchingJishoResults}
-                            onClick={() => { fetchJishoResults(needsSync) }}
+                            onClick={() => {
+                              fetchJishoResults(needsSync)
+                            }}
                           >
                             Load Definition from Jisho
                           </MenuItem>
@@ -230,33 +243,52 @@ const TopicDetailPage: NextPage = () => {
                           <MenuItem
                             icon={<DownloadIcon />}
                             isDisabled={isFetchingOfflineResults}
-                            onClick={() => { fetchOfflineResults(needsSync) }}
+                            onClick={() => {
+                              fetchOfflineResults(needsSync)
+                            }}
                           >
                             Load Definition Offline
                           </MenuItem>
                         )}
-                         {isDictionaryAvailable && (
+                        {isDictionaryAvailable && (
                           <MenuItem
-                            onClick={() => { openBulkAdd() }}
+                            onClick={() => {
+                              openBulkAdd()
+                            }}
                           >
                             Bulk Add Items (Experimental)
                           </MenuItem>
-                         )}
+                        )}
+                        {isDictionaryAvailable && (
+                          <MenuItem
+                            onClick={() => {
+                              push(`/topics/${topicId}/quiz`)
+                            }}
+                          >
+                            Quiz (Experimental)
+                          </MenuItem>
+                        )}
                         <MenuItem
                           icon={<EditIcon />}
-                          onClick={() => { setEditingTopic(topic) }}
+                          onClick={() => {
+                            setEditingTopic(topic)
+                          }}
                         >
                           Edit Topic
                         </MenuItem>
                         <MenuItem
                           icon={<DownloadIcon />}
-                          onClick={() => { handleDownloadCSV() }}
+                          onClick={() => {
+                            handleDownloadCSV()
+                          }}
                         >
                           Download Data (Kotobot CSV)
                         </MenuItem>
                         <MenuItem
                           icon={<DeleteIcon />}
-                          onClick={() => { setDeleteTopic(topic) }}
+                          onClick={() => {
+                            setDeleteTopic(topic)
+                          }}
                         >
                           Delete Topic
                         </MenuItem>
@@ -269,7 +301,9 @@ const TopicDetailPage: NextPage = () => {
               <Stack direction={['column']}>
                 <Search
                   ref={searchRef}
-                  onSelectItem={async (word) => { await handleAddTopicItem(word) }}
+                  onSelectItem={async (word) => {
+                    await handleAddTopicItem(word)
+                  }}
                   inputSize="small"
                   w="full"
                   isShowPopup={showPopup}
@@ -277,7 +311,7 @@ const TopicDetailPage: NextPage = () => {
                   isPopup
                 />
                 <Box w="full">
-                  {(words == null) || words.length === 0
+                  {words == null || words.length === 0
                     ? (
                     <Heading fontSize="xl" textAlign="center">
                       No saved words
@@ -285,7 +319,7 @@ const TopicDetailPage: NextPage = () => {
                       )
                     : (
                     <Stack>
-                      {(settingsData != null) && (
+                      {settingsData != null && (
                         <ItemViewSettings
                           data={settingsData}
                           setData={setSettingsData}
@@ -332,16 +366,20 @@ const TopicDetailPage: NextPage = () => {
               )}
         </Stack>
       </Container>
-      {(editingTopic != null) && (
+      {editingTopic != null && (
         <EditTopicModal
           topic={editingTopic}
-          onClose={() => { setEditingTopic(undefined) }}
+          onClose={() => {
+            setEditingTopic(undefined)
+          }}
         />
       )}
-      {(deleteTopic != null) && (
+      {deleteTopic != null && (
         <DeleteTopicModal
           topic={deleteTopic}
-          onClose={() => { setDeleteTopic(undefined) }}
+          onClose={() => {
+            setDeleteTopic(undefined)
+          }}
           onDeleteSuccess={() => {
             setDeleteTopic(undefined)
             router.push('/topics/')
@@ -352,16 +390,20 @@ const TopicDetailPage: NextPage = () => {
         <WordInfoModal
           item={words?.find((v) => v.id === viewingItem)!}
           isOpen={!!viewingItem}
-          onClose={() => { setViewingItem(undefined) }}
+          onClose={() => {
+            setViewingItem(undefined)
+          }}
           isEditable
         />
       )}
-      { topic && (<BulkAddModal
-      topic={topic}
+      {topic && (
+        <BulkAddModal
+          topic={topic}
           isOpen={showBulkAdd}
           onClose={closeBulkAdd}
           onAddSuccess={closeBulkAdd}
-        />)}
+        />
+      )}
     </>
   )
 }
