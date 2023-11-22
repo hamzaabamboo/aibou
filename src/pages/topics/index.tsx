@@ -18,7 +18,7 @@ import { AddTopicModal } from '../../components/topic/AddTopicModal'
 import { useGetTopicsList } from '../../hooks/topic/useGetTopicsList'
 
 const TopicsPage: NextPage = () => {
-  const { data, refetch, isLoading } = useGetTopicsList()
+  const { data, refetch, isPending: isLoading } = useGetTopicsList()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
   useEffect(() => {

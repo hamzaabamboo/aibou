@@ -1,4 +1,4 @@
-import axios from 'axios'
+import axios, { type AxiosProgressEvent } from 'axios'
 import pako from 'pako'
 import { initDictionaryDB, type DictionaryDB } from '../utils/db/dictionary-db'
 
@@ -15,10 +15,10 @@ const downloadDatabase = async () => {
   })
   const { data: downloadData } = await axios.get(JMDICT_FILE, {
     responseType: 'arraybuffer',
-    onDownloadProgress: (progress: ProgressEvent) => {
+    onDownloadProgress: (progress: AxiosProgressEvent) => {
       postMessage({
         type: 'downloadProgress',
-        value: Math.floor((progress.loaded / progress.total) * 100) / 100
+        value: Math.floor((progress.loaded / (progress.total ?? 1)) * 100) / 100
       })
     }
   })
@@ -32,13 +32,13 @@ const downloadDatabase = async () => {
 }
 
 const checkIfDownloaded = async () => {
-  const db = (indexedDB != null) ? indexedDB : await initDictionaryDB()
+  const db = indexedDB ?? await initDictionaryDB()
   const data = await db.database.where({ id: 'latest' }).count()
   if (data) return true
 }
 
 const loadDictionaryFile = async () => {
-  const db = (indexedDB != null) ? indexedDB : await initDictionaryDB()
+  const db = indexedDB ?? await initDictionaryDB()
   const data = await db.database.get({ id: 'latest' })
   if (data != null) {
     postMessage({
@@ -53,7 +53,7 @@ const loadDictionaryFile = async () => {
 }
 
 const deleteDictionaryFile = async () => {
-  const db = (indexedDB != null) ? indexedDB : await initDictionaryDB()
+  const db = indexedDB ?? await initDictionaryDB()
   await db.database.delete('latest')
 }
 

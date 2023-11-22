@@ -27,11 +27,11 @@ export function AddTopicModal (props: { isOpen: boolean, onClose: () => void }) 
     title?: boolean
   }>({})
   const { isOpen, onClose } = props
-  const { mutate, isLoading } = useAddTopic()
+  const { mutate, isPending } = useAddTopic()
   const toast = useToast()
 
   const handleAddTopic = async () => {
-    if (title.length === 0 || isLoading) return
+    if (title.length === 0 || isPending) return
     await mutate({ name: title, description })
     toast({ status: 'success', title: 'Topic added successfully' })
     onClose()

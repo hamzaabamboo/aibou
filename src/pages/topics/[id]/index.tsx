@@ -77,18 +77,18 @@ const TopicDetailPage: NextPage = () => {
   const {
     data: topic,
     refetch,
-    isLoading: isLoadingTopic
+    isPending: isLoadingTopic
   } = useGetTopic(topicId)
-  const { data: words, isLoading: isLoadingItems } = useGetTopicItems(topicId)
-  const { mutate, isLoading: isAdding } = useAddTopicItem()
-  const { mutate: fetchJishoResults, isLoading: isFetchingJishoResults } =
+  const { data: words, isPending: isLoadingItems } = useGetTopicItems(topicId)
+  const { mutate, isPending: isAdding } = useAddTopicItem()
+  const { mutate: fetchJishoResults, isPending: isFetchingJishoResults } =
     useFetchJishoResults(topicId)
-  const { mutate: fetchOfflineResults, isLoading: isFetchingOfflineResults } =
+  const { mutate: fetchOfflineResults, isPending: isFetchingOfflineResults } =
     useFetchOfflineResults(topicId)
   const {
     isDictionaryAvailable,
     isDBDownloaded,
-    isLoading: isLoadingAvailability
+    isPending: isLoadingAvailability
   } = useOfflineDictionaryAvailability()
   const [
     { data: offlineDictionaryEnabled },
@@ -176,7 +176,7 @@ const TopicDetailPage: NextPage = () => {
         onError: (error) => {
           toast({
             status: 'warning',
-            title: (error as Error).message
+            title: (error).message
           })
         }
       }

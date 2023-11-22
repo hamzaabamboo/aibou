@@ -6,16 +6,17 @@ export const useUpdateTopic = (topicId: string) => {
   const { db } = useDBContext()
   const queryClient = useQueryClient()
   return useMutation(
-    async (data: Partial<Topic>) => {
-      const idNumber = Number(topicId)
-      await db?.topics.update(isNaN(idNumber) ? topicId : idNumber, {
-        ...data,
-        lastUpdatedAt: new Date()
-      })
-    },
+
     {
+      mutationFn: async (data: Partial<Topic>) => {
+        const idNumber = Number(topicId)
+        await db?.topics.update(isNaN(idNumber) ? topicId : idNumber, {
+          ...data,
+          lastUpdatedAt: new Date()
+        })
+      },
       onSuccess: () => {
-        queryClient.invalidateQueries(['fetchTopic', topicId])
+        queryClient.invalidateQueries({ queryKey: ['fetchTopic', topicId] })
       }
     }
   )

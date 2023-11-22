@@ -25,46 +25,46 @@ import { type Topic } from '../../types/topic'
 const useBulkAddItem = () => {
   const queryClient = useQueryClient()
   const { db } = useDBContext()
-  const { mutate: editItem, isLoading: isUpdating } = useUpdateTopicItem()
+  const { mutate: editItem, isPending: isUpdating } = useUpdateTopicItem()
 
   return useMutation(
-    async (data: { words: Array<{ word: string, jishoData: JishoWord }>, topicId: string }) => {
-      const { words, topicId } = data
-      const idNumber = Number(topicId)
-      const existingWords = (await db?.topicEntries?.where({ topicId }).toArray())?.map(w => w.word)
-      const wordAlreadyExist = words.filter(w => existingWords?.includes(w.word))
-      const newWords = words.filter(w => !existingWords?.includes(w.word))
-      if (wordAlreadyExist.length > 0) {
-        await Promise.all(wordAlreadyExist.map(async (word) => {
-          const a = (
-            await db?.topicEntries?.where({ word, topicId }).toArray()
-          )?.[0]
-          if (a?.isDeleted) {
-            await editItem({ id: a.id, topicId, isDeleted: false })
-          }
-        }))
-      }
-      try {
-        await db?.topicEntries.bulkAdd(newWords.map(d => ({
-          ...d,
-          id: nanoid(8),
-          topicId,
-          tags: [],
-          createdAt: new Date(),
-          lastUpdatedAt: new Date()
-        })))
-        await db?.topics.update(isNaN(idNumber) ? topicId : idNumber, {
-          lastUpdatedAt: new Date()
-        })
-        return topicId
-      } catch (e) {
-        console.error('Error adding')
-      }
-    },
     {
+      mutationFn: async (data: { words: Array<{ word: string, jishoData: JishoWord }>, topicId: string }) => {
+        const { words, topicId } = data
+        const idNumber = Number(topicId)
+        const existingWords = (await db?.topicEntries?.where({ topicId }).toArray())?.map(w => w.word)
+        const wordAlreadyExist = words.filter(w => existingWords?.includes(w.word))
+        const newWords = words.filter(w => !existingWords?.includes(w.word))
+        if (wordAlreadyExist.length > 0) {
+          await Promise.all(wordAlreadyExist.map(async (word) => {
+            const a = (
+              await db?.topicEntries?.where({ word, topicId }).toArray()
+            )?.[0]
+            if (a?.isDeleted) {
+              await editItem({ id: a.id, topicId, isDeleted: false })
+            }
+          }))
+        }
+        try {
+          await db?.topicEntries.bulkAdd(newWords.map(d => ({
+            ...d,
+            id: nanoid(8),
+            topicId,
+            tags: [],
+            createdAt: new Date(),
+            lastUpdatedAt: new Date()
+          })))
+          await db?.topics.update(isNaN(idNumber) ? topicId : idNumber, {
+            lastUpdatedAt: new Date()
+          })
+          return topicId
+        } catch (e) {
+          console.error('Error adding')
+        }
+      },
       onSuccess: (topicId) => {
-        queryClient.invalidateQueries(['fetchTopicItems', topicId])
-        queryClient.invalidateQueries(['fetchLastUpdatedTopics'])
+        queryClient.invalidateQueries({ queryKey: ['fetchTopicItems', topicId] })
+        queryClient.invalidateQueries({ queryKey: ['fetchLastUpdatedTopics'] })
       }
     }
   )
@@ -81,7 +81,7 @@ export function BulkAddModal (props: {
   const { searchTerms } = useOfflineDictionaryContext()
   const [terms, setTerms] = useState('')
   const [searchResults, setSearchResults] = useState<Array<{ word: string, results: JishoWord[] }>>([])
-  const { mutate: bulkAddItems, isLoading } = useBulkAddItem()
+  const { mutate: bulkAddItems, isPending: isLoading } = useBulkAddItem()
   const toast = useToast()
 
   const onSearchTerms = async () => {

@@ -29,7 +29,7 @@ export function EditTopicModal (props: { topic: Topic, onClose: () => void }) {
   const [formError, setFormError] = useState<{
     title?: boolean
   }>({})
-  const { mutate, isLoading } = useUpdateTopic(topic.id ?? '')
+  const { mutate, isPending: isLoading } = useUpdateTopic(topic.id ?? '')
   const toast = useToast()
 
   const handleEditTopic = async () => {

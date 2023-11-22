@@ -9,28 +9,28 @@ export const useFetchJishoResults = (topicId: string) => {
   const { db } = useDBContext()
   const queryClient = useQueryClient()
   return useMutation(
-    ['updateJishoResults'],
-    async (words?: TopicItem[]) => {
-      if (words == null) return
-      for (const word of words) {
-        if (!word.id) return
-        const { data } = await axios.get<SearchAPIResults>(
-          `/api/search?keyword=${encodeURIComponent(word.word)}`
-        )
-        const jishoData = data.results.find((m) => m.japanese.some(
-          (w) => w.word === word.word || w.reading === word.word
-        ))
-
-        if (jishoData != null) {
-          await db?.topicEntries.put({
-            ...word,
-            jishoData: sortJishoReadings(jishoData, word.word)
-          })
-        }
-      }
-    },
     {
-      onSuccess: async () => { await queryClient.invalidateQueries(['fetchTopicItems', topicId]) }
+      mutationKey: ['updateJishoResults'],
+      mutationFn: async (words?: TopicItem[]) => {
+        if (words == null) return
+        for (const word of words) {
+          if (!word.id) return
+          const { data } = await axios.get<SearchAPIResults>(
+          `/api/search?keyword=${encodeURIComponent(word.word)}`
+          )
+          const jishoData = data.results.find((m) => m.japanese.some(
+            (w) => w.word === word.word || w.reading === word.word
+          ))
+
+          if (jishoData != null) {
+            await db?.topicEntries.put({
+              ...word,
+              jishoData: sortJishoReadings(jishoData, word.word)
+            })
+          }
+        }
+      },
+      onSuccess: async () => { await queryClient.invalidateQueries({ queryKey: ['fetchTopicItems', topicId] }) }
     }
   )
 }

@@ -41,7 +41,7 @@ export const useSyncData = () => {
           ((newData.topics != null) && newData.topics.length > 0)
         const serverUpdated = data.topicItem.length > 0 || data.topics.length > 0
         if (serverUpdated) {
-          queryClient.invalidateQueries(['fetchTopicsList'])
+          queryClient.invalidateQueries({ queryKey: ['fetchTopicsList'] })
           queryClient.invalidateQueries({
             predicate: (query) => query.queryKey[0] === 'fetchTopicItems'
           })

@@ -23,7 +23,7 @@ export interface WorkerResponse {
 let initializingPromise: Promise<Database> | undefined
 
 const loadDictionaryFile = async () => {
-  const db = (indexedDB != null) ? indexedDB : await initDictionaryDB()
+  const db = indexedDB ?? await initDictionaryDB()
   const data = await db.database.get({ id: 'latest' })
   if (data != null) {
     postMessage({

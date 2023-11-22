@@ -28,7 +28,7 @@ export const OfflineSearch = forwardRef<HTMLInputElement, SearchProps>(function 
   const [input, setInput] = useState(initialWord)
   const [keyword, _setKeyword] = useState('')
   const setKeyword = useCallback(debounce(_setKeyword, 1000), [_setKeyword])
-  const { data, isLoading } = useOfflineDictionary(keyword)
+  const { data, isPending: isLoading } = useOfflineDictionary(keyword)
   useEffect(() => {
     if (input !== keyword) {
       setKeyword(input)

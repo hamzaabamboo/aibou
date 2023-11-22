@@ -22,7 +22,7 @@ export function DeleteTopicModal (props: {
   onDeleteSuccess: () => void
 }) {
   const { topic, onClose, onDeleteSuccess } = props
-  const { mutate, isLoading } = useUpdateTopic(topic.id ?? '')
+  const { mutate, isPending: isLoading } = useUpdateTopic(topic.id ?? '')
   const toast = useToast()
 
   const handleDeleteTopic = async () => {

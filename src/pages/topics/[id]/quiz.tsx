@@ -34,7 +34,7 @@ import { getKanjiInfoSQL } from '../../../utils/sql/getKanjiInfoSQL'
 const KankenPractice = () => {
   const answerInputRef = useRef<HTMLInputElement>(null)
   const questionBoxRef = useRef<HTMLDivElement>(null)
-  const [{ data: mode, isLoading: modeLoading }, { mutate: setMode }] =
+  const [{ data: mode, isPending: modeLoading }, { mutate: setMode }] =
     useKeyValueData<'reading' | 'writing'>('quiz-practice-mode', 'writing')
   const { query, push } = useRouter()
   const topicId = query.id as string
@@ -46,9 +46,9 @@ const KankenPractice = () => {
   const {
     data: topic,
     refetch,
-    isLoading: isLoadingTopic
+    isPending: isLoadingTopic
   } = useGetTopic(topicId)
-  const { data: words, isLoading: isLoadingItems } = useGetTopicItems(topicId)
+  const { data: words, isPending: isLoadingItems } = useGetTopicItems(topicId)
 
   const allWords = words
 

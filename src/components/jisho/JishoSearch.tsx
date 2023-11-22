@@ -28,7 +28,7 @@ export const JishoSearch = forwardRef<HTMLInputElement, SearchProps>(function Ji
   const [input, setInput] = useState(initialWord)
   const [keyword, _setKeyword] = useState('')
   const setKeyword = useCallback(debounce(_setKeyword, 1000), [_setKeyword])
-  const { data, isLoading } = useJishoSearch(keyword)
+  const { data, isPending: isLoading } = useJishoSearch(keyword)
 
   useEffect(() => {
     if (input !== keyword) {

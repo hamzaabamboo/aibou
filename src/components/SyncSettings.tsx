@@ -14,9 +14,9 @@ import { useEffect } from 'react'
 import { useKeyValueData } from '../hooks/utils/useKeyValueData'
 
 export function SyncSettings () {
-  const [{ data: syncUrl, isLoading: isLoadingURL }, { mutate: setSyncUrl }] =
+  const [{ data: syncUrl, isPending: isLoadingURL }, { mutate: setSyncUrl }] =
     useKeyValueData('syncUrl', '')
-  const [{ data: syncSecret, isLoading: isLoadingSecret }, { mutate: setSyncSecret }] = useKeyValueData(
+  const [{ data: syncSecret, isPending: isLoadingSecret }, { mutate: setSyncSecret }] = useKeyValueData(
     'syncSecret',
     ''
   )

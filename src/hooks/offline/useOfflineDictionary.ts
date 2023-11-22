@@ -15,8 +15,11 @@ export const useOfflineDictionary = (keyword: string) => {
       worker.onmessage = ({ data }) => { data.type === 'searchWordResult' && resolve(data.data) }
     })
 
-  return useQuery(['offlineSearch', keyword], async () => {
-    if (!keyword) return []
-    return await search(keyword)
+  return useQuery({
+    queryKey: ['offlineSearch', keyword],
+    queryFn: async () => {
+      if (!keyword) return []
+      return await search(keyword)
+    }
   })
 }

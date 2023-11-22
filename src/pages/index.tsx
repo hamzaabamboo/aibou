@@ -23,7 +23,7 @@ const Home: NextPage = () => {
   const searchRef = useRef<HTMLInputElement>(null)
   const { data: lastUpdatedTopics, refetch } = useLastUpdatedTopics()
   const { syncEnabled, sync, lastSyncedTime } = useSyncData()
-  const { isLoading, isDictionaryAvailable } = useOfflineDictionaryAvailability()
+  const { isPending: isLoading, isDictionaryAvailable } = useOfflineDictionaryAvailability()
 
   useEffect(() => {
     if (!isLoading && isDictionaryAvailable) {

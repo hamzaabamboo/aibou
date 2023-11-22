@@ -19,12 +19,12 @@ interface WordInfoProps {
 export const WordInfo = (props: WordInfoProps) => {
   const { item, isAddable, isEditable } = props
   const [topicIDToAdd, setTopicIDToAdd] = useState<string | undefined>()
-  const { mutate: updateTopicItem, isLoading: isLoadingTopics } =
+  const { mutate: updateTopicItem, isPending: isLoadingTopics } =
     useUpdateTopicItem()
-  const { mutate: fetchJishoResults, isLoading: isFetchingJishoResults } =
+  const { mutate: fetchJishoResults, isPending: isFetchingJishoResults } =
     useFetchJishoResults(item?.topicId)
   const { data: topics } = useGetTopicsList()
-  const { mutate: addTopicItem, isLoading } = useAddTopicItem()
+  const { mutate: addTopicItem, isPending: isLoading } = useAddTopicItem()
 
   const { push } = useRouter()
   const toast = useToast()
@@ -66,7 +66,7 @@ export const WordInfo = (props: WordInfoProps) => {
         onError: (error) => {
           toast({
             status: 'warning',
-            title: (error as Error).message
+            title: (error).message
           })
         }
       }

@@ -10,27 +10,31 @@ export const useKeyValueData = <T extends object | string | number | boolean>(
 ) => {
   const { db } = useDBContext()
   const queryClient = useQueryClient()
-  const data = useQuery<T>(['fetchKeyData', key], async () => {
-    try {
-      const data = await db?.keyValues.get(key)
-      if (data == null) {
+  const data = useQuery<T>({
+    queryKey: ['fetchKeyData', key],
+    queryFn: async () => {
+      try {
+        const data = await db?.keyValues.get(key)
+        if (data == null) {
+          await db?.keyValues.add({ key, value: defaultValue })
+          return defaultValue
+        }
+        return data.value as T ?? defaultValue
+      } catch (error) {
         await db?.keyValues.add({ key, value: defaultValue })
         return defaultValue
       }
-      return data.value as T ?? defaultValue
-    } catch (error) {
-      await db?.keyValues.add({ key, value: defaultValue })
-      return defaultValue
-    }
-  }, { enabled: !!db })
+    },
+    enabled: !!db
+  })
 
   const setData = useMutation(
-    async (data: T) => {
-      await db?.keyValues.update(key, { key, value: data })
-    },
     {
+      mutationFn: async (data: T) => {
+        await db?.keyValues.update(key, { key, value: data })
+      },
       onSuccess: () => {
-        queryClient.invalidateQueries(['fetchKeyData', key])
+        queryClient.invalidateQueries({ queryKey: ['fetchKeyData', key] })
       }
     }
   )

@@ -38,15 +38,15 @@ const KankenPractice = () => {
   const answerInputRef = useRef<HTMLInputElement>(null)
   const questionBoxRef = useRef<HTMLDivElement>(null)
   const data = kankenData as KankenData
-  const [{ data: type, isLoading: typeLoading }] =
+  const [{ data: type, isPending: typeLoading }] =
     useKeyValueData<'word' | 'kanji' | 'yojijukugo'>(
       'kanken-practice-type',
       'word'
     )
-  const [{ data: mode, isLoading: modeLoading }] =
+  const [{ data: mode, isPending: modeLoading }] =
     useKeyValueData<'reading' | 'writing'>('kanken-practice-mode', 'writing')
   const [
-    { data: selectedGrade, isLoading: gradeLoading }
+    { data: selectedGrade, isPending: gradeLoading }
   ] = useKeyValueData<KankenGrade[]>('kanken-practice-selected-grade', [
     '3',
     '4',

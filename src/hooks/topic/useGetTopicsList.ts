@@ -3,8 +3,12 @@ import { useDBContext } from '../contexts/useDBContext'
 
 export const useGetTopicsList = () => {
   const { db } = useDBContext()
-  return useQuery(['fetchTopicsList'], async () => {
-    const data = await db?.topics.orderBy('lastUpdatedAt').reverse().toArray()
-    return (data ?? []).filter((f) => !f.isDeleted)
-  }, { enabled: db !== undefined })
+  return useQuery({
+    queryKey: ['fetchTopicsList'],
+    queryFn: async () => {
+      const data = await db?.topics.orderBy('lastUpdatedAt').reverse().toArray()
+      return (data ?? []).filter((f) => !f.isDeleted)
+    },
+    enabled: db !== undefined
+  })
 }
