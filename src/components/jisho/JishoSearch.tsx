@@ -38,7 +38,7 @@ export const JishoSearch = forwardRef<HTMLInputElement, SearchProps>(
         return <Spinner />
       }
       if (data == null || data.length === 0) {
-        ;<Text>Keyword not found</Text>
+        return <Text>Keyword not found</Text>
       }
       return (
         <Stack>

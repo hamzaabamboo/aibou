@@ -1,5 +1,11 @@
 import { Box, Divider, Heading, Spinner, Stack, Text } from '@chakra-ui/react'
-import React, { forwardRef, useCallback, useEffect, useState } from 'react'
+import React, {
+  forwardRef,
+  useCallback,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
 
 import debounce from 'lodash/debounce'
 import orderBy from 'lodash/orderBy'
@@ -32,7 +38,7 @@ export const OfflineSearch = forwardRef<HTMLInputElement, SearchProps>(
       }
     }, [input, keyword, setKeyword, setShowPopup])
 
-    const searchResults = (() => {
+    const searchResults = useMemo(() => {
       if (isLoading) return <Spinner />
       if (data == null || data.length === 0)
         return <Text>Keyword not found</Text>
@@ -66,7 +72,7 @@ export const OfflineSearch = forwardRef<HTMLInputElement, SearchProps>(
           })}
         </Stack>
       )
-    })()
+    }, [isLoading, data, input, isPopup, onSelectItem])
 
     const handleKeyPress = (e: React.KeyboardEvent<HTMLInputElement>) => {
       if (e.key === 'Escape') setShowPopup?.(false)

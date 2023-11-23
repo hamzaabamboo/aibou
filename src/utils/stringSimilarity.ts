@@ -1,11 +1,13 @@
-function editDistance(first: string, second: string) {
-  const s1 = first.toLowerCase()
-  const s2 = second.toLowerCase()
+function editDistance(s1: string, s2: string) {
+  // eslint-disable-next-line no-param-reassign
+  s1 = s1.toLowerCase()
+  // eslint-disable-next-line no-param-reassign
+  s2 = s2.toLowerCase()
 
   const costs = []
   for (let i = 0; i <= s1.length; i += 1) {
     let lastValue = i
-    for (let j = 0; j <= s2.length; i += 1) {
+    for (let j = 0; j <= s2.length; j += 1) {
       if (i === 0) costs[j] = j
       else if (j > 0) {
         let newValue = costs[j - 1]
