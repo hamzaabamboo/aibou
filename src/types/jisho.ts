@@ -25,6 +25,7 @@ export interface JishoWord {
     jmnedict?: boolean
     dbpedia?: boolean
     jisho?: boolean
+    dictionary_id?: number
   }
 }
 

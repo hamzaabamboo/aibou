@@ -11,6 +11,7 @@ import {
 } from '@chakra-ui/react'
 
 import { DownloadIcon } from '@chakra-ui/icons'
+import { DictionaryApiSettings } from 'components/DictionaryApiSettings'
 import { format } from 'date-fns'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
 
@@ -27,6 +28,7 @@ function Home() {
     { data: offlineDictionaryEnabled },
     { mutate: updateDictionaryEnabledStatus }
   ] = useKeyValueData('offlineDictionaryEnabled', true)
+
   const { sync, syncEnabled } = useSyncData()
 
   return (
@@ -56,6 +58,7 @@ function Home() {
             </Button>
           </HStack>
           <SyncSettings />
+          <DictionaryApiSettings />
           <HStack justifyContent="space-between">
             <Text>Sync Everything (This is destructive btw)</Text>
             <Button

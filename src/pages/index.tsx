@@ -63,7 +63,7 @@ function Home() {
         )}
         <Stack alignItems="stretch" width="full">
           {lastUpdatedTopics?.map((topic) => (
-            <Link key={topic.id} href={`/topics/${topic.id}`}>
+            <Link key={topic.id} href={`/topics/details?id=${topic.id}`}>
               <Box
                 shadow="md"
                 rounded="md"

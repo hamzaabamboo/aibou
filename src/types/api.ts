@@ -1,5 +1,15 @@
-import { type JishoWord } from './jisho'
+// import { type JishoWord } from './jisho'
 
-export interface SearchAPIResults {
-  results: JishoWord[]
-}
+// interface OldSearchAPIResults {
+//   results: JishoWord[]
+// }
+
+export type SearchApiResults = {
+  word_id: string
+  kanji: string
+  reading: string
+  dictionary_id: number
+  heading: string
+  id: number
+  text: string
+}[]

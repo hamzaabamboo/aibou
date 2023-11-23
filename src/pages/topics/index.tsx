@@ -44,7 +44,7 @@ function TopicsPage() {
               {sortBy(data, (d) => d.lastUpdatedAt)
                 .reverse()
                 .map((topic) => (
-                  <Link key={topic.id} href={`/topics/details?id=${topic}`}>
+                  <Link key={topic.id} href={`/topics/details?id=${topic.id}`}>
                     <Box
                       shadow="md"
                       rounded="md"
