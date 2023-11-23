@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+
 import { useDBContext } from '../contexts/useDBContext'
 
 export const useGetTopicsList = () => {

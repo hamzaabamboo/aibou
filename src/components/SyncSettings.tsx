@@ -9,17 +9,18 @@ import {
   Stack,
   Text
 } from '@chakra-ui/react'
-import { useRouter } from 'next/router'
 import { useEffect } from 'react'
+import { useRouter } from 'next/router'
+
 import { useKeyValueData } from '../hooks/utils/useKeyValueData'
 
-export function SyncSettings () {
+export function SyncSettings() {
   const [{ data: syncUrl, isPending: isLoadingURL }, { mutate: setSyncUrl }] =
     useKeyValueData('syncUrl', '')
-  const [{ data: syncSecret, isPending: isLoadingSecret }, { mutate: setSyncSecret }] = useKeyValueData(
-    'syncSecret',
-    ''
-  )
+  const [
+    { data: syncSecret, isPending: isLoadingSecret },
+    { mutate: setSyncSecret }
+  ] = useKeyValueData('syncSecret', '')
   const { query } = useRouter()
 
   useEffect(() => {
@@ -47,7 +48,9 @@ export function SyncSettings () {
               <Input
                 type="text"
                 value={syncUrl ?? ''}
-                onChange={(e) => { setSyncUrl(e.target.value) }}
+                onChange={(e) => {
+                  setSyncUrl(e.target.value)
+                }}
               />
             </HStack>
             <HStack>
@@ -55,7 +58,9 @@ export function SyncSettings () {
               <Input
                 type="text"
                 value={syncSecret ?? ''}
-                onChange={(e) => { setSyncSecret(e.target.value) }}
+                onChange={(e) => {
+                  setSyncSecret(e.target.value)
+                }}
               />
             </HStack>
           </Stack>

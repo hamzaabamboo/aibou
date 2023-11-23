@@ -1,5 +1,12 @@
 import { useDisclosure } from '@chakra-ui/react'
-import { createContext, useEffect, useState, type ReactNode } from 'react'
+import {
+  createContext,
+  type ReactNode,
+  useEffect,
+  useMemo,
+  useState
+} from 'react'
+
 import { JishoSearchModal } from '../../components/jisho/JishoSearchModal'
 import { WordInfoModal } from '../../components/jisho/WordInfoModal'
 import { type JishoWord } from '../../types/jisho'
@@ -11,7 +18,7 @@ interface PopupSearchData {
 }
 export const PopupSearchContext = createContext<PopupSearchData>({})
 
-export const PopupSearchProvider = ({ children }: { children: ReactNode }) => {
+export function PopupSearchProvider({ children }: { children: ReactNode }) {
   const [selectedWord, setSelectedWord] = useState<JishoWord | undefined>()
   const [keyword, setKeyword] = useState<string>()
   const { isOpen, onClose, onOpen } = useDisclosure()
@@ -31,30 +38,47 @@ export const PopupSearchProvider = ({ children }: { children: ReactNode }) => {
       window.removeEventListener('keypress', handleKeystrokes)
     }
   }, [])
-  return <>
-        <PopupSearchContext.Provider value={{
-          openSearchModal: (keyword) => {
-            setKeyword(keyword)
-            onOpen()
-          },
-          closeSearchModal: onClose,
-          showWordInfo: setSelectedWord
-        }}>
-            {children}
-        </PopupSearchContext.Provider>
-        <JishoSearchModal isOpen={isOpen} onClose={onClose} keyword={keyword} onSelectItem={setSelectedWord}/>
-        <WordInfoModal
-          isOpen={!!selectedWord}
-          item={{
-            topicId: '',
-            word:
-              selectedWord?.japanese[0].word ?? selectedWord?.japanese[0].reading ?? '',
-            jishoData: selectedWord,
-            createdAt: new Date(),
-            lastUpdatedAt: new Date()
-          }}
-          onClose={() => { setSelectedWord(undefined) }}
-          isAddable
-        />
+
+  const context = useMemo(
+    () => ({
+      openSearchModal: (searchKeyword?: string) => {
+        setKeyword(searchKeyword)
+        onOpen()
+      },
+      closeSearchModal: onClose,
+      showWordInfo: setSelectedWord
+    }),
+    [onOpen, onClose]
+  )
+
+  return (
+    <>
+      <PopupSearchContext.Provider value={context}>
+        {children}
+      </PopupSearchContext.Provider>
+      <JishoSearchModal
+        isOpen={isOpen}
+        onClose={onClose}
+        keyword={keyword}
+        onSelectItem={setSelectedWord}
+      />
+      <WordInfoModal
+        isOpen={!!selectedWord}
+        item={{
+          topicId: '',
+          word:
+            selectedWord?.japanese[0].word ??
+            selectedWord?.japanese[0].reading ??
+            '',
+          jishoData: selectedWord,
+          createdAt: new Date(),
+          lastUpdatedAt: new Date()
+        }}
+        onClose={() => {
+          setSelectedWord(undefined)
+        }}
+        isAddable
+      />
     </>
+  )
 }

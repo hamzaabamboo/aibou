@@ -1,4 +1,5 @@
 import axios from 'axios'
+
 import { type KanjiApiKanji } from '../types/kanji-api'
 
 /** Kanji api: https://kanjiapi.dev/ */

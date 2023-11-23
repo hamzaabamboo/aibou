@@ -1,5 +1,4 @@
-export const getKanjiCrossPrompt = () => {
-  return `
+export const getKanjiCrossPrompt = () => `
     SELECT firstKanji, word_kanji."text" FROM 
 	(SELECT tmp.firstKanji, word_kanji."text" FROM 
 		(SELECT firstKanji.literal as firstKanji FROM word_kanji 
@@ -14,4 +13,3 @@ export const getKanjiCrossPrompt = () => {
 LEFT JOIN word_kanji ON ((SUBSTR(word_kanji."text",1,1) = t.firstKanji OR SUBSTR(word_kanji."text",2,2) = t.firstKanji) AND length(word_kanji."text") = 2 and word_kanji.common = 1)
 ORDER BY RANDOM() LIMIT 4;
     `
-}

@@ -1,4 +1,5 @@
 import { useQuery } from '@tanstack/react-query'
+
 import { useDBContext } from './contexts/useDBContext'
 
 export const useGetTopicItems = (topicId: string) => {
@@ -6,9 +7,9 @@ export const useGetTopicItems = (topicId: string) => {
   return useQuery({
     queryKey: ['fetchTopicItems', topicId],
     queryFn: async () => {
-      const idNumber = parseInt(topicId)
+      const idNumber = parseInt(topicId, 10)
       let q = db?.topicEntries.where('topicId').equals(topicId ?? '')
-      if (!isNaN(idNumber)) {
+      if (!Number.isNaN(idNumber)) {
         q = q?.or('topicId').equals(idNumber)
       }
       return ((await q?.reverse().sortBy('createdAt')) ?? []).filter(

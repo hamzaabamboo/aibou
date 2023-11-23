@@ -1,24 +1,25 @@
-import { DownloadIcon } from '@chakra-ui/icons'
 import {
   Button,
   Container,
   Divider,
-  HStack,
   Heading,
+  HStack,
   IconButton,
   Stack,
   Switch,
   Text
 } from '@chakra-ui/react'
+
+import { DownloadIcon } from '@chakra-ui/icons'
 import { format } from 'date-fns'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
-import type { NextPage } from 'next'
+
 import { SyncSettings } from '../components/SyncSettings'
 import { useDownloadOfflineDictionary } from '../hooks/offline/useDownloadOfflineDictionary'
 import { useKeyValueData } from '../hooks/utils/useKeyValueData'
 import { useSyncData } from '../hooks/utils/useSyncData'
 
-const Home: NextPage = () => {
+function Home() {
   const { download, isDBDownloaded, progressText, deleteDictionary } =
     useDownloadOfflineDictionary()
   const [{ data: lastSyncedTime }] = useKeyValueData('lastSyncedTime', 0)
@@ -47,7 +48,9 @@ const Home: NextPage = () => {
             </Stack>
             <Button
               isDisabled={!syncEnabled}
-              onClick={async () => { await sync(new Date(lastSyncedTime ?? 0)) }}
+              onClick={async () => {
+                await sync(new Date(lastSyncedTime ?? 0))
+              }}
             >
               Sync Data
             </Button>
@@ -58,7 +61,9 @@ const Home: NextPage = () => {
             <Button
               isDisabled={!syncEnabled}
               colorScheme="red"
-              onClick={async () => { await sync(new Date(0)) }}
+              onClick={async () => {
+                await sync(new Date(0))
+              }}
             >
               Sync Everything
             </Button>
@@ -68,18 +73,18 @@ const Home: NextPage = () => {
             <Heading size="lg">Sync Settings</Heading>
             <HStack justifyContent="space-between">
               <Text>Download offline dictionary (Work in progress)</Text>
-              {isDBDownloaded
-                ? (
+              {isDBDownloaded ? (
                 <Text>Already downloaded</Text>
-                  )
-                : (
+              ) : (
                 <IconButton
                   aria-label="download"
                   icon={<DownloadIcon />}
                   isDisabled={isDBDownloaded}
-                  onClick={() => { download() }}
+                  onClick={() => {
+                    download()
+                  }}
                 />
-                  )}
+              )}
             </HStack>
             {progressText && <Text>{progressText}</Text>}
             {isDBDownloaded && (
@@ -88,13 +93,19 @@ const Home: NextPage = () => {
                   <Text>Enable Offline Dictionary</Text>
                   <Switch
                     isChecked={offlineDictionaryEnabled}
-                    onChange={(e) => { updateDictionaryEnabledStatus(e.target.checked) }
-                    }
+                    onChange={(e) => {
+                      updateDictionaryEnabledStatus(e.target.checked)
+                    }}
                   />
                 </HStack>
                 <HStack justifyContent="space-between">
                   <Text>Delete Offline Dictionary</Text>
-                  <Button colorScheme="red" onClick={(e) => { deleteDictionary() }}>
+                  <Button
+                    colorScheme="red"
+                    onClick={() => {
+                      deleteDictionary()
+                    }}
+                  >
                     Delete
                   </Button>
                 </HStack>

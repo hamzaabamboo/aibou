@@ -1,6 +1,6 @@
-import { RepeatIcon, SearchIcon, SettingsIcon } from '@chakra-ui/icons'
 import {
-  HStack, IconButton,
+  HStack,
+  IconButton,
   Input,
   InputGroup,
   InputLeftElement,
@@ -11,10 +11,13 @@ import {
 } from '@chakra-ui/react'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
+
+import { RepeatIcon, SearchIcon, SettingsIcon } from '@chakra-ui/icons'
+
 import { usePopupSearchContext } from '../../hooks/contexts/usePopupSearchContext'
 import { useSyncData } from '../../hooks/utils/useSyncData'
 
-export function Navigation () {
+export function Navigation() {
   const router = useRouter()
   const { syncEnabled, sync } = useSyncData()
   const { openSearchModal } = usePopupSearchContext()
@@ -34,19 +37,29 @@ export function Navigation () {
       bg="white"
       zIndex={100}
     >
-      <Text fontSize="3xl" fontWeight="bold" onClick={async () => await router.push('/')}>
+      <Text
+        fontSize="3xl"
+        fontWeight="bold"
+        onClick={async () => router.push('/')}
+      >
         相棒
       </Text>
-      <InputGroup maxW="350px" hidden={['base', 'sm', 'md'].includes(breakPoint)} position="absolute" left="50%" transform="translate(-50%, 0)" onClick={(e) => {
-        openSearchModal?.()
-        e.stopPropagation()
-        e.preventDefault()
-      }}>
-        <InputLeftElement
-          pointerEvents='none'
-          fontSize='1.2em'
-        ><SearchIcon/></InputLeftElement>
-        <Input placeholder='Search' />
+      <InputGroup
+        maxW="350px"
+        hidden={['base', 'sm', 'md'].includes(breakPoint)}
+        position="absolute"
+        left="50%"
+        transform="translate(-50%, 0)"
+        onClick={(e) => {
+          openSearchModal?.()
+          e.stopPropagation()
+          e.preventDefault()
+        }}
+      >
+        <InputLeftElement pointerEvents="none" fontSize="1.2em">
+          <SearchIcon />
+        </InputLeftElement>
+        <Input placeholder="Search" />
         <InputRightElement width="6em">
           <Kbd>ctrl</Kbd> + <Kbd>s</Kbd>
         </InputRightElement>
@@ -55,20 +68,28 @@ export function Navigation () {
         <Link href="/kanken">Kanken</Link>
         <Link href="/topics">Topics</Link>
         <Link href="/games">Games</Link>
-        <Link href="/settings"><SettingsIcon aria-label="settings"/></Link>
-        {['base', 'sm'].includes(breakPoint)
-          ? <IconButton
-            aria-label="sync"
-            onClick={async () => { openSearchModal?.() }}
-            icon={<SearchIcon />}
-          />
-          : syncEnabled && (
+        <Link href="/settings">
+          <SettingsIcon aria-label="settings" />
+        </Link>
+        {['base', 'sm'].includes(breakPoint) ? (
           <IconButton
             aria-label="sync"
-            onClick={async () => { await sync() }}
-            icon={<RepeatIcon />}
+            onClick={async () => {
+              openSearchModal?.()
+            }}
+            icon={<SearchIcon />}
           />
-          )}
+        ) : (
+          syncEnabled && (
+            <IconButton
+              aria-label="sync"
+              onClick={async () => {
+                await sync()
+              }}
+              icon={<RepeatIcon />}
+            />
+          )
+        )}
       </HStack>
     </HStack>
   )

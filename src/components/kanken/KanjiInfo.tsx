@@ -1,4 +1,5 @@
 import { Heading, HStack, Stack, Text } from '@chakra-ui/react'
+
 import { type KanjiData } from '../../types/kanji'
 
 interface KanjiInfoProps {
@@ -8,7 +9,7 @@ interface KanjiInfoProps {
   hideReadings?: boolean
 }
 
-export const KanjiInfo = (props: KanjiInfoProps) => {
+export function KanjiInfo(props: KanjiInfoProps) {
   const { data, hideCharacter, hideOtherInfo, hideReadings } = props
   return (
     <Stack>
@@ -17,15 +18,17 @@ export const KanjiInfo = (props: KanjiInfoProps) => {
           <Text fontSize="5xl">{data.kanji}</Text>
         </HStack>
       )}
-    {!hideReadings && (
-      <>
-        <Heading size="sm">Readings</Heading>
-        {data?.onyomi && <Text>Onyomi: {data.onyomi.replaceAll(',', ', ')}</Text>}
-        {data?.kunyomi && (
-          <Text>Kunyomi: {data.kunyomi.replaceAll(',', ', ')}</Text>
-        )}
-      </>
-    )}
+      {!hideReadings && (
+        <>
+          <Heading size="sm">Readings</Heading>
+          {data?.onyomi && (
+            <Text>Onyomi: {data.onyomi.replaceAll(',', ', ')}</Text>
+          )}
+          {data?.kunyomi && (
+            <Text>Kunyomi: {data.kunyomi.replaceAll(',', ', ')}</Text>
+          )}
+        </>
+      )}
       <Heading size="sm">Meanings</Heading>
       {data?.meanings &&
         data.meanings.map((m, idx) => (

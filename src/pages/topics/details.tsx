@@ -1,19 +1,12 @@
 import {
-  ArrowBackIcon,
-  DeleteIcon,
-  DownloadIcon,
-  EditIcon,
-  HamburgerIcon
-} from '@chakra-ui/icons'
-import {
   Box,
   Button,
   Container,
   Divider,
   Grid,
   GridItem,
-  HStack,
   Heading,
+  HStack,
   Menu,
   MenuButton,
   MenuItem,
@@ -25,36 +18,43 @@ import {
   useDisclosure,
   useToast
 } from '@chakra-ui/react'
-import { uniq } from 'lodash'
-import type { NextPage } from 'next'
-import { useRouter } from 'next/router'
 import { useEffect, useMemo, useRef, useState } from 'react'
-import { parsePartOfSpeech } from '../../../components/jisho/PartOfSpeechLabel'
-import { Search } from '../../../components/jisho/Search'
-import { WordInfoModal } from '../../../components/jisho/WordInfoModal'
-import { WordItem } from '../../../components/jisho/WordItem'
-import { BulkAddModal } from '../../../components/topic/BulkAddModal'
-import { DeleteTopicModal } from '../../../components/topic/DeleteTopicModal'
-import { EditTopicModal } from '../../../components/topic/EditTopicModal'
-import {
-  ItemViewSettings,
-  type ItemViewOptions
-} from '../../../components/topic/ItemViewSettings'
-import { useFetchOfflineResults } from '../../../hooks/offline/useFetchOfflineResults'
-import { useOfflineDictionaryAvailability } from '../../../hooks/offline/useOfflineDictionaryAvailability'
-import { useAddTopicItem } from '../../../hooks/topic-item/useAddTopicItem'
-import { useGetTopic } from '../../../hooks/topic/useGetTopic'
-import { useFetchJishoResults } from '../../../hooks/useFetchJishoResults'
-import { useGetTopicItems } from '../../../hooks/useGetTopicItems'
-import { useLocalStorage } from '../../../hooks/useLocalStorage'
-import { useKeyValueData } from '../../../hooks/utils/useKeyValueData'
-import { type JishoWord } from '../../../types/jisho'
-import { type Topic } from '../../../types/topic'
-import { download } from '../../../utils/downloadFile'
-import { filterTopicItemsByKeywords } from '../../../utils/filterTopicItemsByKeywords'
-import { sortTopicItems } from '../../../utils/sortTopicItems'
+import { useRouter } from 'next/router'
 
-const TopicDetailPage: NextPage = () => {
+import {
+  ArrowBackIcon,
+  DeleteIcon,
+  DownloadIcon,
+  EditIcon,
+  HamburgerIcon
+} from '@chakra-ui/icons'
+import { parsePartOfSpeech } from 'components/jisho/PartOfSpeechLabel'
+import { Search } from 'components/jisho/Search'
+import { WordInfoModal } from 'components/jisho/WordInfoModal'
+import { WordItem } from 'components/jisho/WordItem'
+import { BulkAddModal } from 'components/topic/BulkAddModal'
+import { DeleteTopicModal } from 'components/topic/DeleteTopicModal'
+import { EditTopicModal } from 'components/topic/EditTopicModal'
+import {
+  ItemViewOptions,
+  ItemViewSettings
+} from 'components/topic/ItemViewSettings'
+import { useFetchOfflineResults } from 'hooks/offline/useFetchOfflineResults'
+import { useOfflineDictionaryAvailability } from 'hooks/offline/useOfflineDictionaryAvailability'
+import { useGetTopic } from 'hooks/topic/useGetTopic'
+import { useAddTopicItem } from 'hooks/topic-item/useAddTopicItem'
+import { useFetchJishoResults } from 'hooks/useFetchJishoResults'
+import { useGetTopicItems } from 'hooks/useGetTopicItems'
+import { useLocalStorage } from 'hooks/useLocalStorage'
+import { useKeyValueData } from 'hooks/utils/useKeyValueData'
+import { uniq } from 'lodash'
+import { JishoWord } from 'types/jisho'
+import { Topic } from 'types/topic'
+import { download } from 'utils/downloadFile'
+import { filterTopicItemsByKeywords } from 'utils/filterTopicItemsByKeywords'
+import { sortTopicItems } from 'utils/sortTopicItems'
+
+function TopicDetailPage() {
   const searchRef = useRef<HTMLInputElement>(null)
   const { query, push } = useRouter()
   const topicId = query.id as string
@@ -118,13 +118,13 @@ const TopicDetailPage: NextPage = () => {
       ?.reverse()
       ?.map(
         (w) =>
-          `${w.word},"${uniq(w.jishoData?.japanese.map((w) => w.reading)).join(
-            ','
-          )}","${w.jishoData?.senses
+          `${w.word},"${uniq(
+            w.jishoData?.japanese.map((word) => word.reading)
+          ).join(',')}","${w.jishoData?.senses
             .map((s) =>
               `(${s.parts_of_speech
                 .map(parsePartOfSpeech)
-                .filter((s) => !!s)
+                .filter((str) => !!str)
                 .join(',')}) ${s.english_definitions.join(',')}`.replace(
                 '"',
                 '""'
@@ -176,7 +176,7 @@ const TopicDetailPage: NextPage = () => {
         onError: (error) => {
           toast({
             status: 'warning',
-            title: (error).message
+            title: error.message
           })
         }
       }
@@ -191,18 +191,16 @@ const TopicDetailPage: NextPage = () => {
             <Button
               leftIcon={<ArrowBackIcon />}
               variant="ghost"
-              onClick={async () => await router.push('/topics')}
+              onClick={async () => router.push('/topics')}
             >
               Back to Topics
             </Button>
           </Box>
-          {isLoading
-            ? (
+          {isLoading ? (
             <HStack justifyContent="center">
               <Spinner size="xl" my={8} />
             </HStack>
-              )
-            : (
+          ) : (
             <>
               <HStack
                 justifyContent="space-between"
@@ -311,13 +309,11 @@ const TopicDetailPage: NextPage = () => {
                   isPopup
                 />
                 <Box w="full">
-                  {words == null || words.length === 0
-                    ? (
+                  {words == null || words.length === 0 ? (
                     <Heading fontSize="xl" textAlign="center">
                       No saved words
                     </Heading>
-                      )
-                    : (
+                  ) : (
                     <Stack>
                       {settingsData != null && (
                         <ItemViewSettings
@@ -334,8 +330,8 @@ const TopicDetailPage: NextPage = () => {
                         ]}
                         alignItems="stretch"
                       >
-                        {filteredList.map((item, idx) => {
-                          const { id, jishoData, word, ...rest } = item
+                        {filteredList.map((item) => {
+                          const { id, jishoData, word } = item
                           return (
                             <GridItem
                               key={id}
@@ -359,11 +355,11 @@ const TopicDetailPage: NextPage = () => {
                         })}
                       </Grid>
                     </Stack>
-                      )}
+                  )}
                 </Box>
               </Stack>
             </>
-              )}
+          )}
         </Stack>
       </Container>
       {editingTopic != null && (

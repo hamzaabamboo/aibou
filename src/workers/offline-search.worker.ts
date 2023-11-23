@@ -1,5 +1,6 @@
 import initSqlJs, { type Database } from 'sql.js'
-import { initDictionaryDB, type DictionaryDB } from '../utils/db/dictionary-db'
+
+import { type DictionaryDB, initDictionaryDB } from '../utils/db/dictionary-db'
 import { parseOfflineDBResult } from '../utils/parseOfflineDBResult'
 import { getOfflineSearchSQL } from '../utils/sql/getOfflineSearchSQL'
 
@@ -14,7 +15,10 @@ export interface WorkerMessage {
   data: any
 }
 
-export type WorkerResponseType = 'searchWordResult' | 'searchWordsResult' | 'runSQLError'
+export type WorkerResponseType =
+  | 'searchWordResult'
+  | 'searchWordsResult'
+  | 'runSQLError'
 export interface WorkerResponse {
   type: WorkerResponseType
   value: any
@@ -23,8 +27,8 @@ export interface WorkerResponse {
 let initializingPromise: Promise<Database> | undefined
 
 const loadDictionaryFile = async () => {
-  const db = indexedDB ?? await initDictionaryDB()
-  const data = await db.database.get({ id: 'latest' })
+  const database = indexedDB ?? (await initDictionaryDB())
+  const data = await database.database.get({ id: 'latest' })
   if (data != null) {
     postMessage({
       type: 'message',
@@ -35,10 +39,10 @@ const loadDictionaryFile = async () => {
   throw new Error('Dictionary not downloaded')
 }
 
-async function init (): Promise<Database> {
+async function init(): Promise<Database> {
   if (isInitialized) return db as Database
-  if (initializingPromise) return await initializingPromise
-  const SQL = await initSqlJs({ locateFile: file => '/sql-wasm.wasm' })
+  if (initializingPromise) return initializingPromise
+  const SQL = await initSqlJs({ locateFile: () => '/sql-wasm.wasm' })
   const data = await loadDictionaryFile()
   postMessage({
     type: 'message',
@@ -58,34 +62,52 @@ async function init (): Promise<Database> {
 
 initializingPromise = init()
 
+// eslint-disable-next-line no-restricted-globals
 addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
   switch (data.type) {
     case 'searchWord': {
       console.time('Offline Search')
       if (db == null) db = await init()
       const searchTerm = data.data
-      const res = await db.exec(getOfflineSearchSQL(searchTerm), { $searchTerm: `${searchTerm}` })
+      const res = await db.exec(getOfflineSearchSQL(searchTerm), {
+        $searchTerm: `${searchTerm}`
+      })
       if (tagsData == null) {
-        tagsData = Object.fromEntries(await db.exec('SELECT * FROM tags')[0].values)
+        tagsData = Object.fromEntries(
+          await db.exec('SELECT * FROM tags')[0].values
+        )
       }
       console.timeEnd('Offline Search')
       console.debug(data.data)
-      postMessage({ type: 'searchWordResult', data: parseOfflineDBResult(res, tagsData!) })
+      postMessage({
+        type: 'searchWordResult',
+        data: parseOfflineDBResult(res, tagsData!)
+      })
       break
     }
     case 'searchWords': {
       console.time('Offline Search (multiple)')
       if (db == null) db = await init()
       if (tagsData == null) {
-        tagsData = Object.fromEntries(await db.exec('SELECT * FROM tags')[0].values)
+        tagsData = Object.fromEntries(
+          await db.exec('SELECT * FROM tags')[0].values
+        )
       }
-      const words = data.data
-      const results = []
-      for (const word of words) {
-        const searchTerm = word
-        const res = await db.exec(getOfflineSearchSQL(searchTerm, 1, true), { $searchTerm: `${searchTerm}` })
-        results.push({ word, results: parseOfflineDBResult(res, tagsData!) })
-      }
+      const words = data.data as string[]
+      const results: any[] = []
+      await Promise.all(
+        words.map(async (word) => {
+          const searchTerm = word
+          const res = await db?.exec(getOfflineSearchSQL(searchTerm, 1, true), {
+            $searchTerm: `${searchTerm}`
+          })
+          if (!res) return
+          results.push({
+            word,
+            results: parseOfflineDBResult(res, tagsData ?? {})
+          })
+        })
+      )
       console.timeEnd('Offline Search (multiple)')
       console.debug(data.data)
       postMessage({ type: 'searchWordsResult', data: results })
@@ -105,5 +127,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
       }
       break
     }
+    default:
+      break
   }
 })

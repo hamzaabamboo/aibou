@@ -25,7 +25,7 @@ interface ItemViewSettingsProps {
   data: ItemViewOptions
   setData: Dispatch<SetStateAction<ItemViewOptions | null>>
 }
-export function ItemViewSettings ({ data, setData }: ItemViewSettingsProps) {
+export function ItemViewSettings({ data, setData }: ItemViewSettingsProps) {
   const { filter, numberOfColumns, showMeaning, orderBy, reverseSortOrder } =
     data
   return (
@@ -47,8 +47,9 @@ export function ItemViewSettings ({ data, setData }: ItemViewSettingsProps) {
               <Input
                 type="text"
                 value={filter ?? ''}
-                onChange={(e) => { setData((d) => ({ ...d, filter: e.target.value })) }
-                }
+                onChange={(e) => {
+                  setData((d) => ({ ...d, filter: e.target.value }))
+                }}
               />
             </Stack>
             <Stack
@@ -61,7 +62,10 @@ export function ItemViewSettings ({ data, setData }: ItemViewSettingsProps) {
                 value={numberOfColumns}
                 onChange={(e) => {
                   const n = Number(e.target.value) as 1 | 2 | 3 | 4
-                  setData((d) => ({ ...d, numberOfColumns: isNaN(n) ? 1 : n }))
+                  setData((d) => ({
+                    ...d,
+                    numberOfColumns: Number.isNaN(n) ? 1 : n
+                  }))
                 }}
               >
                 {[1, 2, 3, 4].map((row) => (
@@ -84,8 +88,7 @@ export function ItemViewSettings ({ data, setData }: ItemViewSettingsProps) {
                     ...d,
                     orderBy: e.target.value as 'word' | 'createdAt'
                   }))
-                }
-                }
+                }}
               >
                 {['word', 'createdAt'].map((row) => (
                   <option value={row} key={row}>
@@ -101,16 +104,16 @@ export function ItemViewSettings ({ data, setData }: ItemViewSettingsProps) {
                     ...d,
                     reverseSortOrder: e.target.checked
                   }))
-                }
-                }
+                }}
               />
             </Stack>
             <HStack>
               <Text>Show meanings</Text>
               <Switch
                 isChecked={showMeaning}
-                onChange={(e) => { setData((d) => ({ ...d, showMeaning: e.target.checked })) }
-                }
+                onChange={(e) => {
+                  setData((d) => ({ ...d, showMeaning: e.target.checked }))
+                }}
               />
             </HStack>
           </Stack>

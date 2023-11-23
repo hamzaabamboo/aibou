@@ -1,11 +1,10 @@
-import { AddIcon } from '@chakra-ui/icons'
 import {
   Button,
   FormControl,
   Grid,
   GridItem,
-  HStack,
   Heading,
+  HStack,
   Input,
   Modal,
   ModalBody,
@@ -18,9 +17,12 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+
+import { AddIcon } from '@chakra-ui/icons'
+
 import { useAddTopic } from '../../hooks/topic/useAddTopic'
 
-export function AddTopicModal (props: { isOpen: boolean, onClose: () => void }) {
+export function AddTopicModal(props: { isOpen: boolean; onClose: () => void }) {
   const [title, setTitle] = useState('')
   const [description, setDescription] = useState('')
   const [formError, setFormError] = useState<{
@@ -69,7 +71,9 @@ export function AddTopicModal (props: { isOpen: boolean, onClose: () => void }) 
                   <Input
                     type="text"
                     value={title}
-                    onChange={(e) => { setTitle(e.target.value) }}
+                    onChange={(e) => {
+                      setTitle(e.target.value)
+                    }}
                   />
                 </FormControl>
               </GridItem>
@@ -79,7 +83,9 @@ export function AddTopicModal (props: { isOpen: boolean, onClose: () => void }) 
               <GridItem>
                 <Textarea
                   value={description}
-                  onChange={(e) => { setDescription(e.target.value) }}
+                  onChange={(e) => {
+                    setDescription(e.target.value)
+                  }}
                 />
               </GridItem>
             </Grid>
@@ -89,11 +95,19 @@ export function AddTopicModal (props: { isOpen: boolean, onClose: () => void }) 
               <Button
                 leftIcon={<AddIcon />}
                 colorScheme="green"
-                onClick={async () => { await handleAddTopic() }}
+                onClick={async () => {
+                  await handleAddTopic()
+                }}
               >
                 Add
               </Button>
-              <Button onClick={() => { onClose() }}>Close</Button>
+              <Button
+                onClick={() => {
+                  onClose()
+                }}
+              >
+                Close
+              </Button>
             </HStack>
           </ModalFooter>
         </form>

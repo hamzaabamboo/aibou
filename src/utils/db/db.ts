@@ -1,4 +1,5 @@
 import Dexie, { type Table } from 'dexie'
+
 import { type QuizData } from '../../types/quizData'
 import { type Topic, type TopicItem } from '../../types/topic'
 
@@ -9,22 +10,23 @@ export class AibouDB extends Dexie {
 
   topicEntries!: Table<TopicItem>
 
-  keyValues!: Table<{ key: string, value: object | string | number | boolean }>
+  keyValues!: Table<{ key: string; value: object | string | number | boolean }>
 
   quiz!: Table<QuizData>
 
-  constructor () {
+  constructor() {
     super('aibou-app')
     this.version(5).stores({
-      topics: '++id, name, createdAt, lastUpdatedAt, isDeleted',
+      topics: '+= 1id, name, createdAt, lastUpdatedAt, isDeleted',
       topicEntries:
-        '++id, topicId, word, createdAt,lastUpdatedAt, isDeleted, *tags',
+        '+= 1id, topicId, word, createdAt,lastUpdatedAt, isDeleted, *tags',
       keyValues: '&key',
       quiz: 'id'
     })
   }
 }
 
+// eslint-disable-next-line import/no-mutable-exports
 export let db: AibouDB | undefined
 
 export const initDexie = async () => {

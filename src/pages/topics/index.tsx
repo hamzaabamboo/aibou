@@ -1,23 +1,25 @@
-import { AddIcon } from '@chakra-ui/icons'
 import {
   Box,
   Button,
   Container,
-  HStack,
   Heading,
+  HStack,
   Link,
   Spinner,
   Stack,
   Text,
   useDisclosure
 } from '@chakra-ui/react'
-import sortBy from 'lodash/sortBy'
-import type { NextPage } from 'next'
 import { useEffect } from 'react'
+import type { NextPage } from 'next'
+
+import { AddIcon } from '@chakra-ui/icons'
+import sortBy from 'lodash/sortBy'
+
 import { AddTopicModal } from '../../components/topic/AddTopicModal'
 import { useGetTopicsList } from '../../hooks/topic/useGetTopicsList'
 
-const TopicsPage: NextPage = () => {
+function TopicsPage() {
   const { data, refetch, isPending: isLoading } = useGetTopicsList()
   const { isOpen, onOpen, onClose } = useDisclosure()
 
@@ -35,11 +37,9 @@ const TopicsPage: NextPage = () => {
               Add Topic
             </Button>
           </HStack>
-          {isLoading
-            ? (
+          {isLoading ? (
             <Spinner />
-              )
-            : (
+          ) : (
             <Stack>
               {sortBy(data, (d) => d.lastUpdatedAt)
                 .reverse()
@@ -60,7 +60,7 @@ const TopicsPage: NextPage = () => {
                   </Link>
                 ))}
             </Stack>
-              )}
+          )}
         </Stack>
       </Container>
       <AddTopicModal isOpen={isOpen} onClose={onClose} />
@@ -68,4 +68,4 @@ const TopicsPage: NextPage = () => {
   )
 }
 
-export default TopicsPage
+export default TopicsPage as NextPage

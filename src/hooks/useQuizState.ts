@@ -1,4 +1,5 @@
 import { useState } from 'react'
+
 import { type QuizData } from '../types/quizData'
 import { useQuizData } from './useQuizData'
 
@@ -10,15 +11,25 @@ export interface QuizStateProps<Q, A = string> {
   defaultAnswer?: A
 }
 export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
-  const { quizId, getNewQuestion, getAnswers, checkAnswer, defaultAnswer = '' } = props
+  const {
+    quizId,
+    getNewQuestion,
+    getAnswers,
+    checkAnswer,
+    defaultAnswer = ''
+  } = props
   const [answer, setAnswer] = useState<A>(defaultAnswer as A)
   const [showAnswer, setShowAnswer] = useState(false)
   const [currentQuestion, setCurrentQuestion] = useState<Q>()
-  const [{ data: quizData }, { mutate: updateQuizData }] = useQuizData<Q>(quizId)
+  const [{ data: quizData }, { mutate: updateQuizData }] =
+    useQuizData<Q>(quizId)
   const [isLoadingQuestion, setLoadingQuestion] = useState(false)
 
   const answerKey = currentQuestion ? getAnswers(currentQuestion) : []
-  const isCorrectAnswer = !!currentQuestion && !!answerKey && (checkAnswer?.(answerKey, answer) ?? answerKey.includes(answer))
+  const isCorrectAnswer =
+    !!currentQuestion &&
+    !!answerKey &&
+    (checkAnswer?.(answerKey, answer) ?? answerKey.includes(answer))
   const win = !!currentQuestion && isCorrectAnswer
   const giveUp = !!currentQuestion && !isCorrectAnswer && showAnswer
   const ended = win || giveUp
@@ -36,8 +47,16 @@ export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
       if (submitAnswer && currentQuestion && quizData) {
         const newData: QuizData<Q> = {
           ...quizData,
-          recentQuestions: [{ question: currentQuestion, isCorrect: isCorrectAnswer }, ...quizData.recentQuestions].slice(0, 30),
-          recentIncorrect: isCorrectAnswer ? quizData.recentIncorrect : [{ question: currentQuestion, isCorrect: isCorrectAnswer }, ...quizData.recentIncorrect].slice(0, 30),
+          recentQuestions: [
+            { question: currentQuestion, isCorrect: isCorrectAnswer },
+            ...quizData.recentQuestions
+          ].slice(0, 30),
+          recentIncorrect: isCorrectAnswer
+            ? quizData.recentIncorrect
+            : [
+                { question: currentQuestion, isCorrect: isCorrectAnswer },
+                ...quizData.recentIncorrect
+              ].slice(0, 30),
           stats: {
             correct: quizData.stats.correct + (isCorrectAnswer ? 1 : 0),
             skipped: quizData.stats.skipped + (!isCorrectAnswer ? 1 : 0)
@@ -45,9 +64,9 @@ export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
         }
         await updateQuizData(newData)
       }
-      const nextQuestion = await getNewQuestion()
+      const theNextQuestion = await getNewQuestion()
       resetQuestion()
-      setCurrentQuestion(nextQuestion)
+      setCurrentQuestion(theNextQuestion)
     } finally {
       setLoadingQuestion(false)
     }

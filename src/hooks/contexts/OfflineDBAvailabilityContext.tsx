@@ -1,4 +1,5 @@
-import { createContext, type ReactNode } from 'react'
+import { createContext, type ReactNode, useMemo } from 'react'
+
 import { useDownloadOfflineDictionary } from '../offline/useDownloadOfflineDictionary'
 import { useKeyValueData } from '../utils/useKeyValueData'
 
@@ -8,15 +9,29 @@ export const OfflineDBAvailabilityContext = createContext({
   isPending: false
 })
 
-export const OfflineDBAvailabilityProvider = ({ children }: { children: ReactNode }) => {
+export function OfflineDBAvailabilityProvider({
+  children
+}: {
+  children: ReactNode
+}) {
   const { isDBDownloaded, isProcessing } = useDownloadOfflineDictionary()
-  const [
-    { data: offlineDictionaryEnabled, isPending: isLoadingVariable }
-  ] = useKeyValueData('offlineDictionaryEnabled', true)
+  const [{ data: offlineDictionaryEnabled, isPending: isLoadingVariable }] =
+    useKeyValueData('offlineDictionaryEnabled', true)
   const isAvailable = isDBDownloaded && (offlineDictionaryEnabled ?? false)
   const isLoading = isProcessing && isLoadingVariable
 
-  return <OfflineDBAvailabilityContext.Provider value={{ isDictionaryAvailable: isAvailable, isDBDownloaded, isPending: isLoading }}>
-        {children}
+  const context = useMemo(
+    () => ({
+      isDictionaryAvailable: isAvailable,
+      isDBDownloaded,
+      isPending: isLoading
+    }),
+    [isAvailable, isDBDownloaded, isLoading]
+  )
+
+  return (
+    <OfflineDBAvailabilityContext.Provider value={context}>
+      {children}
     </OfflineDBAvailabilityContext.Provider>
+  )
 }

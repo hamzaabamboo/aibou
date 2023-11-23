@@ -1,8 +1,7 @@
-import { EditIcon } from '@chakra-ui/icons'
 import {
   Button,
-  HStack,
   Heading,
+  HStack,
   Modal,
   ModalBody,
   ModalContent,
@@ -12,11 +11,14 @@ import {
   Text,
   useToast
 } from '@chakra-ui/react'
+
+import { EditIcon } from '@chakra-ui/icons'
+
 import { useUpdateTopicItem } from '../../hooks/topic-item/useUpdateTopicItem'
 import { type TopicItem } from '../../types/topic'
 
 // TODO: Refactor modals
-export function DeleteTopicItemModal (props: {
+export function DeleteTopicItemModal(props: {
   topicItem: TopicItem
   onClose: () => void
   onDeleteSuccess: () => void
@@ -67,11 +69,19 @@ export function DeleteTopicItemModal (props: {
               <Button
                 leftIcon={<EditIcon />}
                 colorScheme="red"
-                onClick={async () => { await handleDeleteItem() }}
+                onClick={async () => {
+                  await handleDeleteItem()
+                }}
               >
                 Delete
               </Button>
-              <Button onClick={() => { onClose() }}>Close</Button>
+              <Button
+                onClick={() => {
+                  onClose()
+                }}
+              >
+                Close
+              </Button>
             </HStack>
           </ModalFooter>
         </form>

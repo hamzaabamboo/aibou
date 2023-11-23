@@ -1,6 +1,6 @@
 export interface JMDictWord {
   id: string
-  kanji: Array<{ common: boolean, text: string, tags: JMDictTags[] }>
+  kanji: Array<{ common: boolean; text: string; tags: JMDictTags[] }>
   kana: Array<{
     common: boolean
     text: string
@@ -221,7 +221,7 @@ export enum JMDictTags {
   person = 'full name of a particular person',
   given = 'given name or forename, gender not specified',
   station = 'railway station',
-  organization = 'organization name',
+  organization = 'organization name'
 }
 
 export interface JMDictFile {
@@ -238,8 +238,8 @@ export type DictionaryKanji = JMDictWord['kanji'][number] & {
 }
 
 export type DictionaryKana = Omit<
-JMDictWord['kana'][number],
-'appliesToKanji'
+  JMDictWord['kana'][number],
+  'appliesToKanji'
 > & {
   id: string
   wordId: string
@@ -247,8 +247,8 @@ JMDictWord['kana'][number],
 }
 
 export type DictionarySense = Omit<
-JMDictWord['sense'][number],
-'appliesToKana' | 'appliesToKanji' | 'gloss'
+  JMDictWord['sense'][number],
+  'appliesToKana' | 'appliesToKanji' | 'gloss'
 > & {
   id: string
   wordId: string

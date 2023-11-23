@@ -1,15 +1,17 @@
-import { CopyIcon } from '@chakra-ui/icons'
 import {
   Box,
   HStack,
   IconButton,
   ListItem,
   Stack,
+  type StackProps,
   Text,
   UnorderedList,
-  useToast,
-  type StackProps
+  useToast
 } from '@chakra-ui/react'
+
+import { CopyIcon } from '@chakra-ui/icons'
+
 import { type JishoWord } from '../../types/jisho'
 import { KanjiDisplay } from './KanjiDisplay'
 import { PartOfSpeechLabel } from './PartOfSpeechLabel'
@@ -23,7 +25,7 @@ export type SearchResultItemProps = {
   hideAlternatives?: boolean
 } & StackProps
 
-export function SearchResultItem (props: SearchResultItemProps) {
+export function SearchResultItem(props: SearchResultItemProps) {
   const {
     item,
     showMeaning = true,
@@ -55,12 +57,15 @@ export function SearchResultItem (props: SearchResultItemProps) {
     >
       <HStack justifyContent="space-between" w="full">
         <HStack flexWrap="wrap" alignItems="flex-end" spacing="1">
-          {word[0] && <KanjiDisplay data={word[0]} hideFurigana={hideFurigana} />}
-          {word.length > 1 && !hideAlternatives &&
+          {word[0] && (
+            <KanjiDisplay data={word[0]} hideFurigana={hideFurigana} />
+          )}
+          {word.length > 1 &&
+            !hideAlternatives &&
             word
               .slice(1)
-              .map((item, idx) => (
-                <KanjiDisplay key={idx} data={item} isSmall />
+              .map((kanjiReading, index) => (
+                <KanjiDisplay key={index} data={kanjiReading} isSmall />
               ))}
         </HStack>
         {showCopy && (
@@ -82,8 +87,11 @@ export function SearchResultItem (props: SearchResultItemProps) {
               <ListItem key={idx}>
                 <Text>
                   <HStack as="span" spacing="1" display="inline" mr={2}>
-                    {i.parts_of_speech.map((i, idx) => (
-                      <PartOfSpeechLabel key={idx} partOfSpeech={i} />
+                    {i.parts_of_speech.map((partOfSpeech, index) => (
+                      <PartOfSpeechLabel
+                        key={index}
+                        partOfSpeech={partOfSpeech}
+                      />
                     ))}
                   </HStack>
                   {i.english_definitions.join(', ')}

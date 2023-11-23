@@ -1,5 +1,7 @@
 import { Tag } from '@chakra-ui/react'
+
 import { toKana } from 'wanakana'
+
 import { JishoPartOfSpeech, type PartOfSpeech } from '../../types/jisho'
 
 export const parsePartOfSpeech = (
@@ -24,12 +26,16 @@ export const parsePartOfSpeech = (
         if (
           partOfSpeech.includes('keiyodoshi') ||
           partOfSpeech.includes('a-adjective')
-        ) { return 'な-adj' }
+        ) {
+          return 'な-adj'
+        }
         return partOfSpeech
       }
       if (partOfSpeech.includes('xpressions')) return 'Expressions'
       if (partOfSpeech.includes('noun') || partOfSpeech.includes('Noun')) {
-        if (partOfSpeech.includes('futsuumeishi') || partOfSpeech === 'Noun') { return 'n' }
+        if (partOfSpeech.includes('futsuumeishi') || partOfSpeech === 'Noun') {
+          return 'n'
+        }
         return ''
       }
       if (partOfSpeech.includes('dverb')) {
@@ -43,23 +49,28 @@ export const parsePartOfSpeech = (
           return partOfSpeech.replace(
             /(.*?) verb(?:.*?with '?(.+?)'? ending)?/,
             (_, type, ending) => {
-              const dan =
-                type === 'Godan'
-                  ? '五'
-                  : type === 'Nidan'
-                    ? '二'
-                    : type === 'Yodan'
-                      ? '四'
-                      : type === 'Ichidan'
-                        ? '一'
-                        : 'v'
-              return `${dan}-${
-                type === 'Ichidan'
-                  ? 'る'
-                  : type === 'Suru'
-                  ? 'する'
-                  : toKana(ending)
-              }`
+              const dan = (() => {
+                switch (type) {
+                  case 'Godan':
+                    return '五'
+                  case 'Nidan':
+                    return '二'
+                  case 'Yodan':
+                    return '四'
+                  case 'Ichidan':
+                    return '一'
+                  default:
+                    return 'v'
+                }
+              })()
+
+              const suffix = (() => {
+                if (type === 'Ichidan') return 'る'
+                if (type === 'Suru') return 'する'
+
+                return toKana(ending)
+              })()
+              return `${dan}-${suffix}`
             }
           )
         }
@@ -69,7 +80,7 @@ export const parsePartOfSpeech = (
     }
   }
 }
-export function PartOfSpeechLabel (props: { partOfSpeech: PartOfSpeech }) {
+export function PartOfSpeechLabel(props: { partOfSpeech: PartOfSpeech }) {
   const { partOfSpeech } = props
 
   const text = parsePartOfSpeech(partOfSpeech)

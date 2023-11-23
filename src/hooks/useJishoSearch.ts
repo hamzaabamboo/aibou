@@ -1,5 +1,7 @@
 import { useQuery } from '@tanstack/react-query'
+
 import axios from 'axios'
+
 import { type SearchAPIResults } from '../types/api'
 
 export const useJishoSearch = (keyword: string) =>

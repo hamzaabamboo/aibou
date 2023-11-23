@@ -1,10 +1,9 @@
 import axios, { type AxiosProgressEvent } from 'axios'
 import pako from 'pako'
-import { initDictionaryDB, type DictionaryDB } from '../utils/db/dictionary-db'
 
-const JMDICT_FILE = `/${encodeURIComponent(
-    'offline-dict.sqlite.gz'
-  )}`
+import { type DictionaryDB, initDictionaryDB } from '../utils/db/dictionary-db'
+
+const JMDICT_FILE = `/${encodeURIComponent('offline-dict.sqlite.gz')}`
 
 const indexedDB: DictionaryDB | undefined = undefined
 
@@ -32,13 +31,13 @@ const downloadDatabase = async () => {
 }
 
 const checkIfDownloaded = async () => {
-  const db = indexedDB ?? await initDictionaryDB()
+  const db = indexedDB ?? (await initDictionaryDB())
   const data = await db.database.where({ id: 'latest' }).count()
   if (data) return true
 }
 
 const loadDictionaryFile = async () => {
-  const db = indexedDB ?? await initDictionaryDB()
+  const db = indexedDB ?? (await initDictionaryDB())
   const data = await db.database.get({ id: 'latest' })
   if (data != null) {
     postMessage({
@@ -53,7 +52,7 @@ const loadDictionaryFile = async () => {
 }
 
 const deleteDictionaryFile = async () => {
-  const db = indexedDB ?? await initDictionaryDB()
+  const db = indexedDB ?? (await initDictionaryDB())
   await db.database.delete('latest')
 }
 
@@ -69,7 +68,8 @@ export interface WorkerResponse {
   value: any
 }
 
-addEventListener('message', async ({ type, data }: MessageEvent<WorkerMessage>) => {
+// eslint-disable-next-line no-restricted-globals
+addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
   switch (data.type) {
     case 'download': {
       console.log('Downlaod LAH!!!!')
@@ -96,6 +96,9 @@ addEventListener('message', async ({ type, data }: MessageEvent<WorkerMessage>) 
         type: 'checkResult',
         value: res
       })
+      break
+    }
+    default: {
       break
     }
   }

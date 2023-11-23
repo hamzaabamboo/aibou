@@ -1,11 +1,10 @@
-import { EditIcon } from '@chakra-ui/icons'
 import {
   Button,
   FormControl,
   Grid,
   GridItem,
-  HStack,
   Heading,
+  HStack,
   Input,
   Modal,
   ModalBody,
@@ -18,11 +17,14 @@ import {
   useToast
 } from '@chakra-ui/react'
 import { useEffect, useState } from 'react'
+
+import { EditIcon } from '@chakra-ui/icons'
+
 import { useUpdateTopic } from '../../hooks/topic/useUpdateTopic'
 import { type Topic } from '../../types/topic'
 
 // TODO: Refactor modals
-export function EditTopicModal (props: { topic: Topic, onClose: () => void }) {
+export function EditTopicModal(props: { topic: Topic; onClose: () => void }) {
   const { topic, onClose } = props
   const [title, setTitle] = useState(topic.name)
   const [description, setDescription] = useState(topic.description)
@@ -76,7 +78,9 @@ export function EditTopicModal (props: { topic: Topic, onClose: () => void }) {
                   <Input
                     type="text"
                     value={title}
-                    onChange={(e) => { setTitle(e.target.value) }}
+                    onChange={(e) => {
+                      setTitle(e.target.value)
+                    }}
                   />
                 </FormControl>
               </GridItem>
@@ -86,7 +90,9 @@ export function EditTopicModal (props: { topic: Topic, onClose: () => void }) {
               <GridItem>
                 <Textarea
                   value={description}
-                  onChange={(e) => { setDescription(e.target.value) }}
+                  onChange={(e) => {
+                    setDescription(e.target.value)
+                  }}
                 />
               </GridItem>
             </Grid>
@@ -96,11 +102,19 @@ export function EditTopicModal (props: { topic: Topic, onClose: () => void }) {
               <Button
                 leftIcon={<EditIcon />}
                 colorScheme="green"
-                onClick={async () => { await handleEditTopic() }}
+                onClick={async () => {
+                  await handleEditTopic()
+                }}
               >
                 Edit
               </Button>
-              <Button onClick={() => { onClose() }}>Close</Button>
+              <Button
+                onClick={() => {
+                  onClose()
+                }}
+              >
+                Close
+              </Button>
             </HStack>
           </ModalFooter>
         </form>

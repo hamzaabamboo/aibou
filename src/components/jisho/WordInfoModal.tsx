@@ -1,8 +1,7 @@
-import { DeleteIcon } from '@chakra-ui/icons'
 import {
   Button,
-  HStack,
   Heading,
+  HStack,
   IconButton,
   Modal,
   ModalBody,
@@ -13,24 +12,21 @@ import {
   ModalOverlay
 } from '@chakra-ui/react'
 import { useState } from 'react'
+
+import { DeleteIcon } from '@chakra-ui/icons'
+
 import { type TopicItem } from '../../types/topic'
 import { DeleteTopicItemModal } from '../topic/DeleteTopicItemModal'
 import { WordInfo } from './WordInfo'
 
-export function WordInfoModal (props: {
+export function WordInfoModal(props: {
   item: TopicItem
   isOpen: boolean
   onClose: () => void
   isEditable?: boolean
   isAddable?: boolean
 }) {
-  const {
-    isOpen,
-    onClose,
-    item,
-    isEditable = false,
-    isAddable = false
-  } = props
+  const { isOpen, onClose, item, isEditable = false, isAddable = false } = props
   const [isDeleting, setDeleting] = useState(false)
 
   return (
@@ -46,7 +42,11 @@ export function WordInfoModal (props: {
           </ModalHeader>
           <ModalCloseButton />
           <ModalBody>
-            <WordInfo item={item} isEditable={isEditable} isAddable={isAddable}/>
+            <WordInfo
+              item={item}
+              isEditable={isEditable}
+              isAddable={isAddable}
+            />
           </ModalBody>
           <ModalFooter>
             <HStack w="full" justifyContent="space-between">
@@ -55,7 +55,9 @@ export function WordInfoModal (props: {
                   colorScheme="red"
                   aria-label="Delete Item"
                   icon={<DeleteIcon />}
-                  onClick={() => { setDeleting(true) }}
+                  onClick={() => {
+                    setDeleting(true)
+                  }}
                 />
               )}
               <Button onClick={onClose}>Close</Button>
@@ -66,7 +68,9 @@ export function WordInfoModal (props: {
       {isEditable && isDeleting && (
         <DeleteTopicItemModal
           topicItem={item}
-          onClose={() => { setDeleting(false) }}
+          onClose={() => {
+            setDeleting(false)
+          }}
           onDeleteSuccess={() => {
             setDeleting(false)
             onClose()

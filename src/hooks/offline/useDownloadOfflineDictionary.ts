@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 
 export const useDownloadOfflineDictionary = () => {
-  const [error, setError] = useState()
+  const [error, setError] = useState<string>()
   const [isProcessing, setProcessing] = useState(false)
   const [progress, setProgress] = useState(0)
   const [isDBDownloaded, setIsDBDownloaded] = useState(false)
@@ -9,7 +9,9 @@ export const useDownloadOfflineDictionary = () => {
   const worker = useRef<Worker>()
 
   useEffect(() => {
-    worker.current = new Worker(new URL('../../workers/initdb-worker.ts', import.meta.url))
+    worker.current = new Worker(
+      new URL('../../workers/initdb-worker.ts', import.meta.url)
+    )
     worker.current.onmessage = async ({ data }) => {
       switch (data.type) {
         case 'error':
@@ -35,7 +37,10 @@ export const useDownloadOfflineDictionary = () => {
     worker.current.postMessage({
       type: 'check'
     })
-    worker.current.onerror = function (error) { console.log(error, error.message) }
+    worker.current.onerror = function (workerError) {
+      setError(workerError.message)
+      console.log(workerError, workerError.message)
+    }
     return () => {
       worker.current?.terminate()
     }
@@ -57,6 +62,12 @@ export const useDownloadOfflineDictionary = () => {
     })
   }
   return {
-    download, error, progress, progressText, isProcessing, isDBDownloaded, deleteDictionary
+    download,
+    error,
+    progress,
+    progressText,
+    isProcessing,
+    isDBDownloaded,
+    deleteDictionary
   }
 }

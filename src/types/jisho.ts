@@ -52,5 +52,5 @@ export enum JishoPartOfSpeech {
   IAdj = 'I-adjective (keiyoushi)',
   NaAdj = 'Na-adjective (keiyodoshi)',
   OldNaAdj = 'Archaic/formal form of na-adjective',
-  Expressions = 'Expressions (phrases, clauses, etc.)',
+  Expressions = 'Expressions (phrases, clauses, etc.)'
 }

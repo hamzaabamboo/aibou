@@ -1,13 +1,18 @@
-import { CopyIcon } from '@chakra-ui/icons'
 import { HStack, IconButton, Stack, Text, useToast } from '@chakra-ui/react'
+
+import { CopyIcon } from '@chakra-ui/icons'
+
 import { type JishoWord } from '../../types/jisho'
 import { KanjiDisplay } from './KanjiDisplay'
-import { SearchResultItem, type SearchResultItemProps } from './SearchResultItem'
+import {
+  SearchResultItem,
+  type SearchResultItemProps
+} from './SearchResultItem'
 
-export function WordItem (
-  props: { item?: JishoWord, word: string } & Omit<
-  SearchResultItemProps,
-  'item'
+export function WordItem(
+  props: { item?: JishoWord; word: string } & Omit<
+    SearchResultItemProps,
+    'item'
   >
 ) {
   const { item, showMeaning, word, ...rest } = props
@@ -22,16 +27,14 @@ export function WordItem (
     })
   }
 
-  return (item != null)
-    ? (
+  return item != null ? (
     <SearchResultItem
       item={item}
       showMeaning={showMeaning}
       isCard={false}
       {...rest}
     />
-      )
-    : (
+  ) : (
     <Stack justifyContent="flex-start" h="full">
       <HStack justifyContent="space-between" w="full">
         <KanjiDisplay data={{ word }} />
@@ -49,5 +52,5 @@ export function WordItem (
       </HStack>
       <Text textAlign="center">Click to retreive meaning</Text>
     </Stack>
-      )
+  )
 }

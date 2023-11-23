@@ -1,7 +1,9 @@
 import { useToast } from '@chakra-ui/react'
 import { useQueryClient } from '@tanstack/react-query'
-import axios from 'axios'
 import { useState } from 'react'
+
+import axios from 'axios'
+
 import { type Topic, type TopicItem } from '../../types/topic'
 import { getNewData, importData } from '../../utils/exportData'
 import { useKeyValueData } from './useKeyValueData'
@@ -10,7 +12,8 @@ export const useSyncData = () => {
   const [isSyncing, setSyncing] = useState(false)
   const [{ data: syncUrl }] = useKeyValueData('syncUrl', '')
   const [{ data: syncSecret }] = useKeyValueData('syncSecret', '')
-  const [{ data: lastSyncedTime }, { mutate: updateLastUpdatedTime }] = useKeyValueData('lastSyncedTime', 0)
+  const [{ data: lastSyncedTime }, { mutate: updateLastUpdatedTime }] =
+    useKeyValueData('lastSyncedTime', 0)
   const toast = useToast()
   const queryClient = useQueryClient()
   const syncEnabled = syncUrl && syncSecret
@@ -37,9 +40,11 @@ export const useSyncData = () => {
           }
         )
         await importData(data)
-        const clientUpdated = ((newData.topicItem != null) && newData.topicItem.length > 0) ||
-          ((newData.topics != null) && newData.topics.length > 0)
-        const serverUpdated = data.topicItem.length > 0 || data.topics.length > 0
+        const clientUpdated =
+          (newData.topicItem != null && newData.topicItem.length > 0) ||
+          (newData.topics != null && newData.topics.length > 0)
+        const serverUpdated =
+          data.topicItem.length > 0 || data.topics.length > 0
         if (serverUpdated) {
           queryClient.invalidateQueries({ queryKey: ['fetchTopicsList'] })
           queryClient.invalidateQueries({

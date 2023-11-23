@@ -1,4 +1,5 @@
-import React, { createContext, useEffect, useState } from 'react'
+import React, { createContext, useEffect, useMemo, useState } from 'react'
+
 import { type AibouDB, initDexie } from '../../utils/db/db'
 
 export interface DBContextData {
@@ -8,29 +9,26 @@ export interface DBContextData {
 }
 export const DBContext = createContext<DBContextData>({})
 
-export const DBContextProvider = ({
-  children
-}: {
-  children: React.ReactNode
-}) => {
+export function DBContextProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setLoading] = useState(false)
   const [db, setDB] = useState<AibouDB | undefined>()
 
   const initializeDB = async () => {
     setLoading(true)
-    const db = await initDexie()
-    setDB(db)
+    const newDb = await initDexie()
+    setDB(newDb)
     setLoading(false)
-    return db
+    return newDb
   }
 
   useEffect(() => {
     initializeDB()
   }, [])
 
-  return (
-    <DBContext.Provider value={{ isLoading, isInitialized: !(db == null), db }}>
-      {children}
-    </DBContext.Provider>
+  const context = useMemo(
+    () => ({ isLoading, isInitialized: !(db == null), db }),
+    [db, isLoading]
   )
+
+  return <DBContext.Provider value={context}>{children}</DBContext.Provider>
 }

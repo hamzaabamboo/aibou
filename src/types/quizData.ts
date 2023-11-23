@@ -1,4 +1,4 @@
-export interface QuizData<T = Record<string, unknown> > {
+export interface QuizData<T = Record<string, unknown>> {
   id: string
   recentQuestions: Array<QuizAnswer<T>>
   recentIncorrect: Array<QuizAnswer<T>>

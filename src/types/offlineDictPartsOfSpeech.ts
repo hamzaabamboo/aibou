@@ -252,5 +252,5 @@ export enum OfflineDictPartOfSpeech {
   'vz' = 'Ichidan verb - zuru verb (alternative form of -jiru verbs)',
   'work' = 'work of art, literature, music, etc. name',
   'yoji' = 'yojijukugo',
-  'zool' = 'zoology',
+  'zool' = 'zoology'
 }

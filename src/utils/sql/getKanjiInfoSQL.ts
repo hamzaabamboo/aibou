@@ -1,5 +1,4 @@
-export const getKanjiInfoSQL = () => {
-  return `
+export const getKanjiInfoSQL = () => `
     SELECT kanji.literal, kanji_reading.type, group_concat(distinct kanji_reading.value), kanji_reading_meaning_group.id, group_concat(distinct kanji_meaning."value"), group_concat(distinct kanji_radicals_radical.radicalCharacter), jlptLevel, grade, radicalNames, frequency, strokeCounts FROM kanji
 	INNER JOIN kanji_reading_meaning_group on kanji.literal = kanji_reading_meaning_group.readingMeaningId
 	INNER JOIN kanji_reading_meanings on kanji.literal = kanji_reading_meanings.id
@@ -11,4 +10,3 @@ export const getKanjiInfoSQL = () => {
 	GROUP BY kanji.literal, kanji_reading."type", kanji_reading_meaning_group.id
 	ORDER BY jlptLevel DESC
     `
-}

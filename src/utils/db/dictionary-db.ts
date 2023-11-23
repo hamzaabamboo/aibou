@@ -1,9 +1,9 @@
 import Dexie, { type Table } from 'dexie'
 
 export class DictionaryDB extends Dexie {
-  database!: Table<{ id: string, data: ArrayBuffer }>
+  database!: Table<{ id: string; data: ArrayBuffer }>
 
-  constructor () {
+  constructor() {
     super('aibou-app-dictionary')
     this.version(1).stores({
       database: '&id'
@@ -11,7 +11,7 @@ export class DictionaryDB extends Dexie {
   }
 }
 
-export let dictionaryDB: DictionaryDB | undefined
+let dictionaryDB: DictionaryDB | undefined
 
 export const initDictionaryDB = async () => {
   dictionaryDB = new DictionaryDB()

@@ -1,10 +1,14 @@
 import {
-  useEffect, useRef, useState,
-  type Dispatch, type SetStateAction
+  type Dispatch,
+  type SetStateAction,
+  useEffect,
+  useRef,
+  useState
 } from 'react'
+
 import { LocalStorage } from '../utils/localStorage'
 
-export const useLocalStorage = function <T> (
+export const useLocalStorage = function <T>(
   key: string,
   initial: T | null = null
 ): [T | null, Dispatch<SetStateAction<T | null>>] {
@@ -19,8 +23,8 @@ export const useLocalStorage = function <T> (
     setData(newData)
   }
 
-  const updateValue = (key: string) => (storageEvent: StorageEvent) => {
-    if (storageEvent.key === key) {
+  const updateValue = (updateKey: string) => (storageEvent: StorageEvent) => {
+    if (storageEvent.key === updateKey) {
       setData(JSON.parse(storageEvent.newValue ?? ''))
     }
   }

@@ -1,5 +1,6 @@
 import { Stack } from '@chakra-ui/react'
 import { forwardRef } from 'react'
+
 import { type JishoWord } from '../../types/jisho'
 import { type KanjiData } from '../../types/kanji'
 import {
@@ -12,7 +13,12 @@ import { KanjiDisplay } from '../jisho/KanjiDisplay'
 import { SearchResultItem } from '../jisho/SearchResultItem'
 import { KanjiInfo } from './KanjiInfo'
 
-export interface PracticeQuestion<Data extends KankenWordData | KankenKanjiData | KankenYojijukugoData = KankenWordData | KankenKanjiData | KankenYojijukugoData> {
+export interface PracticeQuestion<
+  Data extends KankenWordData | KankenKanjiData | KankenYojijukugoData =
+    | KankenWordData
+    | KankenKanjiData
+    | KankenYojijukugoData
+> {
   grade: KankenGrade
   kanji?: string
   data: Data
@@ -27,49 +33,67 @@ export interface KankenQuestionProps {
   answerExplanations?: KanjiData[]
 }
 
-export const KankenQuestion = forwardRef<HTMLDivElement, KankenQuestionProps>((props, ref) => {
-  const { questionData, currentQuestion, showAnswer = false, answerExplanations, type, mode } = props
-  if (type === 'word' || type === 'yojijukugo') {
+export const KankenQuestion = forwardRef<HTMLDivElement, KankenQuestionProps>(
+  (props, ref) => {
+    const {
+      questionData,
+      currentQuestion,
+      showAnswer = false,
+      answerExplanations,
+      type,
+      mode
+    } = props
+    if (type === 'word' || type === 'yojijukugo') {
+      const question = currentQuestion?.data as KankenWordData
+      return (
+        <Stack ref={ref} alignItems="center">
+          {currentQuestion && (
+            <KanjiDisplay
+              data={{
+                reading:
+                  !showAnswer && mode === 'reading' ? '' : question.reading,
+                word:
+                  showAnswer || mode === 'reading'
+                    ? question.word
+                    : question.word?.replaceAll(/./g, '＿')
+              }}
+            />
+          )}
+          {questionData && (
+            <SearchResultItem
+              isCard={false}
+              item={{ ...questionData, japanese: [] }}
+            />
+          )}
+        </Stack>
+      )
+    }
     const question = currentQuestion?.data as KankenWordData
     return (
-    <Stack ref={ref} alignItems="center">
-      {currentQuestion && (
-        <KanjiDisplay
-          data={{
-            reading: !showAnswer && mode === 'reading' ? '' : question.reading,
-            word: showAnswer || mode === 'reading'
-              ? question.word
-              : question.word?.replaceAll(/./g, '＿')
-          }}
-        />
-      )}
-      {questionData && (
-        <SearchResultItem
-          isCard={false}
-          item={{ ...questionData, japanese: [] }}
-        />
-      )}
-    </Stack>
-    )
-  }
-  const question = currentQuestion?.data as KankenWordData
-  return (
       <Stack ref={ref} alignItems="center">
         {currentQuestion && (
           <KanjiDisplay
             data={{
-              reading: !showAnswer && mode === 'reading' ? '' : question.reading,
-              word: showAnswer || mode === 'reading'
-                ? question.word
-                : question.word?.replaceAll(/./g, '＿')
+              reading:
+                !showAnswer && mode === 'reading' ? '' : question.reading,
+              word:
+                showAnswer || mode === 'reading'
+                  ? question.word
+                  : question.word?.replaceAll(/./g, '＿')
             }}
           />
         )}
         {answerExplanations && (
-          <KanjiInfo data={answerExplanations[0]} hideCharacter={mode === 'writing' ? !showAnswer : false} hideReadings={ mode === 'reading' ? !showAnswer : false} hideOtherInfo={!showAnswer}/>
+          <KanjiInfo
+            data={answerExplanations[0]}
+            hideCharacter={mode === 'writing' ? !showAnswer : false}
+            hideReadings={mode === 'reading' ? !showAnswer : false}
+            hideOtherInfo={!showAnswer}
+          />
         )}
       </Stack>
-  )
-})
+    )
+  }
+)
 
 KankenQuestion.displayName = 'KankenQuestion'
