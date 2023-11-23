@@ -13,6 +13,8 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { DownloadIcon, ExternalLinkIcon } from '@chakra-ui/icons'
+import { useOfflineDictionary } from 'hooks/offline/useOfflineDictionary'
+import { sortJishoReadings } from 'utils/sortJishoReadings'
 
 import { useGetTopicsList } from '../../hooks/topic/useGetTopicsList'
 import { useAddTopicItem } from '../../hooks/topic-item/useAddTopicItem'
@@ -37,6 +39,8 @@ export function WordInfo(props: WordInfoProps) {
   const { data: topics } = useGetTopicsList()
   const { mutate: addTopicItem, isPending: isLoading } = useAddTopicItem()
 
+  const { data } = useOfflineDictionary(item.word, { exact: true })
+
   const { push } = useRouter()
   const toast = useToast()
 
@@ -59,6 +63,16 @@ export function WordInfo(props: WordInfoProps) {
     })
   }
 
+  const handleChangeMeaning = (index: number) => {
+    if (!data) return
+    updateTopicItem({
+      ...item,
+      jishoData: {
+        ...data[index]
+      }
+    })
+  }
+
   const handleAddToTopic = async () => {
     const word =
       item.jishoData?.japanese[0].word ?? item.jishoData?.japanese[0].reading
@@ -72,7 +86,7 @@ export function WordInfo(props: WordInfoProps) {
       },
       {
         onSuccess: () => {
-          push(`/topics/${topicId}`)
+          push(`/topics/details?id=${topicId}`)
         },
         onError: (error) => {
           toast({
@@ -153,6 +167,26 @@ export function WordInfo(props: WordInfoProps) {
               ))}
             </Select>
           </HStack>
+          {data && data.length > 0 && (
+            <HStack justifyContent="space-between">
+              <Text>Change Alternative Reading/ Sense</Text>
+              <Select
+                value={data.findIndex((d) => d.slug === item.jishoData?.slug)}
+                onChange={(e) => {
+                  handleChangeMeaning(Number(e.target.value))
+                }}
+              >
+                {data
+                  .map((word) => sortJishoReadings(word, item.word))
+                  .map((o, idx) => (
+                    // eslint-disable-next-line jsx-a11y/control-has-associated-label
+                    <option key={idx} value={idx}>
+                      <KanjiDisplay data={o.japanese[0]} hideRuby />
+                    </option>
+                  ))}
+              </Select>
+            </HStack>
+          )}
           <HStack justifyContent="space-between">
             <Text>Download Data from Jisho</Text>
             <IconButton

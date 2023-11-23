@@ -260,7 +260,7 @@ function TopicDetailPage() {
                         {isDictionaryAvailable && (
                           <MenuItem
                             onClick={() => {
-                              push(`/topics/${topicId}/quiz`)
+                              push(`/topics/quiz?id=${topicId}`)
                             }}
                           >
                             Quiz (Experimental)

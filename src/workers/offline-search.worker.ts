@@ -13,6 +13,8 @@ export type WorkerActions = 'searchWord' | 'searchWords' | 'init' | 'runSQL'
 export interface WorkerMessage {
   type: WorkerActions
   data: any
+  exact?: boolean
+  limit?: number
 }
 
 export type WorkerResponseType =
@@ -66,10 +68,10 @@ initializingPromise = init()
 addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
   switch (data.type) {
     case 'searchWord': {
-      console.time('Offline Search')
       if (db == null) db = await init()
       const searchTerm = data.data
-      const res = await db.exec(getOfflineSearchSQL(searchTerm), {
+      const { exact } = data
+      const res = await db.exec(getOfflineSearchSQL(searchTerm, 20, exact), {
         $searchTerm: `${searchTerm}`
       })
       if (tagsData == null) {

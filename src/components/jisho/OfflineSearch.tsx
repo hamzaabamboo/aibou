@@ -8,10 +8,9 @@ import React, {
 } from 'react'
 
 import debounce from 'lodash/debounce'
-import orderBy from 'lodash/orderBy'
+import { sortJishoReadings } from 'utils/sortJishoReadings'
 
 import { useOfflineDictionary } from '../../hooks/offline/useOfflineDictionary'
-import { similarity } from '../../utils/stringSimilarity'
 import { BigTextInput } from '../common/BigTextInput'
 import { type SearchProps } from './Search'
 import { SearchResultItem } from './SearchResultItem'
@@ -44,25 +43,14 @@ export const OfflineSearch = forwardRef<HTMLInputElement, SearchProps>(
         return <Text>Keyword not found</Text>
       return (
         <Stack>
-          {data?.map((item) => {
-            const sortedReadings = input
-              ? orderBy(
-                  item.japanese,
-                  (w) =>
-                    Math.max(
-                      w.word ? similarity(w.word, input) : -Infinity,
-                      w.reading ? similarity(w.reading, input) : -Infinity
-                    ),
-                  'desc'
-                )
-              : item.japanese
-
+          {data?.map((word) => {
+            const item = sortJishoReadings(word, input)
             return (
               <React.Fragment key={item.slug}>
                 <SearchResultItem
-                  item={{ ...item, japanese: sortedReadings }}
+                  item={item}
                   onClick={() => {
-                    onSelectItem({ ...item, japanese: sortedReadings })
+                    onSelectItem(item)
                   }}
                   isCard={!isPopup}
                 />
