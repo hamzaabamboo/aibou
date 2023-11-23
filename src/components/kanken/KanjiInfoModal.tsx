@@ -94,6 +94,15 @@ export function KanjiInfoModal(props: {
                 <ExternalLinkIcon mx="2px" />
               </Link>
               <Link
+                href={`https://www.kanjipedia.jp/search?k=${encodeURIComponent(
+                  data.kanji
+                )}&kt=1&sk=perfect`}
+                isExternal
+              >
+                Kanjipedia
+                <ExternalLinkIcon mx="2px" />
+              </Link>
+              <Link
                 href={`https://kanji.jitenon.jp/cat/search.php?getdata=${data.kanji
                   .split('')
                   .map((s) => s.charCodeAt(0).toString(16))

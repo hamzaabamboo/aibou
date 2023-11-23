@@ -115,6 +115,15 @@ export function WordInfo(props: WordInfoProps) {
           <ExternalLinkIcon mx="2px" />
         </Link>
         <Link
+          href={`https://www.kanjipedia.jp/search/?k=${encodeURIComponent(
+            item.word
+          )}&kt=1&wt=1&ky=1&wy=1&sk=partial&t=kotoba`}
+          isExternal
+        >
+          Kanjipedia
+          <ExternalLinkIcon mx="2px" />
+        </Link>
+        <Link
           href={`https://kanji.jitenon.jp/cat/search.php?getdata=${item.word
             .split('')
             .map((s) => s.charCodeAt(0).toString(16))
