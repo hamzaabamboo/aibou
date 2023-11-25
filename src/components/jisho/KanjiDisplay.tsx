@@ -42,7 +42,7 @@ export function KanjiDisplay(props: {
 
   return (
     <chakra.ruby fontSize={fontSize} textAlign="center">
-      <Text as="span" fontWeight={fontWeight}>
+      <Text as="span" fontWeight={fontWeight} fontFamily="serif">
         {word}
       </Text>
       {!hideFurigana && (

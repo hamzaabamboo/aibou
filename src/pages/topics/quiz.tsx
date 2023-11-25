@@ -31,6 +31,7 @@ function KankenPractice() {
         title={`${topic.name} Practice`}
         questions={words.map((w) => ({
           question: w.word,
+          answer: w.reading ? [w.reading] : undefined,
           data: w.jishoData
         }))}
       />

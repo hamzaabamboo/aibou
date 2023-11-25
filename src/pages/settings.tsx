@@ -1,4 +1,5 @@
 import {
+  Box,
   Button,
   Container,
   Divider,
@@ -57,8 +58,10 @@ function Home() {
               Sync Data
             </Button>
           </HStack>
-          <SyncSettings />
-          <DictionaryApiSettings />
+          <Box>
+            <SyncSettings />
+            <DictionaryApiSettings />
+          </Box>
           <HStack justifyContent="space-between">
             <Text>Sync Everything (This is destructive btw)</Text>
             <Button

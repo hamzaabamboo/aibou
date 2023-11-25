@@ -30,7 +30,7 @@ import { isKana, isRomaji, toHiragana } from 'wanakana'
 
 interface QuizQuestion {
   question: string
-  answer?: string
+  answer?: string[]
   data?: JishoWord
 }
 
@@ -115,7 +115,9 @@ export function Quiz({
     getAnswers: (question) =>
       uniq(
         mode === 'reading'
-          ? question.data?.japanese.map((e) => e.reading) ?? []
+          ? question.answer ??
+              question.data?.japanese.map((e) => e.reading) ??
+              []
           : [
               question.question,
               ...(question?.data?.japanese.map((e) => e.word) ?? []).filter(
@@ -170,6 +172,9 @@ export function Quiz({
       if (event.key === 'Enter' && ended) {
         nextQuestion()
         event.stopPropagation()
+      } else if (event.key === ';' && event.ctrlKey) {
+        setShowAnswer(true)
+        event.stopPropagation()
       }
     }
     window.addEventListener('keypress', handleKeystroke)
@@ -223,7 +228,8 @@ export function Quiz({
               reading:
                 !(ended || showAnswer) && mode === 'reading'
                   ? ''
-                  : currentQuestion?.data?.japanese[0].reading,
+                  : currentQuestion.answer?.[0] ??
+                    currentQuestion?.data?.japanese[0].reading,
               word:
                 ended || showAnswer || mode === 'reading'
                   ? currentQuestion.question ??
@@ -255,9 +261,7 @@ export function Quiz({
       {(questionData ?? currentQuestion?.data) && (
         <SearchResultItem
           isCard={false}
-          showMeaning={
-            ((ended && !!answerExplanations) || showMeaning) ?? false
-          }
+          showMeaning={(ended || showMeaning) ?? false}
           item={{
             ...(questionData ?? (currentQuestion?.data as JishoWord)),
             japanese: []

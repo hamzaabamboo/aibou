@@ -99,8 +99,10 @@ export function KanjiCross() {
   }
 
   useEffect(() => {
-    nextQuestion()
-  }, [runSQL])
+    if (runSQL && worker) {
+      nextQuestion()
+    }
+  }, [worker])
 
   useEffect(() => {
     if (ended && !wordData) {

@@ -67,6 +67,7 @@ export function Navigation() {
       <HStack cursor="pointer">
         <Link href="/kanken">Kanken</Link>
         <Link href="/topics">Topics</Link>
+        <Link href="/quiz">Quiz</Link>
         <Link href="/games">Games</Link>
         <Link href="/settings">
           <SettingsIcon aria-label="settings" />
