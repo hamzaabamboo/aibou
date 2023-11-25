@@ -189,13 +189,11 @@ function TopicDetailPage() {
       <Container maxW="4xl" pt={8}>
         <Stack>
           <Box>
-            <Button
-              leftIcon={<ArrowBackIcon />}
-              variant="ghost"
-              onClick={async () => router.push('/topics')}
-            >
-              Back to Topics
-            </Button>
+            <Link href="/topics">
+              <Button leftIcon={<ArrowBackIcon />} variant="link">
+                Back to Topics
+              </Button>
+            </Link>
           </Box>
           {isLoading ? (
             <HStack justifyContent="center">

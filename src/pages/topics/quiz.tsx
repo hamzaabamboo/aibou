@@ -1,4 +1,4 @@
-import { Box, Button, Container } from '@chakra-ui/react'
+import { Box, Button, Container, Link } from '@chakra-ui/react'
 import { useRouter } from 'next/router'
 
 import { ArrowBackIcon } from '@chakra-ui/icons'
@@ -8,7 +8,7 @@ import { useGetTopic } from 'hooks/topic/useGetTopic'
 import { useGetTopicItems } from 'hooks/topic-item/useGetTopicItems'
 
 function KankenPractice() {
-  const { query, push } = useRouter()
+  const { query } = useRouter()
   const topicId = query.id as string
   const { data: topic } = useGetTopic(topicId)
   const { data: words } = useGetTopicItems(topicId)
@@ -18,15 +18,13 @@ function KankenPractice() {
   }
 
   return (
-    <Container maxWidth={['full', null, '80vw']}>
+    <Container maxWidth={['full', null, '80vw']} pt={4}>
       <Box>
-        <Button
-          leftIcon={<ArrowBackIcon />}
-          variant="ghost"
-          onClick={async () => push('/topics')}
-        >
-          Back to Topic
-        </Button>
+        <Link href={`/topics/details?id=${topicId}`}>
+          <Button leftIcon={<ArrowBackIcon />} variant="link">
+            Back to Topic
+          </Button>
+        </Link>
       </Box>
       <Quiz
         quizId={`topic-quiz-${topicId}`}
