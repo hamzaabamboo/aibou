@@ -22,9 +22,6 @@ export function QuizSettings(props: { total?: number }) {
   const [{ data: type }, { mutate: setType }] = useKeyValueData<
     'word' | 'kanji' | 'yojijukugo'
   >('kanken-practice-type', 'word')
-  const [{ data: mode }, { mutate: setMode }] = useKeyValueData<
-    'reading' | 'writing'
-  >('kanken-practice-mode', 'writing')
   const [{ data: selectedGrade }, { mutate: setSelectGrade }] = useKeyValueData<
     KankenGrade[]
   >('kanken-practice-selected-grade', ['3', '4', '5', '6', '7'])
@@ -33,7 +30,7 @@ export function QuizSettings(props: { total?: number }) {
     <Accordion w="full" allowMultiple>
       <AccordionItem>
         <AccordionButton textAlign="center">
-          Quiz Settings: {mode} / {type} /{' '}
+          Quiz Settings: {type} /{' '}
           {(selectedGrade ?? []).sort().map(getGradeLabel).join(',')} / Total:{' '}
           {total} Items
         </AccordionButton>
@@ -66,26 +63,6 @@ export function QuizSettings(props: { total?: number }) {
                 }}
               >
                 Yojijukugo
-              </Button>
-            </ButtonGroup>
-            <ButtonGroup variant="outline" isAttached>
-              <Button
-                variant={mode === 'writing' ? 'solid' : 'outline'}
-                colorScheme={mode === 'writing' ? 'green' : undefined}
-                onClick={() => {
-                  setMode('writing')
-                }}
-              >
-                Writing
-              </Button>
-              <Button
-                variant={mode === 'reading' ? 'solid' : 'outline'}
-                colorScheme={mode === 'reading' ? 'green' : undefined}
-                onClick={() => {
-                  setMode('reading')
-                }}
-              >
-                Reading
               </Button>
             </ButtonGroup>
             <CheckboxGroup

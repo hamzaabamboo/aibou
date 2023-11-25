@@ -6,7 +6,7 @@ import { useQuizData } from './useQuizData'
 
 export interface QuizStateProps<Q, A = string> {
   quizId: string
-  getNewQuestion: () => Promise<Q>
+  getNewQuestion: () => Promise<Q | undefined>
   getAnswers: (question: Q) => A[]
   checkAnswer?: (answerKey: A[], answer: A) => boolean
   defaultAnswer?: A

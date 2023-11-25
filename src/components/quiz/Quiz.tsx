@@ -94,6 +94,7 @@ export function Quiz({
   } = useQuizState<QuizQuestion, string>({
     quizId: `${quizId}-${mode}`,
     getNewQuestion: async () => {
+      if (!allWords || allWords.length === 0) return
       setAnswerExplanations(undefined)
       let prompt
       let data

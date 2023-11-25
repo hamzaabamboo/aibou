@@ -35,7 +35,7 @@ function KanjiItem({
         {onyomi && <Text>{toKatakana(onyomi)}</Text>}
         {kunyomi && <Text>{kunyomi}</Text>}
       </Box>
-      <Text fontSize="5xl" fontWeight="400">
+      <Text fontSize="5xl" fontWeight="400" fontFamily="serif">
         {kanji}
       </Text>
     </Stack>
