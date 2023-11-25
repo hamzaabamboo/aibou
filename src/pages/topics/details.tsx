@@ -7,6 +7,7 @@ import {
   GridItem,
   Heading,
   HStack,
+  Link,
   Menu,
   MenuButton,
   MenuItem,
@@ -39,12 +40,12 @@ import {
   ItemViewOptions,
   ItemViewSettings
 } from 'components/topic/ItemViewSettings'
-import { useFetchOfflineResults } from 'hooks/offline/useFetchOfflineResults'
+import { useFetchTopicItemDataOffline } from 'hooks/offline/useFetchTopicItemDataOffline'
 import { useOfflineDictionaryAvailability } from 'hooks/offline/useOfflineDictionaryAvailability'
+import { useFetchTopicItemDataOnline } from 'hooks/search/useFetchTopicItemDataOnline'
 import { useGetTopic } from 'hooks/topic/useGetTopic'
 import { useAddTopicItem } from 'hooks/topic-item/useAddTopicItem'
-import { useFetchJishoResults } from 'hooks/useFetchJishoResults'
-import { useGetTopicItems } from 'hooks/useGetTopicItems'
+import { useGetTopicItems } from 'hooks/topic-item/useGetTopicItems'
 import { useLocalStorage } from 'hooks/useLocalStorage'
 import { useKeyValueData } from 'hooks/utils/useKeyValueData'
 import { uniq } from 'lodash'
@@ -56,7 +57,7 @@ import { sortTopicItems } from 'utils/sortTopicItems'
 
 function TopicDetailPage() {
   const searchRef = useRef<HTMLInputElement>(null)
-  const { query, push } = useRouter()
+  const { query } = useRouter()
   const topicId = query.id as string
 
   const [showPopup, setShowPopup] = useState(true)
@@ -82,9 +83,9 @@ function TopicDetailPage() {
   const { data: words, isPending: isLoadingItems } = useGetTopicItems(topicId)
   const { mutate, isPending: isAdding } = useAddTopicItem()
   const { mutate: fetchJishoResults, isPending: isFetchingJishoResults } =
-    useFetchJishoResults(topicId)
+    useFetchTopicItemDataOnline(topicId)
   const { mutate: fetchOfflineResults, isPending: isFetchingOfflineResults } =
-    useFetchOfflineResults(topicId)
+    useFetchTopicItemDataOffline(topicId)
   const {
     isDictionaryAvailable,
     isDBDownloaded,
@@ -221,6 +222,9 @@ function TopicDetailPage() {
                         />
                       </HStack>
                     )}
+                    <Link href={`/topics/quiz?id=${topicId}`}>
+                      <Button>Quiz</Button>
+                    </Link>
                     <Menu>
                       <MenuButton as={Button} rightIcon={<HamburgerIcon />}>
                         Menu
@@ -255,15 +259,6 @@ function TopicDetailPage() {
                             }}
                           >
                             Bulk Add Items (Experimental)
-                          </MenuItem>
-                        )}
-                        {isDictionaryAvailable && (
-                          <MenuItem
-                            onClick={() => {
-                              push(`/topics/quiz?id=${topicId}`)
-                            }}
-                          >
-                            Quiz (Experimental)
                           </MenuItem>
                         )}
                         <MenuItem

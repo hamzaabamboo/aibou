@@ -12,12 +12,12 @@ import { useEffect, useRef } from 'react'
 
 import format from 'date-fns/format'
 import formatDistanceToNow from 'date-fns/formatDistanceToNow'
+import { useLastUpdatedTopics } from 'hooks/settings/useLastUpdatedTopics'
 import noop from 'lodash/noop'
 
 import { Search } from '../components/jisho/Search'
 import { usePopupSearchContext } from '../hooks/contexts/usePopupSearchContext'
 import { useOfflineDictionaryAvailability } from '../hooks/offline/useOfflineDictionaryAvailability'
-import { useLastUpdatedTopics } from '../hooks/useLastUpdatedTopics'
 import { useSyncData } from '../hooks/utils/useSyncData'
 
 function Home() {

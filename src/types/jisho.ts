@@ -1,3 +1,6 @@
+import { groupBy, isEqual, partition, uniqWith } from 'lodash'
+
+import { SearchApiResults } from './api'
 import { type OfflineDictPartOfSpeech } from './offlineDictPartsOfSpeech'
 
 export type PartOfSpeech = JishoPartOfSpeech | OfflineDictPartOfSpeech
@@ -54,4 +57,56 @@ export enum JishoPartOfSpeech {
   NaAdj = 'Na-adjective (keiyodoshi)',
   OldNaAdj = 'Archaic/formal form of na-adjective',
   Expressions = 'Expressions (phrases, clauses, etc.)'
+}
+
+export const parseJishoResults = (data: SearchApiResults): JishoWord[] => {
+  const groups = Object.values(groupBy(data, 'word_id')).map((word) => {
+    const { dictionary_id, text, word_id } = word[0]
+    return {
+      attribution: { offlineDict: true, dictionary_id },
+      is_common: '',
+      japanese: word.map(({ kanji, reading }) => ({ word: kanji, reading })),
+      senses: [
+        {
+          english_definitions: [text],
+          tags: [],
+          parts_of_speech: []
+        }
+      ],
+      tags: [],
+      slug: word_id.toString()
+    }
+  })
+  const [words, kanjiOnly] = partition(groups, (g) =>
+    g.japanese.every((j) => j.reading && j.word)
+  )
+
+  const aggregated = groupBy(
+    words,
+    (d) => `${d.japanese[0].word}:${d.japanese[0].reading}`
+  )
+  const combined = Object.values(aggregated).map((wordsResult) => {
+    const relatedKanji = kanjiOnly.find((w) =>
+      w.japanese.some((j) =>
+        wordsResult.some((a) => a.japanese.some((b) => b.word === j.word))
+      )
+    )
+    const wordsWithKanji = relatedKanji
+      ? [...wordsResult, { ...relatedKanji, japanese: [] }]
+      : wordsResult
+
+    return {
+      ...wordsWithKanji[0],
+      japanese: uniqWith(
+        wordsWithKanji.flatMap((w) => w.japanese),
+        isEqual
+      ),
+      senses: uniqWith(
+        wordsWithKanji.flatMap((w) => w.senses),
+        isEqual
+      )
+    }
+  })
+
+  return combined
 }

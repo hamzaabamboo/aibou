@@ -1,6 +1,7 @@
 import { useState } from 'react'
 
-import { type QuizData } from '../types/quizData'
+import { QuizData } from 'types/quizData'
+
 import { useQuizData } from './useQuizData'
 
 export interface QuizStateProps<Q, A = string> {

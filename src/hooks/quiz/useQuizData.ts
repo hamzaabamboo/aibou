@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
-import { type QuizData } from '../types/quizData'
-import { useDBContext } from './contexts/useDBContext'
+import { useDBContext } from 'hooks/contexts/useDBContext'
+import { QuizData } from 'types/quizData'
 
 export const useQuizData = <T = Record<string, unknown>>(quizId: string) => {
   const { db } = useDBContext()

@@ -85,7 +85,7 @@ export function SearchResultItem(props: SearchResultItemProps) {
           <UnorderedList>
             {item.senses.map((i, idx) => (
               <ListItem key={idx}>
-                <Text>
+                <Text whiteSpace="pre-line">
                   <HStack as="span" spacing="1" display="inline" mr={2}>
                     {i.parts_of_speech.map((partOfSpeech, index) => (
                       <PartOfSpeechLabel

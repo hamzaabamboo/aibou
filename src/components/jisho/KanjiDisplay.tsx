@@ -6,17 +6,22 @@ export function KanjiDisplay(props: {
   data: Partial<KanjiReading>
   hideRuby?: boolean
   hideFurigana?: boolean
+  isVeryBig?: boolean
   isSmall?: boolean
 }) {
   const {
     data,
+    isVeryBig,
     isSmall = false,
     hideRuby = false,
     hideFurigana = false
   } = props
   const { word, reading } = data
 
-  const fontSize = isSmall ? 'lg' : '3xl'
+  const fontSize = (() => {
+    if (isVeryBig) return '7xl'
+    return isSmall ? 'lg' : '3xl'
+  })()
   const fontWeight = isSmall ? 'normal' : 'bold'
 
   if (!word) {

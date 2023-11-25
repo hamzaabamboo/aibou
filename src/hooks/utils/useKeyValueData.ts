@@ -29,7 +29,9 @@ export const useKeyValueData = <T extends object | string | number | boolean>(
         return defaultValue
       }
     },
-    enabled: !!db
+    enabled: !!db,
+    refetchOnWindowFocus: false,
+    networkMode: 'offlineFirst'
   })
 
   const setData = useMutation({

@@ -6,7 +6,7 @@ import { sortJishoReadings } from '../../utils/sortJishoReadings'
 import { useDBContext } from '../contexts/useDBContext'
 import { useOfflineDictionaryContext } from '../contexts/useOfflineDictionaryContext'
 
-export const useFetchOfflineResults = (topicId: string) => {
+export const useFetchTopicItemDataOffline = (topicId: string) => {
   const { db } = useDBContext()
   const { searchTerms } = useOfflineDictionaryContext()
   const queryClient = useQueryClient()

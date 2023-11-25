@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 
-import { useDBContext } from './contexts/useDBContext'
+import { useDBContext } from 'hooks/contexts/useDBContext'
 
 export const useGetTopicItems = (topicId: string) => {
   const { db } = useDBContext()

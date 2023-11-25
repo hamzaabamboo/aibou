@@ -15,15 +15,14 @@ import {
   ArrowForwardIcon,
   ArrowUpIcon
 } from '@chakra-ui/icons'
-
-import { LoadingSpinner } from '../../components/common/LoadingSpinner'
-import { SearchResultItem } from '../../components/jisho/SearchResultItem'
-import { useOfflineDictionaryContext } from '../../hooks/contexts/useOfflineDictionaryContext'
-import { usePopupSearchContext } from '../../hooks/contexts/usePopupSearchContext'
-import { useQuizState } from '../../hooks/useQuizState'
-import { type JishoWord } from '../../types/jisho'
-import { type TopicItem } from '../../types/topic'
-import { getKanjiCrossPrompt } from '../../utils/sql/getKanjiCrossPrompt'
+import { LoadingSpinner } from 'components/common/LoadingSpinner'
+import { SearchResultItem } from 'components/jisho/SearchResultItem'
+import { useOfflineDictionaryContext } from 'hooks/contexts/useOfflineDictionaryContext'
+import { usePopupSearchContext } from 'hooks/contexts/usePopupSearchContext'
+import { useQuizState } from 'hooks/quiz/useQuizState'
+import { JishoWord } from 'types/jisho'
+import { TopicItem } from 'types/topic'
+import { getKanjiCrossPrompt } from 'utils/sql/getKanjiCrossPrompt'
 
 function Kanji({ character }: { character: string }) {
   return <Text fontSize="3em">{character}</Text>

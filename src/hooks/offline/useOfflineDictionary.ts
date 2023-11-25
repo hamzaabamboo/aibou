@@ -5,7 +5,8 @@ import { useOfflineDictionaryContext } from '../contexts/useOfflineDictionaryCon
 
 export const useOfflineDictionary = (
   keyword: string,
-  options: { exact?: boolean } = {}
+  options: { exact?: boolean } = {},
+  enabled = false
 ) => {
   const { exact } = options
   const { worker } = useOfflineDictionaryContext()
@@ -28,6 +29,8 @@ export const useOfflineDictionary = (
     queryFn: async () => {
       if (!keyword) return []
       return search(keyword)
-    }
+    },
+    enabled,
+    refetchOnMount: false
   })
 }

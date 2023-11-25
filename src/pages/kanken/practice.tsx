@@ -9,32 +9,31 @@ import {
 } from '@chakra-ui/react'
 import { useEffect, useMemo, useRef, useState } from 'react'
 
-import { toHiragana, toKatakana } from 'wanakana'
-
-import { BigTextInput } from '../../components/common/BigTextInput'
-import { LoadingSpinner } from '../../components/common/LoadingSpinner'
-import { KanjiInfo } from '../../components/kanken/KanjiInfo'
+import { BigTextInput } from 'components/common/BigTextInput'
+import { LoadingSpinner } from 'components/common/LoadingSpinner'
+import { KanjiInfo } from 'components/kanken/KanjiInfo'
 import {
   KankenQuestion,
-  type PracticeQuestion
-} from '../../components/kanken/KankenQuestion'
-import { PracticeStats } from '../../components/kanken/PracticeStats'
-import { QuizSettings } from '../../components/kanken/QuizSettings'
-import kankenData from '../../constant/kanken-data.json'
-import { useOfflineDictionaryContext } from '../../hooks/contexts/useOfflineDictionaryContext'
-import { useQuizState } from '../../hooks/useQuizState'
-import { useKeyValueData } from '../../hooks/utils/useKeyValueData'
-import { type JishoWord } from '../../types/jisho'
-import { type KanjiData } from '../../types/kanji'
+  PracticeQuestion
+} from 'components/kanken/KankenQuestion'
+import { PracticeStats } from 'components/kanken/PracticeStats'
+import { QuizSettings } from 'components/kanken/QuizSettings'
+import kankenData from 'constant/kanken-data.json'
+import { useOfflineDictionaryContext } from 'hooks/contexts/useOfflineDictionaryContext'
+import { useQuizState } from 'hooks/quiz/useQuizState'
+import { useKeyValueData } from 'hooks/utils/useKeyValueData'
+import { JishoWord } from 'types/jisho'
+import { KanjiData } from 'types/kanji'
 import {
-  type KankenData,
-  type KankenGrade,
-  type KankenKanjiData,
-  type KankenWordData,
-  type KankenYojijukugoData
-} from '../../types/kanken'
-import { parseKanjiSQLResult } from '../../utils/kanken/parseKanjiSQLresult'
-import { getKanjiInfoSQL } from '../../utils/sql/getKanjiInfoSQL'
+  KankenData,
+  KankenGrade,
+  KankenKanjiData,
+  KankenWordData,
+  KankenYojijukugoData
+} from 'types/kanken'
+import { parseKanjiSQLResult } from 'utils/kanken/parseKanjiSQLresult'
+import { getKanjiInfoSQL } from 'utils/sql/getKanjiInfoSQL'
+import { toHiragana, toKatakana } from 'wanakana'
 
 function KankenPractice() {
   const answerInputRef = useRef<HTMLInputElement>(null)

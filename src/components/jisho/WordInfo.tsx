@@ -13,13 +13,13 @@ import { useState } from 'react'
 import { useRouter } from 'next/router'
 
 import { DownloadIcon, ExternalLinkIcon } from '@chakra-ui/icons'
-import { useOfflineDictionary } from 'hooks/offline/useOfflineDictionary'
+import { useFetchTopicItemDataOnline } from 'hooks/search/useFetchTopicItemDataOnline'
+import { useGetSearchResults } from 'hooks/search/useGetSearch'
 import { sortJishoReadings } from 'utils/sortJishoReadings'
 
 import { useGetTopicsList } from '../../hooks/topic/useGetTopicsList'
 import { useAddTopicItem } from '../../hooks/topic-item/useAddTopicItem'
 import { useUpdateTopicItem } from '../../hooks/topic-item/useUpdateTopicItem'
-import { useFetchJishoResults } from '../../hooks/useFetchJishoResults'
 import { type JishoWord } from '../../types/jisho'
 import { type TopicItem } from '../../types/topic'
 import { KanjiDisplay } from './KanjiDisplay'
@@ -35,11 +35,13 @@ export function WordInfo(props: WordInfoProps) {
   const [topicIDToAdd, setTopicIDToAdd] = useState<string | undefined>()
   const { mutate: updateTopicItem, isPending: isLoadingTopics } =
     useUpdateTopicItem()
-  const { mutate: fetchJishoResults } = useFetchJishoResults(item?.topicId)
+  const { mutate: fetchJishoResults } = useFetchTopicItemDataOnline(
+    item?.topicId
+  )
   const { data: topics } = useGetTopicsList()
   const { mutate: addTopicItem, isPending: isLoading } = useAddTopicItem()
 
-  const { data } = useOfflineDictionary(item.word, { exact: true })
+  const { data } = useGetSearchResults(item.word, { exact: true })
 
   const { push } = useRouter()
   const toast = useToast()
