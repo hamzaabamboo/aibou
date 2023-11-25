@@ -19,16 +19,24 @@ export const useFetchTopicItemDataOffline = (topicId: string) => {
         (await searchTerms?.(words.map((w) => w.word))) ?? []
       const p = words.map(async (word, index) => {
         if (!word.id) return
-        const jishoData = searchResults[index].results.find((m: JishoWord) =>
-          m.japanese.some(
-            (w) => w.word === word.word || w.reading === word.word
+        const jishoData =
+          searchResults[index].results.find((m: JishoWord) =>
+            m.japanese.some(
+              (w) => w.word === word.word && w.reading === word.reading
+            )
+          ) ??
+          searchResults[index].results.find((m: JishoWord) =>
+            m.japanese.some(
+              (w) => w.word === word.word || w.reading === word.word
+            )
           )
-        )
 
         if (jishoData != null) {
+          const d = sortJishoReadings(jishoData, word.word)
           await db?.topicEntries.put({
             ...word,
-            jishoData: sortJishoReadings(jishoData, word.word)
+            jishoData: d,
+            reading: d.japanese[0].reading
           })
         }
       })

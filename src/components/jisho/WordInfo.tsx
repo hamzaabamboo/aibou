@@ -47,31 +47,35 @@ export function WordInfo(props: WordInfoProps) {
   const toast = useToast()
 
   const handleChangeReading = (index: number) => {
+    const newReading =
+      item.jishoData != null && index !== 0
+        ? [
+            item.jishoData.japanese[index],
+            ...(item.jishoData?.japanese.filter((_, idx) => idx !== index) ??
+              [])
+          ]
+        : item.jishoData?.japanese ?? []
+
     updateTopicItem({
       ...item,
       word: item.jishoData?.japanese[index].word ?? item.word,
       jishoData: {
         ...(item.jishoData as JishoWord),
-        japanese:
-          item.jishoData != null && index !== 0
-            ? [
-                item.jishoData.japanese[index],
-                ...(item.jishoData?.japanese.filter(
-                  (_, idx) => idx !== index
-                ) ?? [])
-              ]
-            : item.jishoData?.japanese ?? []
-      }
+        japanese: newReading
+      },
+      reading: newReading[0].reading
     })
   }
 
   const handleChangeMeaning = (index: number) => {
     if (!data) return
+    const newData = data[index]
     updateTopicItem({
       ...item,
       jishoData: {
-        ...data[index]
-      }
+        ...newData
+      },
+      reading: newData.japanese[0].reading
     })
   }
 

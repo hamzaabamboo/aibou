@@ -13,6 +13,7 @@ export interface TopicItem {
   id?: string
   topicId: string
   word: string
+  reading?: string
   notes?: string
   jishoData?: JishoWord
   isDeleted?: boolean

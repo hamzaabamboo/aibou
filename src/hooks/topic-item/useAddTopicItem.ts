@@ -40,6 +40,7 @@ export const useAddTopicItem = () => {
           id: nanoid(8),
           topicId,
           tags: [],
+          reading: data.jishoData?.japanese?.[0]?.reading,
           createdAt: new Date(),
           lastUpdatedAt: new Date()
         })

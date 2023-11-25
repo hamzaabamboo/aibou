@@ -32,16 +32,24 @@ export const useFetchTopicItemDataOnline = (topicId: string) => {
         )
 
         const results = parseJishoResults(data)
-        const jishoData = results.find((m) =>
-          m.japanese.some(
-            (w) => w.word === word.word || w.reading === word.word
+        const jishoData =
+          results.find((m) =>
+            m.japanese.some(
+              (w) => w.word === word.word && w.reading === word.reading
+            )
+          ) ??
+          results.find((m) =>
+            m.japanese.some(
+              (w) => w.word === word.word || w.word === word.reading
+            )
           )
-        )
 
         if (jishoData != null) {
+          const d = sortJishoReadings(jishoData, word.word)
           await db?.topicEntries.put({
             ...word,
-            jishoData: sortJishoReadings(jishoData, word.word)
+            jishoData: d,
+            reading: d.japanese[0].reading
           })
         }
       })

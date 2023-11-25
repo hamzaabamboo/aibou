@@ -59,6 +59,7 @@ const useBulkAddItem = () => {
             ...d,
             id: nanoid(8),
             topicId,
+            reading: d.jishoData?.japanese[0]?.reading,
             tags: [],
             createdAt: new Date(),
             lastUpdatedAt: new Date()

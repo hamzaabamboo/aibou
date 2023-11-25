@@ -16,10 +16,10 @@ export class AibouDB extends Dexie {
 
   constructor() {
     super('aibou-app')
-    this.version(5).stores({
-      topics: '+= 1id, name, createdAt, lastUpdatedAt, isDeleted',
+    this.version(6).stores({
+      topics: '++id, name, createdAt, lastUpdatedAt, isDeleted',
       topicEntries:
-        '+= 1id, topicId, word, createdAt,lastUpdatedAt, isDeleted, *tags',
+        '++id, topicId, word, reading, createdAt, lastUpdatedAt, isDeleted, *tags',
       keyValues: '&key',
       quiz: 'id'
     })
