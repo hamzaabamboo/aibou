@@ -21,6 +21,6 @@ export const useGetTopic = (topicId: string) => {
         return undefined
       }
     },
-    enabled: !!topicId && db !== null
+    enabled: !!topicId && db !== null && topicId !== null
   })
 }

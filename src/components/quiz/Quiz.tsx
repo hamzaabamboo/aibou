@@ -59,8 +59,11 @@ export function Quiz({
 
   const allWords = questions
 
-  const getQuestionData = async (question: string): Promise<JishoWord> => {
-    const results = (await searchTerms?.([question]))?.[0].results ?? []
+  const getQuestionData = async (
+    question: string
+  ): Promise<JishoWord | undefined> => {
+    const results = (await searchTerms?.([question]))?.[0].results
+    if (!results || results.length === 0) return undefined
     return {
       ...results[0],
       japanese: uniqWith(
@@ -92,11 +95,16 @@ export function Quiz({
     quizId: `${quizId}-${mode}`,
     getNewQuestion: async () => {
       setAnswerExplanations(undefined)
-      const prompt =
-        allWords?.[Math.round(Math.random() * ((allWords?.length ?? 1) - 1))]
-      const data = prompt.data
-        ? prompt.data
-        : await getQuestionData(prompt.question ?? '')
+      let prompt
+      let data
+      while (data === undefined) {
+        prompt =
+          allWords?.[Math.round(Math.random() * ((allWords?.length ?? 1) - 1))]
+        data = prompt.data
+          ? prompt.data
+          : // eslint-disable-next-line no-await-in-loop
+            await getQuestionData(prompt.question ?? '')
+      }
       setQuestionData(data)
       setTimeout(() => {
         answerInputRef.current?.focus()
