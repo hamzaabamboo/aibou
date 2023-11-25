@@ -30,9 +30,12 @@ export const useKeyValueData = <T extends object | string | number | boolean>(
       }
     },
     enabled: !!db,
-    refetchOnWindowFocus: false,
-    networkMode: 'offlineFirst'
+    refetchOnWindowFocus: false
   })
+
+  if (data.error) {
+    console.log(data.error)
+  }
 
   const setData = useMutation({
     mutationFn: async (newData: T) => {
