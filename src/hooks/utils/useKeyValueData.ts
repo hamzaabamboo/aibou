@@ -6,6 +6,8 @@ import {
   type UseQueryResult
 } from '@tanstack/react-query'
 
+import { initDexie } from 'utils/db/db'
+
 import { useDBContext } from '../contexts/useDBContext'
 
 export const useKeyValueData = <T extends object | string | number | boolean>(
@@ -17,20 +19,21 @@ export const useKeyValueData = <T extends object | string | number | boolean>(
   const data = useQuery<T>({
     queryKey: ['fetchKeyData', key],
     queryFn: async () => {
+      const database = db ?? (await initDexie())
       try {
-        const storedData = await db?.keyValues.get(key)
+        const storedData = await database?.keyValues.get(key)
         if (storedData == null) {
-          await db?.keyValues.add({ key, value: defaultValue })
+          await database?.keyValues.add({ key, value: defaultValue })
           return defaultValue
         }
         return (storedData.value as T) ?? defaultValue
       } catch (error) {
-        await db?.keyValues.add({ key, value: defaultValue })
+        await database?.keyValues.add({ key, value: defaultValue })
         return defaultValue
       }
     },
-    enabled: !!db,
-    refetchOnWindowFocus: false
+    enabled: db !== undefined,
+    refetchOnWindowFocus: true
   })
 
   if (data.error) {
