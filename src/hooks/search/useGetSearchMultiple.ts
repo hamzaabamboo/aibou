@@ -19,8 +19,8 @@ export const useGetSearchMultiple = () => {
     ''
   )
 
-  const isOffline = isDBDownloaded && isDictionaryAvailable
   return async (queries: string[]) => {
+    const isOffline = isDBDownloaded && isDictionaryAvailable
     if (isOffline) {
       return searchTerms?.(queries)
     }

@@ -74,7 +74,7 @@ export const parseJishoResults = (data: SearchApiResults): JishoWord[] => {
         }
       ],
       tags: [],
-      slug: word_id.toString()
+      slug: word_id?.toString()
     }
   })
   const [words, kanjiOnly] = partition(groups, (g) =>

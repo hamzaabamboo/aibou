@@ -46,7 +46,7 @@ export function Quiz({
   const answerInputRef = useRef<HTMLInputElement>(null)
   const questionBoxRef = useRef<HTMLDivElement>(null)
   const [{ data: mode, isPending: modeLoading }, { mutate: setMode }] =
-    useKeyValueData<'reading' | 'writing'>('quiz-practice-mode', 'writing')
+    useKeyValueData<'reading' | 'writing'>('quiz-practice-mode', 'reading')
 
   const [questionData, setQuestionData] = useState<JishoWord>()
   const [answerExplanations, setAnswerExplanations] = useState<KanjiData[]>()
@@ -98,13 +98,15 @@ export function Quiz({
       setAnswerExplanations(undefined)
       let prompt
       let data
-      while (data === undefined) {
+      let tries = 0
+      while (!prompt?.answer && data === undefined && tries < allWords.length) {
         prompt =
           allWords?.[Math.round(Math.random() * ((allWords?.length ?? 1) - 1))]
         data = prompt.data
           ? prompt.data
           : // eslint-disable-next-line no-await-in-loop
             await getQuestionData(prompt.question ?? '')
+        tries += 1
       }
       setQuestionData(data)
       setTimeout(() => {
@@ -202,15 +204,6 @@ export function Quiz({
       <Stack w="full" alignItems="center">
         <ButtonGroup variant="outline" isAttached>
           <Button
-            variant={mode === 'writing' ? 'solid' : 'outline'}
-            colorScheme={mode === 'writing' ? 'green' : undefined}
-            onClick={() => {
-              setMode('writing')
-            }}
-          >
-            Writing
-          </Button>
-          <Button
             variant={mode === 'reading' ? 'solid' : 'outline'}
             colorScheme={mode === 'reading' ? 'green' : undefined}
             onClick={() => {
@@ -218,6 +211,15 @@ export function Quiz({
             }}
           >
             Reading
+          </Button>
+          <Button
+            variant={mode === 'writing' ? 'solid' : 'outline'}
+            colorScheme={mode === 'writing' ? 'green' : undefined}
+            onClick={() => {
+              setMode('writing')
+            }}
+          >
+            Writing
           </Button>
         </ButtonGroup>
       </Stack>
@@ -250,6 +252,27 @@ export function Quiz({
           w="full"
           textAlign="center"
         />
+        <HStack>
+          <Button
+            onClick={() => {
+              nextQuestion()
+            }}
+          >
+            Skip
+          </Button>
+          <Button
+            colorScheme={ended ? 'green' : 'red'}
+            onClick={() => {
+              if (ended) {
+                nextQuestion()
+              } else {
+                setShowAnswer(true)
+              }
+            }}
+          >
+            {ended ? 'Next Questions' : 'Give Up'}
+          </Button>
+        </HStack>
       </Stack>
       <Switch
         checked={showMeaning ?? false}
@@ -258,7 +281,7 @@ export function Quiz({
         }}
       >
         Show Meaning
-      </Switch>
+      </Switch>{' '}
       {(questionData ?? currentQuestion?.data) && (
         <SearchResultItem
           isCard={false}
@@ -269,24 +292,6 @@ export function Quiz({
           }}
         />
       )}
-      <HStack>
-        <Button
-          onClick={() => {
-            nextQuestion()
-          }}
-        >
-          New Question
-        </Button>
-        <Button
-          colorScheme="red"
-          disabled={ended}
-          onClick={() => {
-            setShowAnswer(true)
-          }}
-        >
-          Show Answer
-        </Button>
-      </HStack>
       {quizData && (
         <PracticeStats
           getQuestionString={(q) => q.question}
