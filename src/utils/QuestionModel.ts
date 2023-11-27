@@ -39,8 +39,8 @@ export class QuestionModel<QuestionType> {
     if (!question) return
     if (this.mode === 'conquest') {
       if (
-        question.level === 0 ||
-        question.level === QuestionModel.GRADUATE_LEVEL - 1
+        question.level === 0 &&
+        question.level >= QuestionModel.GRADUATE_LEVEL
       )
         return
       question.level += 1
@@ -55,13 +55,13 @@ export class QuestionModel<QuestionType> {
         0,
         question
       )
-      return
+    } else {
+      this.queue.splice(
+        randInt(question.level + 1 * QuestionModel.INTERVAL, this.queue.length),
+        0,
+        question
+      )
     }
-    this.queue.splice(
-      randInt(question.level + 1 * QuestionModel.INTERVAL, this.queue.length),
-      0,
-      question
-    )
   }
 
   wrongAnswer() {
@@ -71,14 +71,16 @@ export class QuestionModel<QuestionType> {
     }
     const question = this.queue.shift()
     if (!question) return
-    if (this.mode === 'conquest') {
-      question.level = 1
-    }
+    question.level = 1
     this.queue.splice(randInt(0, QuestionModel.INTERVAL), 0, question)
   }
 
   currentQuestion() {
     return QuestionModel.getData(this.queue[0])
+  }
+
+  upcomingQuestion() {
+    return QuestionModel.getData(this.queue[1])
   }
 
   size() {

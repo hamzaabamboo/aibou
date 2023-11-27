@@ -55,6 +55,7 @@ export function OfflineDictionaryProvider({
         worker.onmessage = ({ data }) => {
           if (data.type === 'searchWordsResult') {
             resolve(data.data)
+            setBusy(false)
           }
         }
       }),

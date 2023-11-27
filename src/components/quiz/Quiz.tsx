@@ -70,12 +70,15 @@ export function Quiz({
     new QuestionModel<QuizQuestion>(questions, questionMode)
   )
 
+  const nextQuestionCache = useRef<Record<string, JishoWord>>({})
+
   useEffect(() => {
     if (isLoadingQuestionMode) return
     setQuestionManager(new QuestionModel(questions, questionMode))
+    nextQuestionCache.current = {}
   }, [questions, questionMode, isLoadingQuestionMode])
 
-  const getQuestionData = async (
+  const fetchQuestionData = async (
     question: string
   ): Promise<JishoWord | undefined> => {
     const results = (await searchTerms?.([question]))?.[0].results
@@ -91,6 +94,15 @@ export function Quiz({
         isEqual
       )
     }
+  }
+
+  const getQuestionData = async (
+    question: string
+  ): Promise<JishoWord | undefined> => {
+    if (question in nextQuestionCache.current) {
+      return nextQuestionCache.current[question]
+    }
+    return fetchQuestionData(question)
   }
 
   const {
@@ -132,6 +144,11 @@ export function Quiz({
         }
       }
       setQuestionData(data)
+      try {
+        fetchQuestionData(questionsManager.upcomingQuestion().question)
+      } catch {
+        // Do nothing
+      }
       setTimeout(() => {
         answerInputRef.current?.focus()
         questionBoxRef.current?.scrollIntoView()
@@ -174,16 +191,20 @@ export function Quiz({
     const letters =
       data.split('').filter((e) => !(isKana(e) || isRomaji(e))) ?? []
     const r: KanjiData[] = []
-    await Promise.all(
-      letters.map(async (letter) => {
-        const res = await runSQL?.({
-          query: getKanjiInfoSQL(),
-          variables: { $searchTerm: letter }
+    try {
+      await Promise.all(
+        letters.map(async (letter) => {
+          const res = await runSQL?.({
+            query: getKanjiInfoSQL(),
+            variables: { $searchTerm: letter }
+          })
+          r.push(...(res?.map(parseKanjiSQLResult) ?? []))
         })
-        r.push(...(res?.map(parseKanjiSQLResult) ?? []))
-      })
-    )
-    setAnswerExplanations(r)
+      )
+      setAnswerExplanations(r)
+    } catch {
+      // Do nothing
+    }
   }
 
   useEffect(() => {
@@ -278,7 +299,7 @@ export function Quiz({
               }
             }}
           >
-            {ended ? 'Next Questions' : 'Give Up'}
+            {ended ? 'Next Question' : 'Give Up'}
           </Button>
         </HStack>
       </Stack>

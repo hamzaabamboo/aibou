@@ -1,6 +1,7 @@
+/* eslint-disable simple-import-sort/imports */
 import initSqlJs, { type Database } from 'sql.js'
 
-import { type DictionaryDB, initDictionaryDB } from '../utils/db/dictionary-db'
+import { initDictionaryDB, type DictionaryDB } from '../utils/db/dictionary-db'
 import { parseOfflineDBResult } from '../utils/parseOfflineDBResult'
 import { getOfflineSearchSQL } from '../utils/sql/getOfflineSearchSQL'
 
@@ -80,7 +81,6 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
         )
       }
       console.timeEnd('Offline Search')
-      console.debug(data.data)
       postMessage({
         type: 'searchWordResult',
         data: parseOfflineDBResult(res, tagsData!)
@@ -111,7 +111,6 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
         })
       )
       console.timeEnd('Offline Search (multiple)')
-      console.debug(data.data)
       postMessage({ type: 'searchWordsResult', data: results })
       break
     }
