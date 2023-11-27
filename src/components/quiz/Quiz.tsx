@@ -6,7 +6,8 @@ import {
   Heading,
   HStack,
   Stack,
-  Switch
+  Switch,
+  Text
 } from '@chakra-ui/react'
 import { useEffect, useRef, useState } from 'react'
 
@@ -25,6 +26,7 @@ import { isEqual, uniq, uniqWith } from 'lodash'
 import { JishoWord } from 'types/jisho'
 import { KanjiData } from 'types/kanji'
 import { parseKanjiSQLResult } from 'utils/kanken/parseKanjiSQLresult'
+import { QuestionModel } from 'utils/QuestionModel'
 import { getKanjiInfoSQL } from 'utils/sql/getKanjiInfoSQL'
 import { isKana, isRomaji, toHiragana } from 'wanakana'
 
@@ -47,6 +49,13 @@ export function Quiz({
   const questionBoxRef = useRef<HTMLDivElement>(null)
   const [{ data: mode, isPending: modeLoading }, { mutate: setMode }] =
     useKeyValueData<'reading' | 'writing'>('quiz-practice-mode', 'reading')
+  const [
+    { data: questionMode, isPending: isLoadingQuestionMode },
+    { mutate: setQuestionMode }
+  ] = useKeyValueData<'normal' | 'conquest' | 'random'>(
+    `${quizId}-shuffle-mode`,
+    'normal'
+  )
 
   const [questionData, setQuestionData] = useState<JishoWord>()
   const [answerExplanations, setAnswerExplanations] = useState<KanjiData[]>()
@@ -57,7 +66,14 @@ export function Quiz({
   const { runSQL } = useOfflineDictionaryContext()
   const searchTerms = useGetSearchMultiple()
 
-  const allWords = questions
+  const [questionsManager, setQuestionManager] = useState(
+    new QuestionModel<QuizQuestion>(questions, questionMode)
+  )
+
+  useEffect(() => {
+    if (isLoadingQuestionMode) return
+    setQuestionManager(new QuestionModel(questions, questionMode))
+  }, [questions, questionMode, isLoadingQuestionMode])
 
   const getQuestionData = async (
     question: string
@@ -88,25 +104,32 @@ export function Quiz({
     win,
     giveUp,
     nextQuestion,
+    skipQuestion,
     resetQuestion,
     quizData,
     resetStats
   } = useQuizState<QuizQuestion, string>({
     quizId: `${quizId}-${mode}`,
     getNewQuestion: async () => {
-      if (!allWords || allWords.length === 0) return
+      if (!questionsManager || questionsManager.size() === 0) return
       setAnswerExplanations(undefined)
       let prompt
       let data
       let tries = 0
-      while (!prompt?.answer && data === undefined && tries < allWords.length) {
-        prompt =
-          allWords?.[Math.round(Math.random() * ((allWords?.length ?? 1) - 1))]
+      while (
+        !prompt?.answer &&
+        data === undefined &&
+        tries < questionsManager.size()
+      ) {
+        prompt = questionsManager.currentQuestion()
         data = prompt.data
           ? prompt.data
           : // eslint-disable-next-line no-await-in-loop
             await getQuestionData(prompt.question ?? '')
         tries += 1
+        if (!data) {
+          questionsManager.nextQuestion()
+        }
       }
       setQuestionData(data)
       setTimeout(() => {
@@ -137,6 +160,12 @@ export function Quiz({
               .split('.')[0]
         )
         .includes(toHiragana(answerToCheck)),
+    onCorrectAnswer: () => {
+      questionsManager.correctAnswer()
+    },
+    onWrongAnswer: () => {
+      questionsManager.wrongAnswer()
+    },
     defaultAnswer: ''
   })
 
@@ -158,18 +187,15 @@ export function Quiz({
   }
 
   useEffect(() => {
-    if (!allWords) return
+    if (!questionsManager) return
     resetQuestion()
     nextQuestion(false)
-  }, [allWords, mode])
+  }, [questionsManager, mode])
 
   useEffect(() => {
     if (ended && !answerExplanations) {
       fetchKanjiMeanings()
     }
-  }, [ended])
-
-  useEffect(() => {
     const handleKeystroke = (event: KeyboardEvent) => {
       // Next question
       if (event.key === 'Enter' && ended) {
@@ -198,30 +224,12 @@ export function Quiz({
 
   return (
     <Stack w="full" alignItems="center">
-      <HStack mt="8">
+      <Stack mt="8" alignItems="center">
         <Heading>{title}</Heading>
-      </HStack>
-      <Stack w="full" alignItems="center">
-        <ButtonGroup variant="outline" isAttached>
-          <Button
-            variant={mode === 'reading' ? 'solid' : 'outline'}
-            colorScheme={mode === 'reading' ? 'green' : undefined}
-            onClick={() => {
-              setMode('reading')
-            }}
-          >
-            Reading
-          </Button>
-          <Button
-            variant={mode === 'writing' ? 'solid' : 'outline'}
-            colorScheme={mode === 'writing' ? 'green' : undefined}
-            onClick={() => {
-              setMode('writing')
-            }}
-          >
-            Writing
-          </Button>
-        </ButtonGroup>
+        <Text>
+          {questionsManager.size()}{' '}
+          {questionMode === 'conquest' ? 'remaining' : 'items'}{' '}
+        </Text>
       </Stack>
       <Stack ref={questionBoxRef} alignItems="center" width="full">
         {currentQuestion && (
@@ -255,7 +263,7 @@ export function Quiz({
         <HStack>
           <Button
             onClick={() => {
-              nextQuestion()
+              skipQuestion()
             }}
           >
             Skip
@@ -274,14 +282,6 @@ export function Quiz({
           </Button>
         </HStack>
       </Stack>
-      <Switch
-        checked={showMeaning ?? false}
-        onChange={(e) => {
-          setShowMeaning(e.target.checked)
-        }}
-      >
-        Show Meaning
-      </Switch>{' '}
       {(questionData ?? currentQuestion?.data) && (
         <SearchResultItem
           isCard={false}
@@ -299,6 +299,67 @@ export function Quiz({
           onResetCounter={resetStats}
         />
       )}
+      <Stack w="full" alignItems="center">
+        <HStack>
+          <ButtonGroup variant="outline" isAttached>
+            <Button
+              variant={mode === 'reading' ? 'solid' : 'outline'}
+              colorScheme={mode === 'reading' ? 'green' : undefined}
+              onClick={() => {
+                setMode('reading')
+              }}
+            >
+              Reading
+            </Button>
+            <Button
+              variant={mode === 'writing' ? 'solid' : 'outline'}
+              colorScheme={mode === 'writing' ? 'green' : undefined}
+              onClick={() => {
+                setMode('writing')
+              }}
+            >
+              Writing
+            </Button>
+          </ButtonGroup>
+          <Switch
+            checked={showMeaning ?? undefined}
+            onChange={(e) => {
+              setShowMeaning(e.target.checked)
+            }}
+          >
+            Show Meaning
+          </Switch>
+        </HStack>
+        <ButtonGroup variant="outline" isAttached>
+          <Button
+            variant={questionMode === 'normal' ? 'solid' : 'outline'}
+            colorScheme={questionMode === 'normal' ? 'green' : undefined}
+            onClick={() => {
+              setQuestionMode('normal')
+            }}
+          >
+            Progressive
+          </Button>
+          <Button
+            variant={questionMode === 'random' ? 'solid' : 'outline'}
+            colorScheme={questionMode === 'random' ? 'green' : undefined}
+            onClick={() => {
+              setQuestionMode('random')
+            }}
+          >
+            Random
+          </Button>
+          <Button
+            variant={questionMode === 'conquest' ? 'solid' : 'outline'}
+            colorScheme={questionMode === 'conquest' ? 'green' : undefined}
+            onClick={() => {
+              setQuestionMode('conquest')
+            }}
+          >
+            Conquest
+          </Button>
+        </ButtonGroup>
+      </Stack>
       {ended && answerExplanations && (
         <Grid
           templateColumns={['repeat(2, 1fr)', null, 'repeat(4, 1fr)']}

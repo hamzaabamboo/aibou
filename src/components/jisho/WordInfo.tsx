@@ -211,7 +211,7 @@ export function WordInfo(props: WordInfoProps) {
           <HStack>
             <Text>Select Topic:</Text>
             <Select
-              isDisabled={isLoadingTopics}
+              isDisabled={isLoadingTopics || topics?.length === 0}
               value={topicIDToAdd}
               onChange={(e) => {
                 setTopicIDToAdd(e.target.value)
@@ -224,7 +224,7 @@ export function WordInfo(props: WordInfoProps) {
               ))}
             </Select>
             <Button
-              isDisabled={isLoadingTopics}
+              isDisabled={isLoadingTopics || topics?.length === 0}
               onClick={async () => {
                 await handleAddToTopic()
               }}

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 
 import { QuizData } from 'types/quizData'
 
@@ -9,6 +9,8 @@ export interface QuizStateProps<Q, A = string> {
   getNewQuestion: () => Promise<Q | undefined>
   getAnswers: (question: Q) => A[]
   checkAnswer?: (answerKey: A[], answer: A) => boolean
+  onCorrectAnswer?: () => void
+  onWrongAnswer?: () => void
   defaultAnswer?: A
 }
 export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
@@ -17,7 +19,9 @@ export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
     getNewQuestion,
     getAnswers,
     checkAnswer,
-    defaultAnswer = ''
+    defaultAnswer = '',
+    onCorrectAnswer,
+    onWrongAnswer
   } = props
   const [answer, setAnswer] = useState<A>(defaultAnswer as A)
   const [showAnswer, setShowAnswer] = useState(false)
@@ -40,6 +44,18 @@ export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
     setShowAnswer(false)
     setAnswer(defaultAnswer as A)
   }
+
+  useEffect(() => {
+    if (win) {
+      onCorrectAnswer?.()
+    }
+  }, [win])
+
+  useEffect(() => {
+    if (giveUp) {
+      onWrongAnswer?.()
+    }
+  }, [giveUp])
 
   const nextQuestion = async (submitAnswer = true) => {
     if (isLoadingQuestion) return
@@ -74,6 +90,7 @@ export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
   }
 
   const skipQuestion = async () => {
+    onWrongAnswer?.()
     await nextQuestion()
   }
 
