@@ -16,6 +16,7 @@ export const useQuizData = <T = Record<string, unknown>>(quizId: string) => {
         stats: { correct: 0, skipped: 0 }
       }
       try {
+        if (!quizId) return defaultQuiz
         const data = (await db?.quiz.get(quizId)) as unknown as QuizData<T>
         if (data == null) {
           await db?.quiz.add(defaultQuiz as QuizData)
@@ -32,6 +33,7 @@ export const useQuizData = <T = Record<string, unknown>>(quizId: string) => {
 
   const editQuizData = useMutation({
     mutationFn: async (data: QuizData<T>) => {
+      if (!quizId) return
       await db?.quiz.update(quizId, { ...data, id: quizId })
     },
     onSuccess: () => {

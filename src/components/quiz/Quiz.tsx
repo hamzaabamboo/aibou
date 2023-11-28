@@ -25,16 +25,13 @@ import { useKeyValueData } from 'hooks/utils/useKeyValueData'
 import { isEqual, uniq, uniqWith } from 'lodash'
 import { JishoWord } from 'types/jisho'
 import { KanjiData } from 'types/kanji'
+import { QuizQuestion } from 'types/quizData'
 import { parseKanjiSQLResult } from 'utils/kanken/parseKanjiSQLresult'
 import { QuestionModel } from 'utils/QuestionModel'
 import { getKanjiInfoSQL } from 'utils/sql/getKanjiInfoSQL'
 import { isKana, isRomaji, toHiragana } from 'wanakana'
 
-interface QuizQuestion {
-  question: string
-  answer?: string[]
-  data?: JishoWord
-}
+import { ConquestStats } from './ConquestStats'
 
 export function Quiz({
   title,
@@ -121,7 +118,7 @@ export function Quiz({
     quizData,
     resetStats
   } = useQuizState<QuizQuestion, string>({
-    quizId: `${quizId}-${mode}`,
+    quizId: mode ? `${quizId}-${mode}` : ``,
     getNewQuestion: async () => {
       if (!questionsManager || questionsManager.size() === 0) return
       setAnswerExplanations(undefined)
@@ -242,7 +239,6 @@ export function Quiz({
   if (modeLoading) {
     return <LoadingSpinner />
   }
-
   return (
     <Stack w="full" alignItems="center">
       <Stack mt="8" alignItems="center">
@@ -320,6 +316,7 @@ export function Quiz({
           onResetCounter={resetStats}
         />
       )}
+      {questionMode === 'conquest' && <ConquestStats data={questionsManager} />}
       <Stack w="full" alignItems="center">
         <HStack>
           <ButtonGroup variant="outline" isAttached>

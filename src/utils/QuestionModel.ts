@@ -1,11 +1,9 @@
 import { shuffle } from 'lodash'
+import { QuestionScore } from 'types/conquestData'
 
 const randInt = (min: number, max: number) =>
   Math.round(Math.random() * (max - min)) + min
-interface QuestionScore<Q> {
-  level: number
-  data: Q
-}
+
 export class QuestionModel<QuestionType> {
   static INTERVAL = 5
 
@@ -39,7 +37,7 @@ export class QuestionModel<QuestionType> {
     if (!question) return
     if (this.mode === 'conquest') {
       if (
-        question.level === 0 &&
+        question.level === 0 ||
         question.level >= QuestionModel.GRADUATE_LEVEL
       )
         return
@@ -89,7 +87,8 @@ export class QuestionModel<QuestionType> {
 
   learning() {
     return this.queue
-      .filter((q) => q.level !== 0 && q.level <= QuestionModel.GRADUATE_LEVEL)
+      .filter((q) => q.level > 0 && q.level <= QuestionModel.GRADUATE_LEVEL)
+      .sort((b, a) => b.level - a.level)
       .map(QuestionModel.getData)
   }
 }

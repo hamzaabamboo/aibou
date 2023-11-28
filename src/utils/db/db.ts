@@ -1,4 +1,5 @@
 import Dexie, { type Table } from 'dexie'
+import { ConquestData } from 'types/conquestData'
 
 import { type QuizData } from '../../types/quizData'
 import { type Topic, type TopicItem } from '../../types/topic'
@@ -14,6 +15,8 @@ export class AibouDB extends Dexie {
 
   quiz!: Table<QuizData>
 
+  conquest!: Table<ConquestData>
+
   constructor() {
     super('aibou-app')
     this.version(6).stores({
@@ -21,7 +24,8 @@ export class AibouDB extends Dexie {
       topicEntries:
         '++id, topicId, word, reading, createdAt, lastUpdatedAt, isDeleted, *tags',
       keyValues: '&key',
-      quiz: 'id'
+      quiz: 'id',
+      conquest: 'id'
     })
   }
 }

@@ -1,3 +1,5 @@
+import { JishoWord } from './jisho'
+
 export interface QuizData<T = Record<string, unknown>> {
   id: string
   recentQuestions: Array<QuizAnswer<T>>
@@ -11,4 +13,10 @@ export interface QuizData<T = Record<string, unknown>> {
 export interface QuizAnswer<T = Record<string, unknown>> {
   question: T
   isCorrect: boolean
+}
+
+export interface QuizQuestion {
+  question: string
+  answer?: string[]
+  data?: JishoWord
 }
