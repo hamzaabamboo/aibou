@@ -1,8 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query'
 
 import { useDBContext } from 'hooks/contexts/useDBContext'
-import { ConquestData } from 'types/conquestData'
-import { QuizData } from 'types/quizData'
+import { ConquestData, QuestionScore } from 'types/conquestData'
 
 export const useConquestData = <T = Record<string, unknown>>(
   quizId: string
@@ -34,9 +33,9 @@ export const useConquestData = <T = Record<string, unknown>>(
   })
 
   const editConquestData = useMutation({
-    mutationFn: async (data: QuizData<T>) => {
+    mutationFn: async (data: QuestionScore<T>[]) => {
       if (!quizId) return
-      await db?.conquest.update(quizId, { ...data, id: quizId })
+      await db?.conquest.update(quizId, { queue: data, id: quizId })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fetchConquestData', quizId] })

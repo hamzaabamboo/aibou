@@ -1,10 +1,12 @@
-import { Center, Container, Stack } from '@chakra-ui/react'
+import { Box, Button, Center, Container, Stack } from '@chakra-ui/react'
 import { GetStaticPaths, GetStaticProps } from 'next'
 import Link from 'next/link'
 import { useRouter } from 'next/router'
 
+import { ArrowBackIcon } from '@chakra-ui/icons'
 import { Quiz } from 'components/quiz/Quiz'
 import { readFile } from 'fs/promises'
+import { capitalize } from 'lodash'
 import { join } from 'path'
 
 type QuizData = Record<
@@ -70,9 +72,16 @@ export default function QuizDetail({
   return (
     <Container maxWidth={['full', null, '80vw']} pt={4}>
       <Stack>
+        <Box>
+          <Link href="/quiz">
+            <Button leftIcon={<ArrowBackIcon />} variant="link">
+              Back to Quizzes
+            </Button>
+          </Link>
+        </Box>
         <Quiz
           quizId={`quiz-${id}`}
-          title={`${id} Practice`}
+          title={`${capitalize(id.split('---')[1])} Practice`}
           questions={questions.flatMap((w) =>
             w.question.map((q) => ({
               question: q,

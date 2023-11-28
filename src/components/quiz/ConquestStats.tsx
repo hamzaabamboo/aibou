@@ -23,14 +23,15 @@ export function ConquestStats({
   onResetCounter?: () => void
 }) {
   const { openSearchModal } = usePopupSearchContext()
+  const remaining = data.remaining()
   const total = data.size()
-  // const percentage = Math.round((quizData.stats.correct * 100) / total)
+  const percentage = Math.round((remaining * 100) / total)
 
   return (
     <Accordion w="full" allowMultiple>
       <AccordionItem>
         <AccordionButton textAlign="center">
-          Conquest Data: ({total} remaining)
+          Conquest Data: {remaining} / {total} remaining ({percentage}%)
           {/* Stats: {total} Total / {quizData.stats.correct} Correct ({percentage}
           %) / {quizData.stats.skipped} Skipped */}
         </AccordionButton>

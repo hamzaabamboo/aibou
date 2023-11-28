@@ -19,7 +19,7 @@ export class AibouDB extends Dexie {
 
   constructor() {
     super('aibou-app')
-    this.version(6).stores({
+    this.version(7).stores({
       topics: '++id, name, createdAt, lastUpdatedAt, isDeleted',
       topicEntries:
         '++id, topicId, word, reading, createdAt, lastUpdatedAt, isDeleted, *tags',

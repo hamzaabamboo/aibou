@@ -12,20 +12,35 @@ export class QuestionModel<QuestionType> {
   private queue: QuestionScore<QuestionType>[] = []
 
   constructor(
-    questions: QuestionType[],
-    private mode: 'normal' | 'random' | 'conquest' = 'normal'
+    private questions: QuestionType[],
+    private mode: 'normal' | 'random' | 'conquest' = 'normal',
+    queue: QuestionScore<QuestionType>[] | undefined = undefined,
+    private onSaveData?: (queue: QuestionScore<QuestionType>[]) => void
   ) {
-    this.queue = shuffle(questions.map((data) => ({ level: 0, data })))
+    this.initializeQueue(queue)
   }
 
   static getData<QuestionType>(question: QuestionScore<QuestionType>) {
-    return question.data
+    return question?.data
+  }
+
+  private handleSave() {
+    this.onSaveData?.(this.queue)
+  }
+
+  initializeQueue(dataToLoad?: QuestionScore<QuestionType>[]) {
+    if (dataToLoad && dataToLoad.length > 0) {
+      this.queue = dataToLoad
+      return
+    }
+    this.queue = shuffle(this.questions.map((data) => ({ level: 0, data })))
   }
 
   nextQuestion() {
     const question = this.queue.shift()
     if (!question) return
     this.queue.splice(randInt(0, this.queue.length), 0, question)
+    this.handleSave()
   }
 
   correctAnswer() {
@@ -34,13 +49,18 @@ export class QuestionModel<QuestionType> {
       return
     }
     const question = this.queue.shift()
-    if (!question) return
+    if (!question) {
+      this.handleSave()
+      return
+    }
     if (this.mode === 'conquest') {
       if (
         question.level === 0 ||
         question.level >= QuestionModel.GRADUATE_LEVEL
-      )
+      ) {
+        this.handleSave()
         return
+      }
       question.level += 1
       this.queue.splice(
         randInt(
@@ -60,6 +80,7 @@ export class QuestionModel<QuestionType> {
         question
       )
     }
+    this.handleSave()
   }
 
   wrongAnswer() {
@@ -71,6 +92,7 @@ export class QuestionModel<QuestionType> {
     if (!question) return
     question.level = 1
     this.queue.splice(randInt(0, QuestionModel.INTERVAL), 0, question)
+    this.handleSave()
   }
 
   currentQuestion() {
@@ -82,6 +104,10 @@ export class QuestionModel<QuestionType> {
   }
 
   size() {
+    return this.questions.length
+  }
+
+  remaining() {
     return this.queue.length
   }
 
@@ -90,5 +116,10 @@ export class QuestionModel<QuestionType> {
       .filter((q) => q.level > 0 && q.level <= QuestionModel.GRADUATE_LEVEL)
       .sort((b, a) => b.level - a.level)
       .map(QuestionModel.getData)
+  }
+
+  reset() {
+    this.initializeQueue()
+    this.handleSave()
   }
 }

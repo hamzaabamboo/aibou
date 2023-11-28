@@ -18,6 +18,7 @@ import { SearchResultItem } from 'components/jisho/SearchResultItem'
 import { KanjiInfo } from 'components/kanken/KanjiInfo'
 import { PracticeStats } from 'components/kanken/PracticeStats'
 import { useOfflineDictionaryContext } from 'hooks/contexts/useOfflineDictionaryContext'
+import { useConquestData } from 'hooks/quiz/useConquestData'
 import { useQuizState } from 'hooks/quiz/useQuizState'
 import { useGetSearchMultiple } from 'hooks/search/useGetSearchMultiple'
 import { useLocalStorage } from 'hooks/useLocalStorage'
@@ -62,18 +63,37 @@ export function Quiz({
   )
   const { runSQL } = useOfflineDictionaryContext()
   const searchTerms = useGetSearchMultiple()
+  const [
+    { data: conquestData, isLoading: loadingSaveData },
+    { mutate: saveConquestData }
+  ] = useConquestData<QuizQuestion>(`${quizId}-${mode}-conquest`)
 
   const [questionsManager, setQuestionManager] = useState(
     new QuestionModel<QuizQuestion>(questions, questionMode)
   )
 
   const nextQuestionCache = useRef<Record<string, JishoWord>>({})
-
   useEffect(() => {
-    if (isLoadingQuestionMode) return
-    setQuestionManager(new QuestionModel(questions, questionMode))
+    if (isLoadingQuestionMode || loadingSaveData) return
+    setQuestionManager(
+      new QuestionModel(
+        questions,
+        questionMode,
+        conquestData?.queue,
+        (data) => {
+          saveConquestData(data)
+        }
+      )
+    )
     nextQuestionCache.current = {}
-  }, [questions, questionMode, isLoadingQuestionMode])
+  }, [
+    questions,
+    questionMode,
+    isLoadingQuestionMode,
+    conquestData,
+    saveConquestData,
+    loadingSaveData
+  ])
 
   const fetchQuestionData = async (
     question: string
@@ -236,7 +256,7 @@ export function Quiz({
     return undefined
   })()
 
-  if (modeLoading) {
+  if (modeLoading || loadingSaveData) {
     return <LoadingSpinner />
   }
   return (
@@ -244,7 +264,7 @@ export function Quiz({
       <Stack mt="8" alignItems="center">
         <Heading>{title}</Heading>
         <Text>
-          {questionsManager.size()}{' '}
+          {questionsManager.remaining()}{' '}
           {questionMode === 'conquest' ? 'remaining' : 'items'}{' '}
         </Text>
       </Stack>
