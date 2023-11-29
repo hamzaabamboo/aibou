@@ -9,23 +9,20 @@ import { readFile } from 'fs/promises'
 import { capitalize } from 'lodash'
 import { join } from 'path'
 
-type QuizData = Record<
-  string,
-  {
-    label: string
-    url: string
-    quizzes: Record<string, { question: string[]; answer: string[] }[]>
-  }
->
+type QuizData = {
+  label: string
+  url: string
+  quizzes: Record<string, { question: string[]; answer: string[] }[]>
+}
 
 export const getStaticPaths: GetStaticPaths = async () => {
   const file = await readFile(
-    join(__dirname, '../../../../src/constant/quiz-data.json'),
+    join(__dirname, '../../../../src/constant/quiz/quiz-index.json'),
     'utf-8'
   )
-  const data = JSON.parse(file) as QuizData
+  const data = JSON.parse(file)
   const subKeys = Object.entries(data).flatMap(([key, value]) =>
-    Object.keys(value.quizzes).map((quiz) => `${key}---${quiz}`)
+    (value as { quizzes: string[] }).quizzes.map((quiz) => `${key}---${quiz}`)
   )
   return {
     paths: subKeys.map((id) => ({
@@ -39,13 +36,14 @@ export const getStaticPaths: GetStaticPaths = async () => {
 
 export const getStaticProps = (async (context) => {
   const { id } = context.params ?? {}
+  const [provider, quiz] = id?.split('---') ?? []
   const file = await readFile(
-    join(__dirname, '../../../../src/constant/quiz-data.json'),
+    join(__dirname, `../../../../src/constant/quiz/${provider}.json`),
     'utf-8'
   )
   const data = JSON.parse(file) as QuizData
-  const [provider, quiz] = id?.split('---') ?? []
-  return { props: { questions: data[provider].quizzes[quiz] } }
+
+  return { props: { questions: data.quizzes[quiz] } }
 }) satisfies GetStaticProps<
   {
     questions: { question: string[]; answer: string[] }[]

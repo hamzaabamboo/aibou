@@ -25,7 +25,7 @@ type QuizData = Record<
 
 export const getStaticProps = async () => {
   const file = await readFile(
-    join(__dirname, '../../../src/constant/quiz-data.json'),
+    join(__dirname, '../../../src/constant/quiz/quiz-index.json'),
     'utf-8'
   )
   const data = JSON.parse(file) as QuizData
@@ -33,7 +33,7 @@ export const getStaticProps = async () => {
     key,
     label: value.label,
     url: value.url,
-    links: Object.keys((value as { quizzes: object }).quizzes)
+    quizzes: value.quizzes
   }))
   return {
     props: {
@@ -42,7 +42,7 @@ export const getStaticProps = async () => {
   }
 }
 export default function QuizPage(props: {
-  links: { key: string; label: string; url: string; links: string[] }[]
+  links: { key: string; label: string; url: string; quizzes: string[] }[]
 }) {
   const { links } = props
 
@@ -64,7 +64,7 @@ export default function QuizPage(props: {
                 <Text size="2xl">{l.label}</Text>
               </Link>
               <UnorderedList>
-                {l.links.map((a, i) => (
+                {l.quizzes.map((a, i) => (
                   <ListItem key={i}>
                     <Link key={idx} href={`/quiz/${l.key}---${a}`}>
                       <Text size="lg">{a}</Text>
