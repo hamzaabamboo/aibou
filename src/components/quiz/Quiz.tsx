@@ -66,7 +66,7 @@ export function Quiz({
   const [
     { data: conquestData, isLoading: loadingSaveData },
     { mutate: saveConquestData }
-  ] = useConquestData<QuizQuestion>(`${quizId}-${mode}-conquest`)
+  ] = useConquestData<QuizQuestion>(`${quizId}-${mode}-${questionMode}`)
 
   const [questionsManager, setQuestionManager] = useState(
     new QuestionModel<QuizQuestion>(questions, questionMode)
@@ -225,7 +225,7 @@ export function Quiz({
   }
 
   useEffect(() => {
-    if (!questionsManager) return
+    if (!questionsManager || questionsManager.size() === 0) return
     resetQuestion()
     nextQuestion(false)
   }, [questionsManager, mode])
