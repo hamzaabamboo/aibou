@@ -25,6 +25,12 @@ export class QuestionModel<QuestionType> {
   }
 
   private handleSave() {
+    // console.log(
+    //   this.queue
+    //     .slice(0, 5)
+    //     .map((t) => t.data)
+    //     .map((a: Record<string, unknown>) => a.question)
+    // )
     this.onSaveData?.(this.queue)
   }
 
@@ -90,8 +96,8 @@ export class QuestionModel<QuestionType> {
     }
     const question = this.queue.shift()
     if (!question) return
-    question.level = 1
-    this.queue.splice(randInt(0, QuestionModel.INTERVAL), 0, question)
+    question.level = question.level === 0 ? 1 : Math.min(1, question.level - 1)
+    this.queue.splice(randInt(3, 3 + QuestionModel.INTERVAL), 0, question)
     this.handleSave()
   }
 

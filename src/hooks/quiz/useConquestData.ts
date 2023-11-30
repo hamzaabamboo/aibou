@@ -29,7 +29,7 @@ export const useConquestData = <T = Record<string, unknown>>(
         return defaultQuiz
       }
     },
-    enabled: !!db
+    enabled: !!db && !!quizId
   })
 
   const editConquestData = useMutation({

@@ -6,7 +6,7 @@ import { SearchApiResults } from 'types/api'
 import { parseJishoResults } from 'types/jisho'
 
 export const useGetSearchMultiple = () => {
-  const { isDictionaryAvailable, isDBDownloaded } =
+  const { isDictionaryAvailable, isDBDownloaded, isPending } =
     useOfflineDictionaryAvailability()
   const { searchTerms } = useOfflineDictionaryContext()
 
@@ -18,36 +18,38 @@ export const useGetSearchMultiple = () => {
     'dictionaryApiSecret',
     ''
   )
+  const isOffline = isDBDownloaded && isDictionaryAvailable
 
-  return async (queries: string[]) => {
-    const isOffline = isDBDownloaded && isDictionaryAvailable
-    if (isOffline) {
-      return searchTerms?.(queries)
-    }
-
-    const apiUrl = dictionaryApiUrl || (await refetch()).data
-    const apiKey = dictionaryApiSecret || (await refetchKey()).data
-
-    const p = queries.map(async (word) => {
-      const { data } = await axios.get<SearchApiResults>(
-        `${apiUrl}?q=${encodeURIComponent(word)}&exact=true`,
-
-        {
-          headers: {
-            'x-jisho-secret': apiKey
-          }
+  return isPending
+    ? undefined
+    : async (queries: string[]) => {
+        if (isOffline) {
+          return searchTerms?.(queries)
         }
-      )
 
-      const results = parseJishoResults(data)
-      const jishoData = results.filter((m) =>
-        m.japanese.some((w) => w.word === word || w.reading === word)
-      )
-      return {
-        word,
-        results: jishoData
+        const apiUrl = dictionaryApiUrl || (await refetch()).data
+        const apiKey = dictionaryApiSecret || (await refetchKey()).data
+        if (!apiUrl) throw new Error('URL not set')
+        const p = queries.map(async (word) => {
+          const { data } = await axios.get<SearchApiResults>(
+            `${apiUrl}?q=${encodeURIComponent(word)}&exact=true`,
+
+            {
+              headers: {
+                'x-jisho-secret': apiKey
+              }
+            }
+          )
+
+          const results = parseJishoResults(data)
+          const jishoData = results.filter((m) =>
+            m.japanese.some((w) => w.word === word || w.reading === word)
+          )
+          return {
+            word,
+            results: jishoData
+          }
+        })
+        return Promise.all(p) ?? []
       }
-    })
-    return Promise.all(p) ?? []
-  }
 }

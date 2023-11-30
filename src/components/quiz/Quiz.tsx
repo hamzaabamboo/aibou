@@ -48,7 +48,7 @@ export function Quiz({
   const [{ data: mode, isPending: modeLoading }, { mutate: setMode }] =
     useKeyValueData<'reading' | 'writing'>('quiz-practice-mode', 'reading')
   const [
-    { data: questionMode, isPending: isLoadingQuestionMode },
+    { data: questionMode, isLoading: isLoadingQuestionMode },
     { mutate: setQuestionMode }
   ] = useKeyValueData<'normal' | 'conquest' | 'random'>(
     `${quizId}-shuffle-mode`,
@@ -66,15 +66,19 @@ export function Quiz({
   const [
     { data: conquestData, isLoading: loadingSaveData },
     { mutate: saveConquestData }
-  ] = useConquestData<QuizQuestion>(`${quizId}-${mode}-${questionMode}`)
-
-  const [questionsManager, setQuestionManager] = useState(
-    new QuestionModel<QuizQuestion>(questions, questionMode)
+  ] = useConquestData<QuizQuestion>(
+    mode && questionMode ? `${quizId}-${mode}-${questionMode}` : ''
   )
 
-  const nextQuestionCache = useRef<Record<string, JishoWord>>({})
+  const [questionsManager, setQuestionManager] = useState(
+    new QuestionModel<QuizQuestion>([], questionMode)
+  )
+
+  const wordDataCache = useRef<Record<string, JishoWord>>({})
+
   useEffect(() => {
     if (isLoadingQuestionMode || loadingSaveData) return
+
     setQuestionManager(
       new QuestionModel(
         questions,
@@ -85,7 +89,7 @@ export function Quiz({
         }
       )
     )
-    nextQuestionCache.current = {}
+    wordDataCache.current = {}
   }, [
     questions,
     questionMode,
@@ -116,8 +120,8 @@ export function Quiz({
   const getQuestionData = async (
     question: string
   ): Promise<JishoWord | undefined> => {
-    if (question in nextQuestionCache.current) {
-      return nextQuestionCache.current[question]
+    if (question in wordDataCache.current) {
+      return wordDataCache.current[question]
     }
     return fetchQuestionData(question)
   }
@@ -134,7 +138,6 @@ export function Quiz({
     giveUp,
     nextQuestion,
     skipQuestion,
-    resetQuestion,
     quizData,
     resetStats
   } = useQuizState<QuizQuestion, string>({
@@ -142,27 +145,20 @@ export function Quiz({
     getNewQuestion: async () => {
       if (!questionsManager || questionsManager.size() === 0) return
       setAnswerExplanations(undefined)
-      let prompt
-      let data
-      let tries = 0
-      while (
-        !prompt?.answer &&
-        data === undefined &&
-        tries < questionsManager.size()
-      ) {
-        prompt = questionsManager.currentQuestion()
-        data = prompt.data
-          ? prompt.data
-          : // eslint-disable-next-line no-await-in-loop
-            await getQuestionData(prompt.question ?? '')
-        tries += 1
-        if (!data) {
-          questionsManager.nextQuestion()
-        }
+      const prompt = questionsManager.currentQuestion()
+      const data = prompt.data
+        ? prompt.data
+        : await getQuestionData(prompt.question ?? '')
+      if (!data) {
+        questionsManager.nextQuestion()
+        return data
       }
       setQuestionData(data)
       try {
-        fetchQuestionData(questionsManager.upcomingQuestion().question)
+        const upcoming = questionsManager.upcomingQuestion().question
+        fetchQuestionData(upcoming).then((res) => {
+          if (res) wordDataCache.current[upcoming] = res
+        })
       } catch {
         // Do nothing
       }
@@ -225,10 +221,24 @@ export function Quiz({
   }
 
   useEffect(() => {
-    if (!questionsManager || questionsManager.size() === 0) return
-    resetQuestion()
+    if (
+      loadingSaveData ||
+      isLoadingQuestionMode ||
+      !questionsManager ||
+      questionsManager.size() === 0 ||
+      !!currentQuestion ||
+      !searchTerms
+    )
+      return
     nextQuestion(false)
-  }, [questionsManager, mode])
+  }, [
+    questionsManager,
+    mode,
+    loadingSaveData,
+    isLoadingQuestionMode,
+    currentQuestion,
+    searchTerms
+  ])
 
   useEffect(() => {
     if (ended && !answerExplanations) {
@@ -336,7 +346,9 @@ export function Quiz({
           onResetCounter={resetStats}
         />
       )}
-      {questionMode === 'conquest' && <ConquestStats data={questionsManager} />}
+      {questionMode === 'conquest' && (
+        <ConquestStats data={questionsManager} questions={questions} />
+      )}
       <Stack w="full" alignItems="center">
         <HStack>
           <ButtonGroup variant="outline" isAttached>

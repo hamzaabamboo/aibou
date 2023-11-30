@@ -47,7 +47,7 @@ export function OfflineDictionaryProvider({
     async (params: string[]) =>
       new Promise<Array<{ word: string; results: JishoWord[] }>>((resolve) => {
         if (isBusy) throw new Error('Worker is busy')
-        if (!worker) return
+        if (!worker) throw new Error('Not Ready')
         worker.postMessage({
           type: 'searchWords',
           data: params

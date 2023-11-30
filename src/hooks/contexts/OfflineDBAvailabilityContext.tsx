@@ -18,7 +18,7 @@ export function OfflineDBAvailabilityProvider({
   const [{ data: offlineDictionaryEnabled, isPending: isLoadingVariable }] =
     useKeyValueData('offlineDictionaryEnabled', true)
   const isAvailable = isDBDownloaded && (offlineDictionaryEnabled ?? false)
-  const isLoading = isProcessing && isLoadingVariable
+  const isLoading = isProcessing || isLoadingVariable
 
   const context = useMemo(
     () => ({
