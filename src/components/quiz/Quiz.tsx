@@ -61,6 +61,10 @@ export function Quiz({
     'quiz-show-meaning',
     false
   )
+  const [showInfo, setShowInfo] = useLocalStorage<boolean>(
+    'quiz-show-info',
+    true
+  )
   const { runSQL } = useOfflineDictionaryContext()
   const searchTerms = useGetSearchMultiple()
   const [
@@ -139,6 +143,7 @@ export function Quiz({
     nextQuestion,
     skipQuestion,
     quizData,
+    isLoadingQuestion,
     resetStats
   } = useQuizState<QuizQuestion, string>({
     quizId: mode ? `${quizId}-${mode}` : ``,
@@ -269,6 +274,7 @@ export function Quiz({
   if (modeLoading || loadingSaveData) {
     return <LoadingSpinner />
   }
+
   return (
     <Stack w="full" alignItems="center">
       <Stack mt="8" alignItems="center">
@@ -296,6 +302,9 @@ export function Quiz({
             }}
           />
         )}
+        {showInfo && currentQuestion?.info && (
+          <Text>{currentQuestion.info}</Text>
+        )}
         <BigTextInput
           ref={answerInputRef}
           value={(ended ? answerKey.join(', ') : answer) ?? ''}
@@ -309,6 +318,7 @@ export function Quiz({
         />
         <HStack>
           <Button
+            disabled={isLoadingQuestion}
             onClick={() => {
               skipQuestion()
             }}
@@ -317,6 +327,7 @@ export function Quiz({
           </Button>
           <Button
             colorScheme={ended ? 'green' : 'red'}
+            disabled={isLoadingQuestion}
             onClick={() => {
               if (ended) {
                 nextQuestion()
@@ -371,14 +382,24 @@ export function Quiz({
               Writing
             </Button>
           </ButtonGroup>
-          <Switch
-            checked={showMeaning ?? undefined}
-            onChange={(e) => {
-              setShowMeaning(e.target.checked)
-            }}
-          >
-            Show Meaning
-          </Switch>
+          <Stack>
+            <Switch
+              isChecked={showMeaning ?? false}
+              onChange={(e) => {
+                setShowMeaning(e.target.checked)
+              }}
+            >
+              Show Meaning
+            </Switch>
+            <Switch
+              isChecked={showInfo ?? true}
+              onChange={(e) => {
+                setShowInfo(e.target.checked)
+              }}
+            >
+              Show Info
+            </Switch>
+          </Stack>
         </HStack>
         <ButtonGroup variant="outline" isAttached>
           <Button

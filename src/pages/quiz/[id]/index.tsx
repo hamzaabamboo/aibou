@@ -82,6 +82,7 @@ export default function QuizDetail({
           title={`${capitalize(id.split('---')[1])} Practice`}
           questions={questions.flatMap((w) =>
             w.question.map((q) => ({
+              ...w,
               question: q,
               answer: w.answer
             }))
