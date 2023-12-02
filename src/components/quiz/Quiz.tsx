@@ -302,7 +302,7 @@ export function Quiz({
             }}
           />
         )}
-        {showInfo && currentQuestion?.info && (
+        {(ended || showInfo) && currentQuestion?.info && (
           <Text>{currentQuestion.info}</Text>
         )}
         <BigTextInput
