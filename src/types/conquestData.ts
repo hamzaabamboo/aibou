@@ -6,4 +6,5 @@ export interface QuestionScore<Q> {
 export interface ConquestData<Q = unknown> {
   id: string
   queue: QuestionScore<Q>[]
+  learned?: QuestionScore<Q>[]
 }

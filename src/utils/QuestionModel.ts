@@ -11,13 +11,23 @@ export class QuestionModel<QuestionType> {
 
   private queue: QuestionScore<QuestionType>[] = []
 
+  private learnedItems: QuestionScore<QuestionType>[] = []
+
   constructor(
     private questions: QuestionType[],
     private mode: 'normal' | 'random' | 'conquest' = 'normal',
-    queue: QuestionScore<QuestionType>[] | undefined = undefined,
-    private onSaveData?: (queue: QuestionScore<QuestionType>[]) => void
+    saveData:
+      | {
+          queue: QuestionScore<QuestionType>[]
+          learned?: QuestionScore<QuestionType>[]
+        }
+      | undefined = undefined,
+    private onSaveData?: (
+      queue: QuestionScore<QuestionType>[],
+      learned: QuestionScore<QuestionType>[]
+    ) => void
   ) {
-    this.initializeQueue(queue)
+    this.initializeQueue(saveData)
   }
 
   static getData<QuestionType>(question: QuestionScore<QuestionType>) {
@@ -27,19 +37,24 @@ export class QuestionModel<QuestionType> {
   private handleSave() {
     // console.log(
     //   this.queue
-    //     .slice(0, 5)
-    //     .map((t) => t.data)
-    //     .map((a: Record<string, unknown>) => a.question)
+    //     .map((t) => `${t.data.question}(${t.level})`)
+
+    //     .join(',')
     // )
-    this.onSaveData?.(this.queue)
+    this.onSaveData?.(this.queue, this.learnedItems)
   }
 
-  initializeQueue(dataToLoad?: QuestionScore<QuestionType>[]) {
-    if (dataToLoad && dataToLoad.length > 0) {
-      this.queue = dataToLoad
-      return
+  initializeQueue(dataToLoad?: {
+    queue?: QuestionScore<QuestionType>[]
+    learned?: QuestionScore<QuestionType>[]
+  }) {
+    if (dataToLoad?.queue && dataToLoad?.queue?.length > 0) {
+      this.queue = dataToLoad.queue
+      this.learnedItems = dataToLoad.learned ?? []
+    } else {
+      this.queue = shuffle(this.questions.map((data) => ({ level: 0, data })))
+      this.learnedItems = []
     }
-    this.queue = shuffle(this.questions.map((data) => ({ level: 0, data })))
   }
 
   nextQuestion() {
@@ -65,6 +80,7 @@ export class QuestionModel<QuestionType> {
         question.level >= QuestionModel.GRADUATE_LEVEL
       ) {
         this.handleSave()
+        this.learnedItems.push(question)
         return
       }
       question.level += 1
@@ -122,6 +138,10 @@ export class QuestionModel<QuestionType> {
       .filter((q) => q.level > 0 && q.level <= QuestionModel.GRADUATE_LEVEL)
       .sort((b, a) => b.level - a.level)
       .map(QuestionModel.getData)
+  }
+
+  learned() {
+    return this.learnedItems.map(QuestionModel.getData)
   }
 
   reset() {

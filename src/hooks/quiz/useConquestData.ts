@@ -33,9 +33,12 @@ export const useConquestData = <T = Record<string, unknown>>(
   })
 
   const editConquestData = useMutation({
-    mutationFn: async (data: QuestionScore<T>[]) => {
+    mutationFn: async (data: {
+      queue: QuestionScore<T>[]
+      learned: QuestionScore<T>[]
+    }) => {
       if (!quizId) return
-      await db?.conquest.update(quizId, { queue: data, id: quizId })
+      await db?.conquest.update(quizId, { ...data, id: quizId })
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ['fetchConquestData', quizId] })

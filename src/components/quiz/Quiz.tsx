@@ -76,29 +76,6 @@ export function Quiz({
 
   const wordDataCache = useRef<Record<string, JishoWord>>({})
 
-  useEffect(() => {
-    if (isLoadingQuestionMode || loadingSaveData) return
-
-    setQuestionManager(
-      new QuestionModel(
-        questions,
-        questionMode,
-        conquestData?.queue,
-        (data) => {
-          saveConquestData(data)
-        }
-      )
-    )
-    wordDataCache.current = {}
-  }, [
-    questions,
-    questionMode,
-    isLoadingQuestionMode,
-    conquestData,
-    saveConquestData,
-    loadingSaveData
-  ])
-
   const fetchQuestionData = async (
     question: string
   ): Promise<JishoWord | undefined> => {
@@ -138,20 +115,21 @@ export function Quiz({
     giveUp,
     nextQuestion,
     skipQuestion,
+    resetQuestion,
     quizData,
     resetStats
   } = useQuizState<QuizQuestion, string>({
     quizId: mode ? `${quizId}-${mode}` : ``,
     getNewQuestion: async () => {
-      if (!questionsManager || questionsManager.size() === 0) return
+      if (!questionsManager || questionsManager.remaining() === 0)
+        return undefined
       setAnswerExplanations(undefined)
       const prompt = questionsManager.currentQuestion()
       const data = prompt.data
         ? prompt.data
         : await getQuestionData(prompt.question ?? '')
       if (!data) {
-        questionsManager.nextQuestion()
-        return data
+        return { ...prompt }
       }
       setQuestionData(data)
       try {
@@ -220,12 +198,59 @@ export function Quiz({
     }
   }
 
+  const handleResetConquest = () => {
+    setQuestionManager(
+      new QuestionModel(
+        questions,
+        questionMode,
+        undefined,
+        (queue, learned) => {
+          saveConquestData({
+            queue,
+            learned
+          })
+        }
+      )
+    )
+    wordDataCache.current = {}
+    resetQuestion()
+  }
+
+  useEffect(() => {
+    if (
+      isLoadingQuestionMode ||
+      loadingSaveData ||
+      !questionMode ||
+      !conquestData?.queue
+    )
+      return
+
+    setQuestionManager(
+      new QuestionModel(
+        questions,
+        questionMode,
+        conquestData,
+        (queue, learned) => {
+          saveConquestData({ queue, learned })
+        }
+      )
+    )
+    wordDataCache.current = {}
+  }, [
+    questions,
+    questionMode,
+    isLoadingQuestionMode,
+    conquestData,
+    saveConquestData,
+    loadingSaveData
+  ])
+
   useEffect(() => {
     if (
       loadingSaveData ||
       isLoadingQuestionMode ||
       !questionsManager ||
-      questionsManager.size() === 0 ||
+      questionsManager.remaining() === 0 ||
       !!currentQuestion ||
       !searchTerms
     )
@@ -269,6 +294,7 @@ export function Quiz({
   if (modeLoading || loadingSaveData) {
     return <LoadingSpinner />
   }
+
   return (
     <Stack w="full" alignItems="center">
       <Stack mt="8" alignItems="center">
@@ -346,9 +372,11 @@ export function Quiz({
           onResetCounter={resetStats}
         />
       )}
-      {questionMode === 'conquest' && (
-        <ConquestStats data={questionsManager} questions={questions} />
-      )}
+      <ConquestStats
+        data={questionsManager}
+        questions={questions}
+        onResetConquest={handleResetConquest}
+      />
       <Stack w="full" alignItems="center">
         <HStack>
           <ButtonGroup variant="outline" isAttached>

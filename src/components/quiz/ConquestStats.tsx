@@ -18,11 +18,11 @@ import { QuizQuestion } from '../../types/quizData'
 export function ConquestStats({
   data,
   questions,
-  onResetCounter
+  onResetConquest
 }: {
   data: QuestionModel<QuizQuestion>
   questions: QuizQuestion[]
-  onResetCounter?: () => void
+  onResetConquest?: () => void
 }) {
   const { openSearchModal } = usePopupSearchContext()
   const remaining = data.remaining()
@@ -30,6 +30,7 @@ export function ConquestStats({
   const percentage = Math.round((remaining * 100) / total)
 
   const learningQuestions = data.learning().map((l) => l.question)
+  const learned = data.learned()
   const learnedQuestions = questions.filter(
     (q) => !learningQuestions.includes(q.question)
   )
@@ -55,9 +56,22 @@ export function ConquestStats({
                 </Text>
               ))}
             </HStack>
-            <Heading size="sm">Learned</Heading>
+            <Heading size="sm">Remaining</Heading>
             <HStack w="full" flexWrap="wrap">
               {learnedQuestions.map((q, idx) => (
+                <Text
+                  key={idx}
+                  onClick={() => {
+                    openSearchModal?.(q.question)
+                  }}
+                >
+                  {q.question}
+                </Text>
+              ))}
+            </HStack>
+            <Heading size="sm">Learned</Heading>
+            <HStack w="full" flexWrap="wrap">
+              {learned.map((q, idx) => (
                 <Text
                   key={idx}
                   onClick={() => {
@@ -71,7 +85,7 @@ export function ConquestStats({
             {/* <Heading size="md">Recent Incorrect</Heading> */}
             <Button
               width="fit-content"
-              onClick={onResetCounter ?? (() => {})}
+              onClick={onResetConquest ?? (() => {})}
               colorScheme="red"
               disabled
             >
