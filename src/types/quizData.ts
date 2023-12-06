@@ -18,5 +18,6 @@ export interface QuizAnswer<T = Record<string, unknown>> {
 export interface QuizQuestion {
   question: string
   answer?: string[]
+  info?: string
   data?: JishoWord
 }

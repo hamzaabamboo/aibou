@@ -115,6 +115,7 @@ export const useQuizState = <Q, A = string>(props: QuizStateProps<Q, A>) => {
     skipQuestion,
     resetQuestion,
     quizData,
-    resetStats
+    resetStats,
+    isLoadingQuestion
   }
 }
