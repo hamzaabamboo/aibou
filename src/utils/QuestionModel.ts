@@ -54,6 +54,7 @@ export class QuestionModel<QuestionType> {
     } else {
       this.queue = shuffle(this.questions.map((data) => ({ level: 0, data })))
       this.learnedItems = []
+      this.handleSave()
     }
   }
 
