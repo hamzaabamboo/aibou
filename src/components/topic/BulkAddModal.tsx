@@ -113,10 +113,11 @@ export function BulkAddModal(props: {
   }
 
   const wordsFound = useMemo(
-    () => searchResults.map((s) => s.results.length > 0).length,
+    () => searchResults.filter((s) => s.results.length > 0).length,
     [searchResults]
   )
 
+  console.log(wordsFound)
   return (
     <Modal
       isOpen={isOpen}
