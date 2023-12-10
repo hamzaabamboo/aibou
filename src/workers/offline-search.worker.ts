@@ -83,7 +83,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
       console.timeEnd('Offline Search')
       postMessage({
         type: 'searchWordResult',
-        data: parseOfflineDBResult(res, tagsData!)
+        data: parseOfflineDBResult(res, tagsData!, searchTerm)
       })
       break
     }
@@ -106,7 +106,7 @@ addEventListener('message', async ({ data }: MessageEvent<WorkerMessage>) => {
           if (!res) return
           results.push({
             word,
-            results: parseOfflineDBResult(res, tagsData ?? {})
+            results: parseOfflineDBResult(res, tagsData ?? {}, word)
           })
         })
       )
