@@ -19,8 +19,8 @@ import {
   useDisclosure,
   useToast
 } from '@chakra-ui/react'
-import { useEffect, useMemo, useRef, useState } from 'react'
 import { useRouter } from 'next/router'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import {
   ArrowBackIcon,
@@ -43,9 +43,9 @@ import {
 import { useFetchTopicItemDataOffline } from 'hooks/offline/useFetchTopicItemDataOffline'
 import { useOfflineDictionaryAvailability } from 'hooks/offline/useOfflineDictionaryAvailability'
 import { useFetchTopicItemDataOnline } from 'hooks/search/useFetchTopicItemDataOnline'
-import { useGetTopic } from 'hooks/topic/useGetTopic'
 import { useAddTopicItem } from 'hooks/topic-item/useAddTopicItem'
 import { useGetTopicItems } from 'hooks/topic-item/useGetTopicItems'
+import { useGetTopic } from 'hooks/topic/useGetTopic'
 import { useLocalStorage } from 'hooks/useLocalStorage'
 import { useKeyValueData } from 'hooks/utils/useKeyValueData'
 import { uniq } from 'lodash'
@@ -126,7 +126,7 @@ function TopicDetailPage() {
               `(${s.parts_of_speech
                 .map(parsePartOfSpeech)
                 .filter((str) => !!str)
-                .join(',')}) ${s.english_definitions.join(',')}`.replace(
+                .join(',')}) ${s.english_definitions.join(',')}`.replaceAll(
                 '"',
                 '""'
               )
